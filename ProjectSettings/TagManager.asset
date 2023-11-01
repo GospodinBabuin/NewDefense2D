@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Ground
+  - HealthSprite
+  - BuildingBoundaries
+  - Chest
+  - UnitMenu
   layers:
   - Default
   - TransparentFX
@@ -11,12 +16,12 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Ground
+  - DropItem
+  - Ally
+  - Building
+  - Enemy
+  - Player
   - 
   - 
   - 
@@ -44,9 +49,21 @@ TagManager:
   - name: Background
     uniqueID: 3146874385
     locked: 0
+  - name: Buildings1
+    uniqueID: 2233070753
+    locked: 0
   - name: Entity
     uniqueID: 3436038377
     locked: 0
+  - name: Buildings2
+    uniqueID: 232126305
+    locked: 0
+  - name: Collectables
+    uniqueID: 185054111
+    locked: 0
   - name: Ground
     uniqueID: 3384545185
+    locked: 0
+  - name: UI
+    uniqueID: 3960787737
     locked: 0
