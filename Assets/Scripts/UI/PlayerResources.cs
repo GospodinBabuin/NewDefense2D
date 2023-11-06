@@ -34,7 +34,7 @@ public class PlayerResources : MonoBehaviour
 
     private void OnGoldValueChanged(object sender, int oldGoldValue, int newGoldValue)
     {
-        currentGoldField.text = _goldbank.Gold.ToString();
+        currentGoldField.text = newGoldValue.ToString();
     }
 
     private void SetAnimIDs()

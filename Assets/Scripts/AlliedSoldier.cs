@@ -1,67 +1,67 @@
-
 using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class AlliedSoldier : Entity
 {
-    public Transform SelectedBorder { get; private set; }
-    private Transform _targetTransform;
+    private Transform _selectedBorder;
+    private Vector2 _selectedBorderPosition;
 
-    private void Start()
+    protected override void Awake()
     {
-        GreenZoneBorders.Instance.AddSolderToList(this);
-        Debug.Log(SelectedBorder);
+        base.Awake();
+
+        ObjectsInWorld.Instance.AddSolderToList(this);
+        GreenZoneBorders.Instance.OnBordersPositionChangedEvent += SelectBordersPosition;
     }
-    
-    private void FixedUpdate()
+
+    private void Update()
     {
-        if (_targetTransform == null)
+        if (!IsOnBorder(_selectedBorderPosition))
         {
-            Vector2 newTargetPosition = FindCurrentBorderPosition();
-            _targetTransform.position = new Vector2(newTargetPosition.x, newTargetPosition.y);
-        }
-        
-        
-        if (!IsOnBorder(_targetTransform.position))
-        {
-            MoveToBorder(_targetTransform.position);
+            MoveToBorder(_selectedBorderPosition);
             return;
         }
     }
 
     public void SelectBorder(Transform newBorder)
     {
-        SelectedBorder = newBorder;
+        _selectedBorder = newBorder;
+
+        SelectBordersPosition();
+    }
+
+    private void SelectBordersPosition()
+    {
+        _selectedBorderPosition = _selectedBorder.position;
+        _selectedBorderPosition = AddRandomToBorderPosition(_selectedBorderPosition);
     }
 
     private void MoveToBorder(Vector2 targetPosition)
     {
-        transform.rotation = SelectedBorder.position.x < transform.position.x ?
-            Quaternion.Euler(0, 180, 0) : Quaternion.identity;
-        
-        transform.position = Vector2.MoveTowards(transform.position, 
-            targetPosition, speed * Time.deltaTime);
+        Rotate(targetPosition);
+
+        Move(targetPosition.x < transform.position.x ? -transform.right : transform.right);
     }
 
     private bool IsOnBorder(Vector2 targetPosition)
     {
-        return Math.Abs(transform.position.x - targetPosition.x) < 0.1;
+        return Math.Abs(transform.position.x - targetPosition.x) <= 0.1;
     }
 
-    private Vector2 FindCurrentBorderPosition()
+    private Vector2 AddRandomToBorderPosition(Vector2 borderOldPosition)
     {
-        Vector3 targetPosition = new Vector3(SelectedBorder.position.x, transform.position.y);
-        
-        if (SelectedBorder.position.x < 0)
+        Vector2 borderNewPosition = new Vector2(borderOldPosition.x, borderOldPosition.y);
+
+        if (borderNewPosition.x < 0)
         {
-            targetPosition += new Vector3(Random.Range(0.25f, 0.5f), transform.position.y);
+            borderNewPosition += new Vector2(Random.Range(0f, 1.5f), borderNewPosition.y);
         }
         else
         {
-            targetPosition += new Vector3(Random.Range(-0.25f, -0.5f), transform.position.y);
+            borderNewPosition += new Vector2(Random.Range(-0f, -1.5f), borderNewPosition.y);
         }
-        
-        return targetPosition;
+
+        return borderNewPosition;
     }
 }

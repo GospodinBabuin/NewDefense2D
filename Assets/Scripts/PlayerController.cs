@@ -1,10 +1,7 @@
-using System;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : Entity
 {
-    [SerializeField] private float speed = 2f;
-
     [SerializeField] private float interactionRadius = 1.3f;
     [SerializeField] private GameObject interactionNotice;
     
@@ -15,10 +12,15 @@ public class PlayerController : MonoBehaviour
 
     private int _animIDMove;
     
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
+        ObjectsInWorld.Instance.AddPlayerToList(this);
+
         _input = GetComponent<InputReader>();
         _animator = GetComponent<Animator>();
+
         SetAnimIDs();
     }
 

@@ -18,6 +18,7 @@ public class BuildingSpawner : MonoBehaviour
     private void Update()
     {
         if (!_previewMode || _buildingToSpawn == null) return;
+
         SetBuildingPosition();
 
         if (_input.CancelAction)
@@ -58,7 +59,7 @@ public class BuildingSpawner : MonoBehaviour
     {
         _buildingToSpawn.GetComponent<Building>().enabled = true;
         ActivateBuildingsCollider(_buildingToSpawn);
-        GreenZoneBorders.Instance.AddBuildingToList(_buildingToSpawn.GetComponent<Building>());
+        ObjectsInWorld.Instance.AddBuildingToList(_buildingToSpawn.GetComponent<Building>());
     }
 
     private void SetBuildingPosition()

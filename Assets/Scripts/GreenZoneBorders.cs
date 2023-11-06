@@ -1,12 +1,13 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class GreenZoneBorders : MonoBehaviour
 {
     public static GreenZoneBorders Instance { get; private set; }
-    
+
+    public delegate void BordersHandler();
+    public event BordersHandler OnBordersPositionChangedEvent;
+
     public Transform LeftBorder
     {
         get => leftBorder;
@@ -17,15 +18,12 @@ public class GreenZoneBorders : MonoBehaviour
         get => rightBorder;
         private set => rightBorder = value;
     }
-    
+
     [SerializeField] private Transform leftBorder;
     [SerializeField] private Transform rightBorder;
 
     [SerializeField] private Transform defaultLeftBorder;
     [SerializeField] private Transform defaultRightBorder;
-
-    private readonly List<Building> _buildings = new List<Building>();
-    private readonly List<AlliedSoldier> _alliedSoldiersOnBorders = new List<AlliedSoldier>();
 
     private void Awake()
     {
@@ -35,68 +33,46 @@ public class GreenZoneBorders : MonoBehaviour
             DontDestroyOnLoad(this);
             return;
         }
-        
+
         Destroy(gameObject);
     }
 
     private void Start()
     {
-        SetBorders();
+        ObjectsInWorld.Instance.OnBuildingsListChangedEvent += SetBorders;
+        ObjectsInWorld.Instance.OnAlliedSoldersListChangedEvent += SelectBorder;
     }
 
-    private void SetBorders()
+    private void SetBorders(List<Building> buildings)
     {
         LeftBorder.position = defaultLeftBorder.position;
         RightBorder.position = defaultRightBorder.position;
 
-        if (_buildings.Count == 0) return;
-        
-        foreach (Building building in _buildings)
+        if (buildings.Count == 0) return;
+
+        foreach (Building building in buildings)
         {
             if (building.transform.position.x < LeftBorder.transform.position.x)
             {
                 LeftBorder.transform.position = building.transform.position + new Vector3(2, -3);
                 Debug.Log($"New left border position: {LeftBorder.transform.position.x}");
+                continue;
             }
 
             if (building.transform.position.x > RightBorder.transform.position.x)
             {
                 RightBorder.transform.position = building.transform.position + new Vector3(-2, -3);
                 Debug.Log($"New Right border position: {RightBorder.transform.position.x}");
+                continue;
             }
         }
+
+        OnBordersPositionChangedEvent?.Invoke();
     }
 
-    public void AddBuildingToList(Building newBuilding)
+    private void SelectBorder(List<AlliedSoldier> soldiers, AlliedSoldier solder)
     {
-        _buildings.Add(newBuilding);
-        
-        SetBorders();
-    }
-    
-    public void RemoveBuildingFromList(Building newBuilding)
-    {
-        _buildings.Remove(newBuilding);
-        
-        SetBorders();
-    }
-
-    public void AddSolderToList(AlliedSoldier soldier)
-    {
-        _alliedSoldiersOnBorders.Add(soldier);
-        SelectBorder();
-    }
-    
-    public void RemoveSolderFromList(AlliedSoldier soldier)
-    {
-        _alliedSoldiersOnBorders.Remove(soldier);
-    }
-
-    private void SelectBorder()
-    {
-        for (int i = 0; i < _alliedSoldiersOnBorders.Count; i++)
-        {
-            _alliedSoldiersOnBorders[i].SelectBorder(i % 2 == 0 ? LeftBorder : RightBorder);
-        }
+        soldiers[soldiers.IndexOf(solder)]
+            .SelectBorder(soldiers.IndexOf(solder) % 2 == 0 ? LeftBorder : RightBorder);
     }
 }
