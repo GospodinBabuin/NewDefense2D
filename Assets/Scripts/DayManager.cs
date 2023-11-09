@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
-using UnityEngine.UI;
 
 public class DayManager : MonoBehaviour
 {
@@ -9,9 +8,12 @@ public class DayManager : MonoBehaviour
     public enum DayState { DAY, EVENING, NIGHT }
     public DayState dayState { get; private set; } = DayState.DAY;
 
-    private int DayCount;
-    private float CurrentTime;
-    private bool _globalLightIntensityOnPosition = false;
+    public delegate void DayStateHandler(DayState dayState, int currentDay);
+    public event DayStateHandler OnDayStateChangedEvent;
+
+    [SerializeField] private int _dayCount = 1;
+    [SerializeField] private float _currentTime;
+    [SerializeField] private bool _globalLightIntensityOnPosition = false;
 
     [SerializeField] private Light2D GlobalLight;
 
@@ -22,6 +24,7 @@ public class DayManager : MonoBehaviour
     [SerializeField] private float nightTimeGlobalLightIntensity = 0.05f;
 
     [SerializeField] private int dayTime = 0;
+
     [SerializeField] private int eveningTime = 90;
     [SerializeField] private int nightTime = 180;
     [SerializeField] private int newDayTime = 360;
@@ -45,9 +48,9 @@ public class DayManager : MonoBehaviour
 
     private void ChangeDayTime()
     {
-        CurrentTime += Time.deltaTime;
+        _currentTime += Time.deltaTime;
 
-        if (CurrentTime >= eveningTime && dayState == DayState.DAY)
+        if (_currentTime >= eveningTime && dayState == DayState.DAY)
         {
             _globalLightIntensityOnPosition = false;
             if (!_globalLightIntensityOnPosition)
@@ -59,11 +62,14 @@ public class DayManager : MonoBehaviour
                     GlobalLight.intensity = eveningTimeGlobalLightIntensity;
                     _globalLightIntensityOnPosition = true;
                     dayState = DayState.EVENING;
+
+                    OnDayStateChangedEvent?.Invoke(dayState, _dayCount);
+                    return;
                 }
             }
         }
 
-        if (CurrentTime >= nightTime && dayState == DayState.EVENING)
+        if (_currentTime >= nightTime && dayState == DayState.EVENING)
         {
             _globalLightIntensityOnPosition = false;
             if (!_globalLightIntensityOnPosition)
@@ -75,11 +81,14 @@ public class DayManager : MonoBehaviour
                     GlobalLight.intensity = nightTimeGlobalLightIntensity;
                     _globalLightIntensityOnPosition = true;
                     dayState = DayState.NIGHT;
+
+                    OnDayStateChangedEvent?.Invoke(dayState, _dayCount);
+                    return;
                 }
             }
         }
 
-        if (CurrentTime >= newDayTime && dayState == DayState.NIGHT || WaveSpawner.Instance.IsMonstersDead())
+        if (_currentTime >= newDayTime && dayState == DayState.NIGHT || (dayState == DayState.NIGHT && ObjectsInWorld.Instance.GetEnemiesCount() == 0))
         {
             _globalLightIntensityOnPosition = false;
             if (!_globalLightIntensityOnPosition)
@@ -91,8 +100,11 @@ public class DayManager : MonoBehaviour
                     GlobalLight.intensity = dayTimeGlobalLightIntensity;
                     _globalLightIntensityOnPosition = true;
                     dayState = DayState.DAY;
-                    CurrentTime = dayTime;
-                    DayCount++;
+                    _currentTime = dayTime;
+                    _dayCount++;
+
+                    OnDayStateChangedEvent?.Invoke(dayState, _dayCount);
+                    return;
                 }
             }
         }

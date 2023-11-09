@@ -7,9 +7,9 @@ public class AlliedSoldier : Entity
     private Transform _selectedBorder;
     private Vector2 _selectedBorderPosition;
 
-    protected override void Awake()
+    protected override void Start()
     {
-        base.Awake();
+        base.Start();
 
         ObjectsInWorld.Instance.AddSolderToList(this);
         GreenZoneBorders.Instance.OnBordersPositionChangedEvent += SelectBordersPosition;

@@ -89,4 +89,8 @@ public class ObjectsInWorld : MonoBehaviour
         OnPlayersListChangedEvent?.Invoke(_players);
     }
 
+    public int GetEnemiesCount()
+    {
+        return _enemies.Count;
+    }
 }

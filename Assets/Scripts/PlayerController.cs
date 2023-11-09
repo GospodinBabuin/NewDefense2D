@@ -12,9 +12,9 @@ public class PlayerController : Entity
 
     private int _animIDMove;
     
-    protected override void Awake()
+    protected override void Start()
     {
-        base.Awake();
+        base.Start();
 
         ObjectsInWorld.Instance.AddPlayerToList(this);
 

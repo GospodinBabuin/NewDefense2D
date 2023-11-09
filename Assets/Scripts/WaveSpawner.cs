@@ -1,12 +1,10 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class WaveSpawner : MonoBehaviour
 {
-    public static WaveSpawner Instance {  get; private set; }
+    public static WaveSpawner Instance { get; private set; }
 
     [System.Serializable]
     private class Wave
@@ -22,61 +20,58 @@ public class WaveSpawner : MonoBehaviour
 
     [SerializeField] private Transform[] spawnPoints;
 
-    private bool _isMonstersAppear = false;
-
-
     private void Awake()
     {
-        Instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            return;
+        }
+
+        Destroy(gameObject);
     }
 
     private void Start()
     {
-        CheckDayWithNewWave();
+        DayManager.Instance.OnDayStateChangedEvent += CheckDay;
     }
 
-    private void FixedUpdate()
+    private void CheckDay(DayManager.DayState dayState, int day)
     {
-        if (DayManager.Instance.dayState == DayManager.DayState.NIGHT && !_isMonstersAppear)
+        switch (dayState)
         {
-            StartCoroutine(SpawnWave(Waves[waveType]));
-        }
-        if (DayManager.Instance.dayState == DayManager.DayState.DAY && _isMonstersAppear)
-        {
-            CheckDayWithNewWave();
-            _isMonstersAppear = false;
+            case DayManager.DayState.DAY:
+                StartCoroutine(SpawnWave(Waves[waveType], day));
+                break;
+
+            case DayManager.DayState.NIGHT:
+                CheckDayWithNewWave(day);
+                break;
         }
     }
 
-    private void CheckDayWithNewWave()
+    private void CheckDayWithNewWave(int day)
     {
-        bool needToPlayMusic = false;
-
         for (int i = 0; i < daysWithNewWave.Length; i++)
         {
-            if (DayManager.Instance.DayCount == daysWithNewWave[i])
+            if (day == daysWithNewWave[i])
             {
                 waveType = i;
-                needToPlayMusic = true;
             }
         }
-
-        if (needToPlayMusic)
-            _newWaveMusic.Play();
     }
 
-    private IEnumerator SpawnWave(Wave wave)
+    private IEnumerator SpawnWave(Wave wave, int day)
     {
-        Debug.Log("spawning wave: " + wave.Name);
-        _isMonstersAppear = true;
+        Debug.Log("spawning wave: " + wave.Name + " day: " + day);
 
-        for (int i = 0; i < wave.Count + DayManager.Instance.DayCount; i++)
+        for (int i = 0; i < wave.Count + day; i++)
         {
             SpawnEnemy(wave.Enemy[Random.Range(0, wave.Enemy.Length)]);
             yield return new WaitForSeconds(1);
         }
 
-        DayManager.Instance.CanCheckIsMonstersDead = true;
         yield break;
     }
 
@@ -85,19 +80,5 @@ public class WaveSpawner : MonoBehaviour
         Debug.Log("spawning enemy: " + enemy.name);
         Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
         Instantiate(enemy, spawnPoint.position, spawnPoint.rotation);
-    }
-
-
-    public bool IsMonstersDead()
-    {
-        if (ObjectsInWorld.Instance.CanCheckIsMonstersDead)
-        {
-            if (ObjectsInWorld.Instance.EnemyList.Count == 0)
-                return true;
-            else
-                return false;
-        }
-
-        return false;
     }
 }

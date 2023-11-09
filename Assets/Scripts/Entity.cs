@@ -10,7 +10,7 @@ public class Entity : MonoBehaviour
     [SerializeField] private Health _health;
     [SerializeField] protected float speed;
 
-    protected virtual void Awake()
+    protected virtual void Start()
     {
         _health = GetComponent<Health>();
         SetPositionOnGround();
