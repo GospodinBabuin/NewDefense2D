@@ -75,4 +75,10 @@ public class GreenZoneBorders : MonoBehaviour
         soldiers[soldiers.IndexOf(solder)]
             .SelectBorder(soldiers.IndexOf(solder) % 2 == 0 ? LeftBorder : RightBorder);
     }
+
+    public bool IsBeyondGreenZoneBorders(Vector2 ObjectsPosition)
+    {
+        return (ObjectsPosition.x > LeftBorder.transform.position.x &&
+            ObjectsPosition.x < RightBorder.transform.position.x);
+    }
 }

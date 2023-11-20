@@ -10,6 +10,12 @@ public class ObjectsInWorld : MonoBehaviour
     [SerializeField] private List<Enemy> _enemies = new List<Enemy>();
     [SerializeField] private List<PlayerController> _players = new List<PlayerController>();
 
+    public List<Building> Buildings { get { return _buildings; } }
+    public List<AlliedSoldier> AlliedSoldiers { get { return _alliedSoldiers; } }
+    public List<Enemy> Enemies { get { return _enemies; } }
+    public List<PlayerController> Players { get { return _players; } }
+
+
     public delegate void BuildingsHandler(List<Building> buildings);
     public event BuildingsHandler OnBuildingsListChangedEvent;
 
@@ -87,10 +93,5 @@ public class ObjectsInWorld : MonoBehaviour
         _players.Remove(player);
 
         OnPlayersListChangedEvent?.Invoke(_players);
-    }
-
-    public int GetEnemiesCount()
-    {
-        return _enemies.Count;
     }
 }

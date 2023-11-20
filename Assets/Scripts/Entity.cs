@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -21,10 +22,17 @@ public class Entity : MonoBehaviour
         transform.Translate(direction * speed * Time.deltaTime);
     }
 
-    protected virtual void Rotate(Vector2 targetPosition)
+    protected virtual void Rotate(Vector2 dierection)
     {
-        transform.rotation = targetPosition.x < transform.position.x ?
+        transform.rotation = dierection.x < transform.position.x ?
             Quaternion.identity : Quaternion.Euler(0, 180, 0);
+    }
+
+    protected void RotateAndMove(Vector2 dierection)
+    {
+        Rotate(dierection);
+
+        Move(dierection.x < transform.position.x ? -transform.right : transform.right);
     }
 
     private void SetPositionOnGround()

@@ -587,9 +587,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   imageField: {fileID: 6854646050741484453}
-  descriptionField: {fileID: 3535461246874108113}
-  costField: {fileID: 3184323032847968955}
+  descriptionField: {fileID: 0}
+  costField: {fileID: 0}
   slotSO: {fileID: 0}
+  buildingMenu: {fileID: 0}
 --- !u!1 &5576793401884606026
 GameObject:
   m_ObjectHideFlags: 0

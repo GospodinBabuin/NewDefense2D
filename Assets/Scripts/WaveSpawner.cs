@@ -20,6 +20,8 @@ public class WaveSpawner : MonoBehaviour
 
     [SerializeField] private Transform[] spawnPoints;
 
+    private bool _isMonstersAppeared = false;
+
     private void Awake()
     {
         if (Instance == null)
@@ -42,11 +44,16 @@ public class WaveSpawner : MonoBehaviour
         switch (dayState)
         {
             case DayManager.DayState.DAY:
-                StartCoroutine(SpawnWave(Waves[waveType], day));
+                if (_isMonstersAppeared)
+                {
+                    CheckDayWithNewWave(day);
+                    _isMonstersAppeared = false;
+                }
                 break;
 
             case DayManager.DayState.NIGHT:
-                CheckDayWithNewWave(day);
+                if (!_isMonstersAppeared)
+                    StartCoroutine(SpawnWave(Waves[waveType], day));
                 break;
         }
     }
@@ -66,6 +73,8 @@ public class WaveSpawner : MonoBehaviour
     {
         Debug.Log("spawning wave: " + wave.Name + " day: " + day);
 
+        _isMonstersAppeared = true;
+
         for (int i = 0; i < wave.Count + day; i++)
         {
             SpawnEnemy(wave.Enemy[Random.Range(0, wave.Enemy.Length)]);
@@ -79,6 +88,11 @@ public class WaveSpawner : MonoBehaviour
     {
         Debug.Log("spawning enemy: " + enemy.name);
         Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-        Instantiate(enemy, spawnPoint.position, spawnPoint.rotation);
+        Instantiate(enemy, spawnPoint.position, Quaternion.identity);
+    }
+
+    public bool IsMonstersDead()
+    {
+        return (_isMonstersAppeared && ObjectsInWorld.Instance.Enemies.Count == 0);
     }
 }

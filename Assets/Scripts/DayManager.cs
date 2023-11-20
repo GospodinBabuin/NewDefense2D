@@ -13,7 +13,7 @@ public class DayManager : MonoBehaviour
 
     [SerializeField] private int _dayCount = 1;
     [SerializeField] private float _currentTime;
-    [SerializeField] private bool _globalLightIntensityOnPosition = false;
+    private bool _globalLightIntensityOnPosition = true;
 
     [SerializeField] private Light2D GlobalLight;
 
@@ -88,7 +88,7 @@ public class DayManager : MonoBehaviour
             }
         }
 
-        if (_currentTime >= newDayTime && dayState == DayState.NIGHT || (dayState == DayState.NIGHT && ObjectsInWorld.Instance.GetEnemiesCount() == 0))
+        if (_currentTime >= newDayTime && dayState == DayState.NIGHT || (dayState == DayState.NIGHT && WaveSpawner.Instance.IsMonstersDead()))
         {
             _globalLightIntensityOnPosition = false;
             if (!_globalLightIntensityOnPosition)

@@ -231,7 +231,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthValue: {fileID: 5369575778034279149}
-  _health: {fileID: 0}
+  _playerHealth: {fileID: 0}
 --- !u!114 &1752747486063057950
 MonoBehaviour:
   m_ObjectHideFlags: 0

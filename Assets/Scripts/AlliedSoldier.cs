@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -6,6 +7,10 @@ public class AlliedSoldier : Entity
 {
     private Transform _selectedBorder;
     private Vector2 _selectedBorderPosition;
+
+    private Enemy _nearestEnemy;
+
+    [SerializeField] private byte visionRange = 15;
 
     protected override void Start()
     {
@@ -17,10 +22,24 @@ public class AlliedSoldier : Entity
 
     private void Update()
     {
+        if (_nearestEnemy != null)
+        {
+            RotateAndMove(_nearestEnemy.transform.position);
+            return;
+        }
+
         if (!IsOnBorder(_selectedBorderPosition))
         {
-            MoveToBorder(_selectedBorderPosition);
+            RotateAndMove(_selectedBorderPosition);
             return;
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (!GreenZoneBorders.Instance.IsBeyondGreenZoneBorders(transform.position))
+        {
+            _nearestEnemy = FindNearestEnemy(ObjectsInWorld.Instance.Enemies);
         }
     }
 
@@ -34,14 +53,7 @@ public class AlliedSoldier : Entity
     private void SelectBordersPosition()
     {
         _selectedBorderPosition = _selectedBorder.position;
-        _selectedBorderPosition = AddRandomToBorderPosition(_selectedBorderPosition);
-    }
-
-    private void MoveToBorder(Vector2 targetPosition)
-    {
-        Rotate(targetPosition);
-
-        Move(targetPosition.x < transform.position.x ? -transform.right : transform.right);
+        _selectedBorderPosition = AddRandomToTargetPosition(_selectedBorderPosition, 0f, 1.5f);
     }
 
     private bool IsOnBorder(Vector2 targetPosition)
@@ -49,19 +61,41 @@ public class AlliedSoldier : Entity
         return Math.Abs(transform.position.x - targetPosition.x) <= 0.1;
     }
 
-    private Vector2 AddRandomToBorderPosition(Vector2 borderOldPosition)
+    private Vector2 AddRandomToTargetPosition(Vector2 OldPosition, float minRandomValue, float maxRandomValue)
     {
-        Vector2 borderNewPosition = new Vector2(borderOldPosition.x, borderOldPosition.y);
+        Vector2 NewPosition = new Vector2(OldPosition.x, OldPosition.y);
 
-        if (borderNewPosition.x < 0)
+        minRandomValue = Math.Abs(minRandomValue);
+        maxRandomValue = Math.Abs(maxRandomValue);
+
+        if (NewPosition.x < 0)
         {
-            borderNewPosition += new Vector2(Random.Range(0f, 1.5f), borderNewPosition.y);
+            NewPosition += new Vector2(Random.Range(minRandomValue, maxRandomValue), NewPosition.y);
         }
         else
         {
-            borderNewPosition += new Vector2(Random.Range(-0f, -1.5f), borderNewPosition.y);
+            NewPosition += new Vector2(Random.Range(-minRandomValue, -maxRandomValue), NewPosition.y);
         }
 
-        return borderNewPosition;
+        return NewPosition;
+    }
+
+    private Enemy FindNearestEnemy(List<Enemy> enemies)
+    {
+        if (enemies.Count == 0)
+            return null;
+
+        Enemy nearestEnemy = enemies[0];
+
+        for (int i = 1; i < enemies.Count; i++)
+        {
+            if (Math.Abs(transform.position.x - enemies[i].transform.position.x) > visionRange)
+                continue;
+
+            if (Math.Abs(transform.position.x - enemies[i].transform.position.x) < Math.Abs(transform.position.x - nearestEnemy.transform.position.x))
+                nearestEnemy = enemies[i];
+        }
+
+        return nearestEnemy;
     }
 }
