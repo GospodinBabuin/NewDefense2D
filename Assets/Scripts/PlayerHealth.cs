@@ -7,9 +7,9 @@ public class PlayerHealth : Health
     public delegate void HealthHandler(int currentHealth, int maxHealth);
     public event HealthHandler OnHealthValueChangedEvent;
     
-    public override void Damage(int damageAmount)
+    public override void Damage(int damageAmount, GameObject damager)
     {
-        base.Damage(damageAmount);
+        base.Damage(damageAmount, gameObject);
         
         OnHealthValueChangedEvent?.Invoke(CurrentHealth, MaxHealth);
     }

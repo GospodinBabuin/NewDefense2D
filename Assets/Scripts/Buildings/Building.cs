@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Health))]
@@ -5,12 +6,17 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider2D))]
 public class Building : MonoBehaviour
 {
-    public Health Health { get; private set; }
-    public byte BuildingLvl { get; private set; }
+    private Health _health;
+    protected byte BuildingLvl { get; private set; }
 
     private void Awake()
     {
-        Health = GetComponent<Health>();
+        _health = GetComponent<Health>();
         BuildingLvl = 1;
+    }
+
+    private void OnDestroy()
+    {
+        ObjectsInWorld.Instance.RemoveBuildingFromList(this);
     }
 }

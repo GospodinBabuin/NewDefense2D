@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -3, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1349707158536914315}
@@ -541,6 +541,14 @@ PrefabInstance:
     - target: {fileID: 8305927063140264142, guid: 064f933cdecabeb479a50f811dc1c99f, type: 3}
       propertyPath: m_Name
       value: 'BuildingBoundaries '
+      objectReference: {fileID: 0}
+    - target: {fileID: 8305927063140264142, guid: 064f933cdecabeb479a50f811dc1c99f, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 8305927063140264142, guid: 064f933cdecabeb479a50f811dc1c99f, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 8389093057223921577, guid: 064f933cdecabeb479a50f811dc1c99f, type: 3}
       propertyPath: m_LocalPosition.x

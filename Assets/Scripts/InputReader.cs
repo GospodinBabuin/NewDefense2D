@@ -5,6 +5,7 @@ public class InputReader : MonoBehaviour
     private PlayerInputActions _inputActions;
 
     public float Move => _inputActions.Player.Move.ReadValue<float>();
+    public bool Attack => _inputActions.Player.Attack.triggered;
     public bool Interact => _inputActions.Player.Interact.triggered;
     
     public bool ConfirmAction => _inputActions.Building.Confirm.triggered;

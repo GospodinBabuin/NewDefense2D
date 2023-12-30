@@ -68,17 +68,17 @@ public class BuildingSpawner : MonoBehaviour
         if (hit) _buildingToSpawn.transform.position = hit.point;
     }
 
-    private bool CanPlaceBuilding(GameObject building)
+    private static bool CanPlaceBuilding(GameObject building)
     {
         return building.GetComponentInChildren<BuildingBoundaries>().IsBoundariesClear();
     }
 
-    private void DeactivateBuildingsCollider(GameObject building)
+    private static void DeactivateBuildingsCollider(GameObject building)
     {
         building.GetComponent<Collider2D>().enabled = false;
     }
     
-    private void ActivateBuildingsCollider(GameObject building)
+    private static void ActivateBuildingsCollider(GameObject building)
     {
         building.GetComponent<Collider2D>().enabled = true;
     }

@@ -25,6 +25,9 @@ public class GreenZoneBorders : MonoBehaviour
     [SerializeField] private Transform defaultLeftBorder;
     [SerializeField] private Transform defaultRightBorder;
 
+    private int _soldiersOnLeftBorder = 0;
+    private int _soldiersOnRightBorder = 0;
+
     private void Awake()
     {
         if (Instance == null)
@@ -40,7 +43,6 @@ public class GreenZoneBorders : MonoBehaviour
     private void Start()
     {
         ObjectsInWorld.Instance.OnBuildingsListChangedEvent += SetBorders;
-        ObjectsInWorld.Instance.OnAlliedSoldersListChangedEvent += SelectBorder;
     }
 
     private void SetBorders(List<Building> buildings)
@@ -69,16 +71,39 @@ public class GreenZoneBorders : MonoBehaviour
 
         OnBordersPositionChangedEvent?.Invoke();
     }
-
-    private void SelectBorder(List<AlliedSoldier> soldiers, AlliedSoldier solder)
+    
+    public void SelectBorder(AlliedSoldier soldier)
     {
-        soldiers[soldiers.IndexOf(solder)]
-            .SelectBorder(soldiers.IndexOf(solder) % 2 == 0 ? LeftBorder : RightBorder);
+        if (_soldiersOnLeftBorder <= _soldiersOnRightBorder)
+        {
+            soldier.SelectBorder(LeftBorder);
+            _soldiersOnLeftBorder++;
+        }
+        else
+        {
+            soldier.SelectBorder(RightBorder);
+            _soldiersOnRightBorder++;
+        }
     }
 
-    public bool IsBeyondGreenZoneBorders(Vector2 ObjectsPosition)
+    public void RemoveFromBorder(AlliedSoldier soldier)
     {
-        return (ObjectsPosition.x > LeftBorder.transform.position.x &&
-            ObjectsPosition.x < RightBorder.transform.position.x);
+        if (soldier.SelectedBorder == LeftBorder)
+        {
+            _soldiersOnLeftBorder--;
+            return;
+        }
+
+        if (soldier.SelectedBorder == RightBorder)
+        {
+            _soldiersOnRightBorder--;
+            return;
+        }
+    }
+
+    public bool IsBeyondGreenZoneBorders(Vector2 objectsPosition)
+    {
+        return (objectsPosition.x > LeftBorder.transform.position.x &&
+            objectsPosition.x < RightBorder.transform.position.x);
     }
 }

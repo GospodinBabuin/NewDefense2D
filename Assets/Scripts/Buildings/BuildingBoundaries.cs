@@ -4,6 +4,7 @@ using UnityEngine;
 public class BuildingBoundaries : MonoBehaviour
 {
     private CircleCollider2D _collider;
+    [SerializeField] private LayerMask notClearTargetsLayers;
     
     private void Awake()
     {
@@ -13,7 +14,7 @@ public class BuildingBoundaries : MonoBehaviour
     public bool IsBoundariesClear()
     {
         Collider2D[] colliders;
-        colliders = Physics2D.OverlapCircleAll(transform.position, _collider.radius);
+        colliders = Physics2D.OverlapCircleAll(transform.position, _collider.radius, notClearTargetsLayers);
 
         if (colliders == null) return true;
         
@@ -21,11 +22,8 @@ public class BuildingBoundaries : MonoBehaviour
         {
             if (collider.gameObject == gameObject)
                 continue;
-            
-            if (collider.CompareTag("BuildingBoundaries"))
-            {
-                return false;
-            }
+
+            return false;
         }
 
         return true;

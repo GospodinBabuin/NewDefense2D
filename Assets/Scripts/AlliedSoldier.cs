@@ -1,58 +1,71 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class AlliedSoldier : Entity
 {
-    private Transform _selectedBorder;
+    public Transform SelectedBorder { get; private set; }
     private Vector2 _selectedBorderPosition;
-
-    private Enemy _nearestEnemy;
-
-    [SerializeField] private byte visionRange = 15;
-
+    
     protected override void Start()
     {
         base.Start();
 
-        ObjectsInWorld.Instance.AddSolderToList(this);
+        ObjectsInWorld.Instance.AddSoldierToList(this);
         GreenZoneBorders.Instance.OnBordersPositionChangedEvent += SelectBordersPosition;
+        GreenZoneBorders.Instance.SelectBorder(this);
     }
 
     private void Update()
     {
-        if (_nearestEnemy != null)
+        if (nearestFoe != null)
         {
-            RotateAndMove(_nearestEnemy.transform.position);
-            return;
+            if (!Locomotion.CloseEnough(nearestFoe.transform.position))
+            {
+                Locomotion.RotateAndMove(nearestFoe.transform.position);
+                return;
+            }
+            else
+            {
+                Combat.Attack();
+                Locomotion.SetMoveAnimation(false);
+                return;
+            }
         }
 
         if (!IsOnBorder(_selectedBorderPosition))
         {
-            RotateAndMove(_selectedBorderPosition);
+            Locomotion.RotateAndMove(_selectedBorderPosition);
             return;
         }
+        
+        Locomotion.SetMoveAnimation(false);
     }
 
     private void FixedUpdate()
     {
+        if (ObjectsInWorld.Instance.Enemies.Count == 0)
+        {
+            nearestFoe = null;
+            return;
+        }
+        
         if (!GreenZoneBorders.Instance.IsBeyondGreenZoneBorders(transform.position))
         {
-            _nearestEnemy = FindNearestEnemy(ObjectsInWorld.Instance.Enemies);
+            nearestFoe = FindNearestFoe(ObjectsInWorld.Instance.Enemies, true);
         }
     }
 
     public void SelectBorder(Transform newBorder)
     {
-        _selectedBorder = newBorder;
+        SelectedBorder = newBorder;
 
         SelectBordersPosition();
     }
 
     private void SelectBordersPosition()
     {
-        _selectedBorderPosition = _selectedBorder.position;
+        _selectedBorderPosition = SelectedBorder.position;
         _selectedBorderPosition = AddRandomToTargetPosition(_selectedBorderPosition, 0f, 1.5f);
     }
 
@@ -63,39 +76,27 @@ public class AlliedSoldier : Entity
 
     private Vector2 AddRandomToTargetPosition(Vector2 OldPosition, float minRandomValue, float maxRandomValue)
     {
-        Vector2 NewPosition = new Vector2(OldPosition.x, OldPosition.y);
+        Vector2 newPosition = new Vector2(OldPosition.x, OldPosition.y);
 
         minRandomValue = Math.Abs(minRandomValue);
         maxRandomValue = Math.Abs(maxRandomValue);
 
-        if (NewPosition.x < 0)
+        if (newPosition.x < 0)
         {
-            NewPosition += new Vector2(Random.Range(minRandomValue, maxRandomValue), NewPosition.y);
+            newPosition += new Vector2(Random.Range(minRandomValue, maxRandomValue), newPosition.y);
         }
         else
         {
-            NewPosition += new Vector2(Random.Range(-minRandomValue, -maxRandomValue), NewPosition.y);
+            newPosition += new Vector2(Random.Range(-minRandomValue, -maxRandomValue), newPosition.y);
         }
 
-        return NewPosition;
+        return newPosition;
     }
-
-    private Enemy FindNearestEnemy(List<Enemy> enemies)
+    
+    protected override void OnDestroy()
     {
-        if (enemies.Count == 0)
-            return null;
-
-        Enemy nearestEnemy = enemies[0];
-
-        for (int i = 1; i < enemies.Count; i++)
-        {
-            if (Math.Abs(transform.position.x - enemies[i].transform.position.x) > visionRange)
-                continue;
-
-            if (Math.Abs(transform.position.x - enemies[i].transform.position.x) < Math.Abs(transform.position.x - nearestEnemy.transform.position.x))
-                nearestEnemy = enemies[i];
-        }
-
-        return nearestEnemy;
+        base.OnDestroy();
+        ObjectsInWorld.Instance.RemoveSoldierFromList(this);
+        GreenZoneBorders.Instance.RemoveFromBorder(this);
     }
 }

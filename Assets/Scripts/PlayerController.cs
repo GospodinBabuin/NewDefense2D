@@ -6,11 +6,8 @@ public class PlayerController : Entity
     [SerializeField] private GameObject interactionNotice;
     
     private InputReader _input;
-    private Animator _animator;
 
     private bool _canInteract;
-
-    private int _animIDMove;
     
     protected override void Start()
     {
@@ -19,15 +16,13 @@ public class PlayerController : Entity
         ObjectsInWorld.Instance.AddPlayerToList(this);
 
         _input = GetComponent<InputReader>();
-        _animator = GetComponent<Animator>();
-
-        SetAnimIDs();
     }
 
     private void Update()
     {
         Rotate();
         Move();
+        Attack();
         Interact();
     }
 
@@ -35,31 +30,32 @@ public class PlayerController : Entity
     {
         CheckInteractionObjects();
     }
-
-    private void SetAnimIDs()
-    {
-        _animIDMove = Animator.StringToHash("IsMoving");
-    }
     
     private void Move()
     {
         if (_input.Move == 0f)
         {
-            _animator.SetBool(_animIDMove, false);
+            Locomotion.SetMoveAnimation(false);
             return;
         }
 
-        transform.position += new Vector3(_input.Move, 0, 0) * (speed * Time.deltaTime);
-        
-        _animator.SetBool(_animIDMove, true);
+        transform.position += new Vector3(_input.Move, 0, 0) * (Locomotion.GetSpeed() * Time.deltaTime);
+
+        Locomotion.SetMoveAnimation(true);
     }
 
     private void Rotate()
     {
-        if (!Mathf.Approximately(0, _input.Move))
-        {
-            transform.rotation = _input.Move > 0 ? Quaternion.Euler(0, 180, 0) : Quaternion.identity;
-        }
+        if (_input.Move == 0) return;
+        
+        transform.rotation = _input.Move < 0 ? Quaternion.Euler(0, 180, 0) : Quaternion.identity;
+    }
+
+    private void Attack()
+    {
+        if (!_input.Attack) return;
+        
+        Combat.Attack();
     }
 
     private void CheckInteractionObjects()
@@ -98,6 +94,13 @@ public class PlayerController : Entity
             interactable.Interact(this.gameObject);
             return;
         }
+    }
+    
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        ObjectsInWorld.Instance.RemovePlayerFromList(this);
+        this.enabled = false;
     }
 
     private void OnDrawGizmos()
