@@ -7,7 +7,6 @@ public class Barracks : Building, IInteractable
     private Transform _interactingObjectTransform;
     private CircleCollider2D _circleCollider;
     [SerializeField] private LayerMask enemyLayerMask;
-    [SerializeField] private bool _enemyPresence = false;
 
     private void Start()
     {
@@ -53,14 +52,9 @@ public class Barracks : Building, IInteractable
         if (_interactingObjectTransform == null) return;
 
         Collider2D[] colliders2d = Physics2D.OverlapCircleAll(transform.position, _circleCollider.radius, enemyLayerMask);
-        if (colliders2d.Length == 0)
-        {
-            _enemyPresence = false;
-        }
-        else
+        if (colliders2d.Length != 0)
         {
             CloseUnitMenu();
-            _enemyPresence = true;
         }
     }
 

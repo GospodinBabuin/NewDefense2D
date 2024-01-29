@@ -49,20 +49,22 @@ public class ObjectsInWorld : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void AddBuildingToList(Building newBuilding)
+    public void AddBuildingToList(Building newBuilding, bool needToInvoke)
     {
         _buildings.Add(newBuilding);
         _alliedObjects.Add(newBuilding.GetComponent<MonoBehaviour>());
 
-        OnBuildingsListChangedEvent?.Invoke(_buildings);
+        if (needToInvoke)
+            OnBuildingsListChangedEvent?.Invoke(_buildings);
     }
 
-    public void RemoveBuildingFromList(Building newBuilding)
+    public void RemoveBuildingFromList(Building newBuilding, bool needToInvoke)
     {
         _buildings.Remove(newBuilding);
         _alliedObjects.Remove(newBuilding.GetComponent<MonoBehaviour>());
 
-        OnBuildingsListChangedEvent?.Invoke(_buildings);
+        if (needToInvoke)
+            OnBuildingsListChangedEvent?.Invoke(_buildings);
     }
 
     public void AddSoldierToList(AlliedSoldier soldier)

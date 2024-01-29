@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Health))]
@@ -15,8 +14,9 @@ public class Building : MonoBehaviour
         BuildingLvl = 1;
     }
 
-    private void OnDestroy()
+    protected virtual void OnDestroy()
     {
-        ObjectsInWorld.Instance.RemoveBuildingFromList(this);
+        if (ObjectsInWorld.Instance.Buildings.Contains(this))
+            ObjectsInWorld.Instance.RemoveBuildingFromList(this, true);
     }
 }

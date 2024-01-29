@@ -103,7 +103,13 @@ public class GreenZoneBorders : MonoBehaviour
 
     public bool IsBeyondGreenZoneBorders(Vector2 objectsPosition)
     {
-        return (objectsPosition.x > LeftBorder.transform.position.x &&
-            objectsPosition.x < RightBorder.transform.position.x);
+        return (objectsPosition.x > LeftBorder.position.x &&
+            objectsPosition.x < RightBorder.position.x);
+    }
+
+    public bool IsBeyondDefaultGreenZoneBorders(Vector2 objectsPosition)
+    {
+        return (objectsPosition.x > defaultLeftBorder.position.x &&
+            objectsPosition.x < defaultRightBorder.position.x);
     }
 }

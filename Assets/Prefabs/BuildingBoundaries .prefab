@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8389093057223921577}
   - component: {fileID: 336648136637006889}
   - component: {fileID: 7346248113890863169}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 'BuildingBoundaries '
   m_TagString: BuildingBoundaries
   m_Icon: {fileID: 0}
@@ -82,4 +82,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   notClearTargetsLayers:
     serializedVersion: 2
-    m_Bits: 4096
+    m_Bits: 5120

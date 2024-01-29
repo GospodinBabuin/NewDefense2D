@@ -44,13 +44,7 @@ public class AlliedSoldier : Entity
 
     private void FixedUpdate()
     {
-        if (ObjectsInWorld.Instance.Enemies.Count == 0)
-        {
-            nearestFoe = null;
-            return;
-        }
-        
-        if (!GreenZoneBorders.Instance.IsBeyondGreenZoneBorders(transform.position))
+        if (!GreenZoneBorders.Instance.IsBeyondGreenZoneBorders(transform.position) || GreenZoneBorders.Instance.IsBeyondDefaultGreenZoneBorders(transform.position))
         {
             nearestFoe = FindNearestFoe(ObjectsInWorld.Instance.Enemies, true);
         }

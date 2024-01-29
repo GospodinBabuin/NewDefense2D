@@ -15,7 +15,7 @@ public class WaveSpawner : MonoBehaviour
     }
 
     [SerializeField] private Wave[] Waves;
-    [SerializeField] int waveType = 0;
+    [SerializeField] private int waveType = 0;
     [SerializeField] private int[] daysWithNewWave;
 
     [SerializeField] private Transform[] spawnPoints;
@@ -37,6 +37,8 @@ public class WaveSpawner : MonoBehaviour
     private void Start()
     {
         DayManager.Instance.OnDayStateChangedEvent += CheckDay;
+
+        CheckDayWithNewWave(DayManager.Instance.CurrentDay);
     }
 
     private void CheckDay(DayManager.DayState dayState, int day)
@@ -62,9 +64,9 @@ public class WaveSpawner : MonoBehaviour
     {
         for (int i = 0; i < daysWithNewWave.Length; i++)
         {
-            if (day == daysWithNewWave[i])
+            if (day >= daysWithNewWave[i])
             {
-                waveType = i;
+                waveType = i + 1;
             }
         }
     }

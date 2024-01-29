@@ -4,6 +4,9 @@ public class Locomotion : MonoBehaviour
 {
     [SerializeField] private float speed = 1f;
     [SerializeField] private float stopDistance = 1f;
+
+    [SerializeField] private float minStopDistance = -0.1f;
+    [SerializeField] private float maxStopDistance = 0.35f;
     private int _animIDMove;
 
     private Animator _animator;
@@ -19,7 +22,7 @@ public class Locomotion : MonoBehaviour
 
     private void Move(Vector2 direction)
     {
-        transform.Translate(direction * speed * Time.deltaTime);
+        transform.Translate(speed * Time.deltaTime * direction);
         SetMoveAnimation(true);
     }
     
@@ -58,6 +61,6 @@ public class Locomotion : MonoBehaviour
 
     private void AddRandomToStopDistance()
     {
-        stopDistance += Random.Range(-0.1f, 0.35f);
+        stopDistance += Random.Range(minStopDistance, maxStopDistance);
     }
 }

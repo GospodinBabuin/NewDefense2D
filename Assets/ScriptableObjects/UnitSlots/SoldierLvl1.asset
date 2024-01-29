@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: SoldierLvl1
   m_EditorClassIdentifier: 
   sprite: {fileID: 4723107735738678597, guid: 174209194dbf2fb44aef1ea1ba76a2f1, type: 3}
-  description: Basic knight
+  description: Well trained warrior with good equipment. Went through many battles,
+    from which his fighting skills are not in doubt.
   cost: 25
   prefab: {fileID: 1824416424260298, guid: 79639b84e20f0ea4694165c0d4554387, type: 3}
+  needToIvoke: 0

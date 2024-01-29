@@ -23,7 +23,7 @@ public class BuildingSlot : MonoBehaviour
 
     public void SelectBuilding()
     {
-        GameObject.FindWithTag("Player").GetComponentInChildren<BuildingSpawner>().StartPlacement(slotSO.Prefab);
+        GameObject.FindWithTag("Player").GetComponentInChildren<BuildingSpawner>().StartPlacement(slotSO.Prefab, slotSO.NeedToIvoke);
         buildingMenu.SetActive(false);
     }
 }

@@ -14,7 +14,6 @@ public class Entity : MonoBehaviour
     private Health _health;
     private Combat _combat;
     private Locomotion _locomotion;
-    private Animator _animator;
     
     public Combat Combat => _combat;
     public Locomotion Locomotion => _locomotion;
@@ -27,7 +26,6 @@ public class Entity : MonoBehaviour
         _health = GetComponent<Health>();
         _combat = GetComponent<Combat>();
         _locomotion = GetComponent<Locomotion>();
-        _animator = GetComponent<Animator>();
         
         SetPositionOnGround();
     }

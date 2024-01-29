@@ -23,7 +23,7 @@ TagManager:
   - Enemy
   - Player
   - BuildingBoundaries
-  - 
+  - RoadLampBoundaries
   - 
   - 
   - 
@@ -57,6 +57,9 @@ TagManager:
     locked: 0
   - name: Buildings2
     uniqueID: 232126305
+    locked: 0
+  - name: BuildingToSpawn
+    uniqueID: 1173366909
     locked: 0
   - name: Collectables
     uniqueID: 185054111

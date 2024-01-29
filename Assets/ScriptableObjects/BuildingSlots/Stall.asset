@@ -17,3 +17,4 @@ MonoBehaviour:
     from sales.
   cost: 150
   prefab: {fileID: 8880890979157700241, guid: b18dcd3ee86986b469e9cfc64055704c, type: 3}
+  needToIvoke: 1

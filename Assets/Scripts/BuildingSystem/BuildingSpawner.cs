@@ -1,5 +1,6 @@
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class BuildingSpawner : MonoBehaviour
 {
@@ -7,6 +8,7 @@ public class BuildingSpawner : MonoBehaviour
     
     private GameObject _buildingToSpawn;
     private bool _previewMode = false;
+    private bool _needToInvoke = true;
 
     private InputReader _input;
 
@@ -38,7 +40,7 @@ public class BuildingSpawner : MonoBehaviour
         }
     }
 
-    public void StartPlacement(GameObject buildingPrefab)
+    public void StartPlacement(GameObject buildingPrefab, bool needToInvoke)
     {
         if (_buildingToSpawn != null)
             Destroy(_buildingToSpawn);
@@ -46,11 +48,14 @@ public class BuildingSpawner : MonoBehaviour
         buildingPrefab.GetComponent<Building>().enabled = false;
         _buildingToSpawn = Instantiate(buildingPrefab, transform.position, quaternion.identity);
         DeactivateBuildingsCollider(_buildingToSpawn);
+        _buildingToSpawn.AddComponent<SortingGroup>().sortingLayerName = "BuildingToSpawn";
+        _needToInvoke = needToInvoke;
         _previewMode = true;
     }
 
     private void StopPlacement()
     {
+        _needToInvoke = false;
         _previewMode = false;
         _buildingToSpawn = null;
     }
@@ -59,7 +64,8 @@ public class BuildingSpawner : MonoBehaviour
     {
         _buildingToSpawn.GetComponent<Building>().enabled = true;
         ActivateBuildingsCollider(_buildingToSpawn);
-        ObjectsInWorld.Instance.AddBuildingToList(_buildingToSpawn.GetComponent<Building>());
+        Destroy(_buildingToSpawn.GetComponent<SortingGroup>());
+        ObjectsInWorld.Instance.AddBuildingToList(_buildingToSpawn.GetComponent<Building>(), _needToInvoke);
     }
 
     private void SetBuildingPosition()

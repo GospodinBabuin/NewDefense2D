@@ -11,7 +11,7 @@ public class DayManager : MonoBehaviour
     public delegate void DayStateHandler(DayState dayState, int currentDay);
     public event DayStateHandler OnDayStateChangedEvent;
 
-    [SerializeField] private int _dayCount = 1;
+    [SerializeField] private int _currentDay = 1;
     [SerializeField] private float _currentTime;
     private bool _globalLightIntensityOnPosition = true;
 
@@ -28,6 +28,8 @@ public class DayManager : MonoBehaviour
     [SerializeField] private int eveningTime = 90;
     [SerializeField] private int nightTime = 180;
     [SerializeField] private int newDayTime = 360;
+
+    public int CurrentDay { get { return _currentDay; } }
 
     private void Awake()
     {
@@ -63,7 +65,7 @@ public class DayManager : MonoBehaviour
                     _globalLightIntensityOnPosition = true;
                     dayState = DayState.EVENING;
 
-                    OnDayStateChangedEvent?.Invoke(dayState, _dayCount);
+                    OnDayStateChangedEvent?.Invoke(dayState, _currentDay);
                     return;
                 }
             }
@@ -82,7 +84,7 @@ public class DayManager : MonoBehaviour
                     _globalLightIntensityOnPosition = true;
                     dayState = DayState.NIGHT;
 
-                    OnDayStateChangedEvent?.Invoke(dayState, _dayCount);
+                    OnDayStateChangedEvent?.Invoke(dayState, _currentDay);
                     return;
                 }
             }
@@ -101,9 +103,9 @@ public class DayManager : MonoBehaviour
                     _globalLightIntensityOnPosition = true;
                     dayState = DayState.DAY;
                     _currentTime = dayTime;
-                    _dayCount++;
+                    _currentDay++;
 
-                    OnDayStateChangedEvent?.Invoke(dayState, _dayCount);
+                    OnDayStateChangedEvent?.Invoke(dayState, _currentDay);
                     return;
                 }
             }
