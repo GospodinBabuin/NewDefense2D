@@ -1,3 +1,4 @@
+using UI;
 using UnityEngine;
 
 public class PlayerController : Entity
@@ -82,6 +83,9 @@ public class PlayerController : Entity
     private void Interact()
     {
         if (!_input.Interact || !_canInteract) return;
+        
+        if (GameUI.Instance.IsMenuOpen())
+            return;
 
         Collider2D[] interactionObjects;
         interactionObjects = Physics2D.OverlapCircleAll(transform.position, interactionRadius);

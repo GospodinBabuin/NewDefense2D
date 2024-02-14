@@ -1,22 +1,30 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Health))]
-[RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(BoxCollider2D))]
-public class Building : MonoBehaviour
+namespace Buildings
 {
-    private Health _health;
-    protected byte BuildingLvl { get; private set; }
-
-    private void Awake()
+    [RequireComponent(typeof(Health))]
+    [RequireComponent(typeof(Rigidbody2D))]
+    [RequireComponent(typeof(BoxCollider2D))]
+    public class Building : MonoBehaviour
     {
-        _health = GetComponent<Health>();
-        BuildingLvl = 1;
-    }
+        private Health _health;
+        public byte BuildingLvl { get; private set; }
 
-    protected virtual void OnDestroy()
-    {
-        if (ObjectsInWorld.Instance.Buildings.Contains(this))
-            ObjectsInWorld.Instance.RemoveBuildingFromList(this, true);
+        private void Awake()
+        {
+            _health = GetComponent<Health>();
+            BuildingLvl = 1;
+        }
+
+        public virtual void UpgradeBuilding()
+        {
+            BuildingLvl++;
+        }
+
+        protected virtual void OnDestroy()
+        {
+            if (ObjectsInWorld.Instance.Buildings.Contains(this))
+                ObjectsInWorld.Instance.RemoveBuildingFromList(this, true);
+        }
     }
 }

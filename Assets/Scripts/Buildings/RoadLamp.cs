@@ -1,61 +1,58 @@
+using System;
 using UnityEngine;
 
-public class RoadLamp : Building
+namespace Buildings
 {
-    private Animator _animator;
-
-    private int _animIDTurnOn;
-    private int _animIDTurnOff;
-
-    private bool _lightsOn = false;
-
-
-    private void Awake()
+    public class RoadLamp : Building
     {
-        _animator = GetComponent<Animator>();
+        private Animator _animator;
 
-        _animIDTurnOn = Animator.StringToHash("TurnOn");
-        _animIDTurnOff = Animator.StringToHash("TurnOff");
-    }
+        private int _animIDTurnOn;
+        private int _animIDTurnOff;
 
-    private void Start()
-    {
-        DayManager.Instance.OnDayStateChangedEvent += FadeLights;
+        private bool _lightsOn = false;
 
-        if (DayManager.Instance.dayState != DayManager.DayState.DAY)
+
+        private void Awake()
         {
+            _animator = GetComponent<Animator>();
+
+            _animIDTurnOn = Animator.StringToHash("TurnOn");
+            _animIDTurnOff = Animator.StringToHash("TurnOff");
+        }
+
+        private void Start()
+        {
+            DayManager.Instance.OnDayStateChangedEvent += FadeLights;
+
+            if (DayManager.Instance.dayState == DayManager.DayState.Day) return;
+            
             _animator.SetTrigger(_animIDTurnOn);
-            return;
         }
-    }
 
-    private void FadeLights(DayManager.DayState dayState, int currentDay)
-    {
-        if (dayState == DayManager.DayState.DAY && _lightsOn)
+        private void FadeLights(DayManager.DayState dayState, int currentDay)
         {
-            _animator.SetTrigger(_animIDTurnOff);
-            _lightsOn = false;
-            return;
+            switch (dayState)
+            {
+                case DayManager.DayState.Day when _lightsOn:
+                    _animator.SetTrigger(_animIDTurnOff);
+                    _lightsOn = false;
+                    return;
+                case DayManager.DayState.Evening when !_lightsOn:
+                    _animator.SetTrigger(_animIDTurnOn);
+                    _lightsOn = true;
+                    return;
+                case DayManager.DayState.Night when !_lightsOn:
+                    _animator.SetTrigger(_animIDTurnOn);
+                    _lightsOn = true;
+                    return;
+            }
         }
 
-        if (dayState == DayManager.DayState.EVENING && !_lightsOn)
+        protected override void OnDestroy()
         {
-            _animator.SetTrigger(_animIDTurnOn);
-            _lightsOn = true;
-            return;
+            if (ObjectsInWorld.Instance.Buildings.Contains(this))
+                ObjectsInWorld.Instance.RemoveBuildingFromList(this, false);
         }
-
-        if (dayState == DayManager.DayState.NIGHT && !_lightsOn)
-        {
-            _animator.SetTrigger(_animIDTurnOn);
-            _lightsOn = true;
-            return;
-        }
-    }
-
-    protected override void OnDestroy()
-    {
-        if (ObjectsInWorld.Instance.Buildings.Contains(this))
-            ObjectsInWorld.Instance.RemoveBuildingFromList(this, false);
     }
 }

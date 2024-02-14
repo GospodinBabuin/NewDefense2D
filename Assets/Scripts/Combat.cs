@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -15,18 +14,25 @@ public class Combat : MonoBehaviour
     [SerializeField] private LayerMask attackLayers;
     [SerializeField] private bool canDamageMultipleTargets = false;
 
+    [SerializeField] private bool IsSoldierLvl1 = false;
     public float AttackDelay => attackDelay;
     
     private bool _canAttack = true;
     private int _animIDAttack1;
     private int _animIDAttack2;
     private int _animIDAttack3;
+    private int _animIDAttack4;
     
-    private void Start()
+    private byte _attackAnimationIndexForSoldierLvl1;
+    
+    protected virtual void Start()
     {
         _animator = GetComponent<Animator>();
         
         SetAnimIDs();
+
+        if (IsSoldierLvl1)
+            _attackAnimationIndexForSoldierLvl1 = (byte)Random.Range(1, attackAnimationCount + 1);
     }
     
     public void Attack()
@@ -40,12 +46,19 @@ public class Combat : MonoBehaviour
 
     private int ChoseAttackAnimation()
     {
-        byte attackAnimation = (byte)Random.Range(1, attackAnimationCount + 1);
+        byte attackAnimation;
+        
+        if (IsSoldierLvl1)
+            attackAnimation = _attackAnimationIndexForSoldierLvl1;
+        else
+            attackAnimation = (byte)Random.Range(1, attackAnimationCount + 1);
+        
         return attackAnimation switch
         {
             1 => _animIDAttack1,
             2 => _animIDAttack2,
             3 => _animIDAttack3,
+            4 => _animIDAttack4,
             _ => _animIDAttack1
         };
     }
@@ -55,13 +68,13 @@ public class Combat : MonoBehaviour
         foreach (Collider2D collider2D in Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, attackLayers))
         {
             Health health = collider2D.GetComponent<Health>();
-            if (health != null)
-            {
-                health.Damage(damage, gameObject);
+            
+            if (health == null) continue;
+            
+            health.Damage(damage, gameObject);
                 
-                if (!canDamageMultipleTargets)
-                    return;
-            }
+            if (!canDamageMultipleTargets)
+                return;
         }
     }
 
@@ -81,11 +94,11 @@ public class Combat : MonoBehaviour
         _animIDAttack1 = Animator.StringToHash("Attack1");
         _animIDAttack2 = Animator.StringToHash("Attack2");
         _animIDAttack3 = Animator.StringToHash("Attack3");
+        _animIDAttack4 = Animator.StringToHash("Attack4");
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
     }
-    
 }

@@ -1,29 +1,32 @@
+using UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BuildingSlot : MonoBehaviour
+namespace BuildingSystem
 {
-    [SerializeField] private Image imageField;
-    [SerializeField] private Text descriptionField;
-    [SerializeField] private Text costField;
-    [SerializeField] private MenuSlotsScriptableObject slotSO;
-
-    [SerializeField] private GameObject buildingMenu;
-    private void Awake()
+    public class BuildingSlot : MonoBehaviour
     {
-        SetFieldsValues();
-    }
+        [SerializeField] private Image imageField;
+        [SerializeField] private Text descriptionField;
+        [SerializeField] private Text costField;
+        [SerializeField] private MenuSlotsScriptableObject slotSO;
 
-    private void SetFieldsValues()
-    {
-        imageField.sprite = slotSO.Sprite;
-        descriptionField.text = slotSO.Description;
-        costField.text = slotSO.Cost.ToString();
-    }
+        private void Awake()
+        {
+            SetFieldsValues();
+        }
 
-    public void SelectBuilding()
-    {
-        GameObject.FindWithTag("Player").GetComponentInChildren<BuildingSpawner>().StartPlacement(slotSO.Prefab, slotSO.NeedToIvoke);
-        buildingMenu.SetActive(false);
+        private void SetFieldsValues()
+        {
+            imageField.sprite = slotSO.Sprite;
+            descriptionField.text = slotSO.Description;
+            costField.text = slotSO.Cost.ToString();
+        }
+
+        public void SelectBuilding()
+        {
+            GameObject.FindWithTag("Player").GetComponentInChildren<BuildingSpawner>().StartPlacement(slotSO.Prefab, slotSO.NeedToInvoke,slotSO.Cost);
+            GameUI.Instance.OpenOrCloseBuildingMenu();
+        }
     }
 }

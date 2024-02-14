@@ -24,21 +24,21 @@ public class SunRays : MonoBehaviour
 
     private void FadeRays(DayManager.DayState dayState, int currentDay)
     {
-        if (dayState == DayManager.DayState.DAY && !_raysOn)
+        if (dayState == DayManager.DayState.Day && !_raysOn)
         {
             _animator.SetTrigger(_animIDAppear);
             _raysOn = true;
             return;
         }
 
-        if (dayState == DayManager.DayState.EVENING && _raysOn)
+        if (dayState == DayManager.DayState.Evening && _raysOn)
         {
             _animator.SetTrigger(_animIDEvanescet);
             _raysOn = false;
             return;
         }
 
-        if (dayState == DayManager.DayState.NIGHT && _raysOn)
+        if (dayState == DayManager.DayState.Night && _raysOn)
         {
             _animator.SetTrigger(_animIDEvanescet);
             _raysOn = false;

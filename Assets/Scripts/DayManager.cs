@@ -1,12 +1,15 @@
+using System;
+using UI;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.Serialization;
 
 public class DayManager : MonoBehaviour
 {
     public static DayManager Instance { get; private set; }
 
-    public enum DayState { DAY, EVENING, NIGHT }
-    public DayState dayState { get; private set; } = DayState.DAY;
+    public enum DayState { Day, Evening, Night }
+    public DayState dayState { get; private set; } = DayState.Day;
 
     public delegate void DayStateHandler(DayState dayState, int currentDay);
     public event DayStateHandler OnDayStateChangedEvent;
@@ -15,9 +18,9 @@ public class DayManager : MonoBehaviour
     [SerializeField] private float _currentTime;
     private bool _globalLightIntensityOnPosition = true;
 
-    [SerializeField] private Light2D GlobalLight;
+    [SerializeField] private Light2D globalLight;
 
-    [SerializeField] private float GlobalLightIntensityChangeSpeed = 15f;
+    [SerializeField] private float globalLightIntensityChangeSpeed = 15f;
 
     [SerializeField] private float dayTimeGlobalLightIntensity = 1f;
     [SerializeField] private float eveningTimeGlobalLightIntensity = 0.65f;
@@ -25,11 +28,11 @@ public class DayManager : MonoBehaviour
 
     [SerializeField] private int dayTime = 0;
 
-    [SerializeField] private int eveningTime = 90;
-    [SerializeField] private int nightTime = 180;
-    [SerializeField] private int newDayTime = 360;
+    [SerializeField] private int eveningTime = 60;
+    [SerializeField] private int nightTime = 120;
+    [SerializeField] private int newDayTime = 300;
 
-    public int CurrentDay { get { return _currentDay; } }
+    public int CurrentDay => _currentDay;
 
     private void Awake()
     {
@@ -43,6 +46,11 @@ public class DayManager : MonoBehaviour
         Destroy(gameObject);
     }
 
+    private void Start()
+    {
+        GameUI.Instance.Notifications.ShowNewDayNotification(_currentDay);
+    }
+
     private void FixedUpdate()
     {
         ChangeDayTime();
@@ -52,18 +60,18 @@ public class DayManager : MonoBehaviour
     {
         _currentTime += Time.deltaTime;
 
-        if (_currentTime >= eveningTime && dayState == DayState.DAY)
+        if (_currentTime >= eveningTime && dayState == DayState.Day)
         {
             _globalLightIntensityOnPosition = false;
             if (!_globalLightIntensityOnPosition)
             {
-                GlobalLight.intensity -= Time.deltaTime / GlobalLightIntensityChangeSpeed;
+                globalLight.intensity -= Time.deltaTime / globalLightIntensityChangeSpeed;
 
-                if (GlobalLight.intensity <= eveningTimeGlobalLightIntensity)
+                if (globalLight.intensity <= eveningTimeGlobalLightIntensity)
                 {
-                    GlobalLight.intensity = eveningTimeGlobalLightIntensity;
+                    globalLight.intensity = eveningTimeGlobalLightIntensity;
                     _globalLightIntensityOnPosition = true;
-                    dayState = DayState.EVENING;
+                    dayState = DayState.Evening;
 
                     OnDayStateChangedEvent?.Invoke(dayState, _currentDay);
                     return;
@@ -71,18 +79,18 @@ public class DayManager : MonoBehaviour
             }
         }
 
-        if (_currentTime >= nightTime && dayState == DayState.EVENING)
+        if (_currentTime >= nightTime && dayState == DayState.Evening)
         {
             _globalLightIntensityOnPosition = false;
             if (!_globalLightIntensityOnPosition)
             {
-                GlobalLight.intensity -= Time.deltaTime / GlobalLightIntensityChangeSpeed;
+                globalLight.intensity -= Time.deltaTime / globalLightIntensityChangeSpeed;
 
-                if (GlobalLight.intensity <= nightTimeGlobalLightIntensity)
+                if (globalLight.intensity <= nightTimeGlobalLightIntensity)
                 {
-                    GlobalLight.intensity = nightTimeGlobalLightIntensity;
+                    globalLight.intensity = nightTimeGlobalLightIntensity;
                     _globalLightIntensityOnPosition = true;
-                    dayState = DayState.NIGHT;
+                    dayState = DayState.Night;
 
                     OnDayStateChangedEvent?.Invoke(dayState, _currentDay);
                     return;
@@ -90,18 +98,18 @@ public class DayManager : MonoBehaviour
             }
         }
 
-        if (_currentTime >= newDayTime && dayState == DayState.NIGHT || (dayState == DayState.NIGHT && WaveSpawner.Instance.IsMonstersDead()))
+        if (_currentTime >= newDayTime && dayState == DayState.Night || (dayState == DayState.Night && WaveSpawner.Instance.IsMonstersDead()))
         {
             _globalLightIntensityOnPosition = false;
             if (!_globalLightIntensityOnPosition)
             {
-                GlobalLight.intensity += Time.deltaTime / GlobalLightIntensityChangeSpeed;
+                globalLight.intensity += Time.deltaTime / globalLightIntensityChangeSpeed;
 
-                if (GlobalLight.intensity >= dayTimeGlobalLightIntensity)
+                if (globalLight.intensity >= dayTimeGlobalLightIntensity)
                 {
-                    GlobalLight.intensity = dayTimeGlobalLightIntensity;
+                    globalLight.intensity = dayTimeGlobalLightIntensity;
                     _globalLightIntensityOnPosition = true;
-                    dayState = DayState.DAY;
+                    dayState = DayState.Day;
                     _currentTime = dayTime;
                     _currentDay++;
 

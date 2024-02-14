@@ -68,9 +68,9 @@ public class AlliedSoldier : Entity
         return Math.Abs(transform.position.x - targetPosition.x) <= 0.1;
     }
 
-    private Vector2 AddRandomToTargetPosition(Vector2 OldPosition, float minRandomValue, float maxRandomValue)
+    private static Vector2 AddRandomToTargetPosition(Vector2 oldPosition, float minRandomValue, float maxRandomValue)
     {
-        Vector2 newPosition = new Vector2(OldPosition.x, OldPosition.y);
+        Vector2 newPosition = new Vector2(oldPosition.x, oldPosition.y);
 
         minRandomValue = Math.Abs(minRandomValue);
         maxRandomValue = Math.Abs(maxRandomValue);

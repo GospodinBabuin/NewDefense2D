@@ -44,22 +44,22 @@ public class Entity : MonoBehaviour
 
         T tempNearestFoe = null;
         
-        for (int i = 0; i < foes.Count; i++)
+        foreach (var foe in foes)
         {
             if (activateVisionRange)
             {
-                if (Math.Abs(transform.position.x - foes[i].transform.position.x) > visionRange)
+                if (Math.Abs(transform.position.x - foe.transform.position.x) > visionRange)
                     continue;
             }
 
             if (tempNearestFoe == null)
             {
-                tempNearestFoe = foes[i];
+                tempNearestFoe = foe;
                 continue;
             }
             
-            if (Math.Abs(transform.position.x - foes[i].transform.position.x) < Math.Abs(transform.position.x - tempNearestFoe.transform.position.x))
-                tempNearestFoe = foes[i];
+            if (Math.Abs(transform.position.x - foe.transform.position.x) < Math.Abs(transform.position.x - tempNearestFoe.transform.position.x))
+                tempNearestFoe = foe;
         }
         
         return tempNearestFoe;

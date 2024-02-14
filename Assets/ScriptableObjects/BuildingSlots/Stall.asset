@@ -15,6 +15,6 @@ MonoBehaviour:
   sprite: {fileID: 21300194, guid: 7810966f0f690954c87305933cabf2b0, type: 3}
   description: A stall supporting the expansion with food. Over time, brings money
     from sales.
-  cost: 150
+  cost: 50
   prefab: {fileID: 8880890979157700241, guid: b18dcd3ee86986b469e9cfc64055704c, type: 3}
-  needToIvoke: 1
+  needToInvoke: 1

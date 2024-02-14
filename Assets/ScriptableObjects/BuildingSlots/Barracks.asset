@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300162, guid: 7810966f0f690954c87305933cabf2b0, type: 3}
   description: A weapon rack that allows you to recruit warriors.
-  cost: 150
+  cost: 20
   prefab: {fileID: 1417126715660350475, guid: db3033d1b9a69204ebc8a3bc98f3c254, type: 3}
-  needToIvoke: 1
+  needToInvoke: 1

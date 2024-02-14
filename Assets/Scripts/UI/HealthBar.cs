@@ -1,42 +1,45 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HealthBar : MonoBehaviour
+namespace UI
 {
-    private Slider _slider;
-    [SerializeField] private Text healthValue;
-    [SerializeField] private PlayerHealth _playerHealth;
+    public class HealthBar : MonoBehaviour
+    {
+        private Slider _slider;
+        private Text _healthValue;
+        [SerializeField] private PlayerHealth playerHealth;
     
-    private void Start()
-    {
-        _slider = GetComponent<Slider>();
-        healthValue = GetComponentInChildren<Text>();
+        private void Start()
+        {
+            _slider = GetComponent<Slider>();
+            _healthValue = GetComponentInChildren<Text>();
         
-        SetMaxHealth(_playerHealth.MaxHealth);
-        SetHealth(_playerHealth.CurrentHealth);
-        SetHealthCount(_playerHealth.CurrentHealth, _playerHealth.MaxHealth);
+            SetMaxHealth(playerHealth.MaxHealth);
+            SetCurrentHealth(playerHealth.CurrentHealth);
+            SetHealthCount(playerHealth.CurrentHealth, playerHealth.MaxHealth);
         
-        _playerHealth.OnHealthValueChangedEvent += OnPlayerHealthValueChangedEvent;
-    }
+            playerHealth.OnHealthValueChangedEvent += SetUIBarValues;
+        }
 
-    private void OnPlayerHealthValueChangedEvent(int currentHealth, int maxHealth)
-    {
-        SetMaxHealth(maxHealth);
-        SetHealth(currentHealth);
-        SetHealthCount(currentHealth, maxHealth);
-    }
+        private void SetUIBarValues(int currentHealth, int maxHealth)
+        {
+            SetMaxHealth(maxHealth);
+            SetCurrentHealth(currentHealth);
+            SetHealthCount(currentHealth, maxHealth);
+        }
 
-    private void SetMaxHealth(int health)
-    {
-        _slider.maxValue = health;
-    }
-    private void SetHealth(int health)
-    {
-        _slider.value = health;
-    }
+        private void SetMaxHealth(int maxHealth)
+        {
+            _slider.maxValue = maxHealth;
+        }
+        private void SetCurrentHealth(int currentHealth)
+        {
+            _slider.value = currentHealth;
+        }
 
-    private void SetHealthCount(int currentHealth, int maxHealth)
-    {
-        healthValue.text = $"{currentHealth}/{maxHealth}";
+        private void SetHealthCount(int currentHealth, int maxHealth)
+        {
+            _healthValue.text = $"{currentHealth}/{maxHealth}";
+        }
     }
 }

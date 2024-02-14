@@ -1,10 +1,30 @@
 using UnityEngine;
 
-public class Gold : MonoBehaviour, IInteractable
+[RequireComponent(typeof(CircleCollider2D))]
+[RequireComponent(typeof(Animator))]
+public class Gold : MonoBehaviour
 {
-    public void Interact(GameObject interactingObject)
+    private Animator _animator;
+
+    private int _animIDCollect;
+
+    private void Awake()
     {
-        interactingObject.GetComponentInChildren<GoldBank>().AddGold(this, 1);
+        _animator = GetComponent<Animator>();
+
+        _animIDCollect = Animator.StringToHash("Collect");
+    }
+
+    private void DestroyCoinAnimEvent()
+    {
         Destroy(gameObject);
+    }
+    
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (!other.gameObject.TryGetComponent(out PlayerController player)) return;
+        
+        player.GetComponentInChildren<GoldBank>().AddGold(this, 1);
+        _animator.SetTrigger(_animIDCollect);
     }
 }

@@ -45,7 +45,7 @@ public class WaveSpawner : MonoBehaviour
     {
         switch (dayState)
         {
-            case DayManager.DayState.DAY:
+            case DayManager.DayState.Day:
                 if (_isMonstersAppeared)
                 {
                     CheckDayWithNewWave(day);
@@ -53,7 +53,7 @@ public class WaveSpawner : MonoBehaviour
                 }
                 break;
 
-            case DayManager.DayState.NIGHT:
+            case DayManager.DayState.Night:
                 if (!_isMonstersAppeared)
                     StartCoroutine(SpawnWave(Waves[waveType], day));
                 break;
