@@ -1,9 +1,10 @@
+using Interfaces;
 using UI;
 using UnityEngine;
 
 namespace Buildings
 {
-    public class Barracks : Building, IInteractable
+    public class Barracks : Building, IInteractable, IUpgradeable
     {
         [SerializeField] private Transform unitSpawner;
 
@@ -11,12 +12,17 @@ namespace Buildings
         private CircleCollider2D _circleCollider;
         [SerializeField] private LayerMask enemyLayerMask;
 
+        private int _currentMaxAllyCountFromBuilding = 0;
+        [SerializeField] private int startAllyCoutSize = 6;
+        [SerializeField] private int magnificationSize = 2;
+
         private void Start()
         {
             _circleCollider = GetComponentInChildren<CircleCollider2D>();
 
-            AllyCountController.Instance.IncreaseMaxAllyCount(6);
+            AllyCountController.Instance.IncreaseMaxAllyCount(startAllyCoutSize);
         }
+        
         private void FixedUpdate()
         {
             CheckDistance();
@@ -31,8 +37,7 @@ namespace Buildings
             
             _interactingObjectTransform = interactingObject.transform;
 
-            GameUI.Instance.OpenUnitMenu();
-            GameUI.Instance.UnitMenu.GetComponent<UnitMenu>().ShowMenu(BuildingLvl, this);
+            GameUI.Instance.OpenUnitMenu(BuildingLvl, this);
         }
 
         public void SpawnUnit(GameObject unitPrefab, int unitCost)
@@ -52,19 +57,18 @@ namespace Buildings
             Instantiate(unitPrefab, unitSpawner.position, Quaternion.identity);
             GoldBank.Instance.SpendGold(this, unitCost);
         }
-
+        
+        [ContextMenu("UpgradeBarracks")]
         public override void UpgradeBuilding()
         {
             base.UpgradeBuilding();
-            
-            
+            _currentMaxAllyCountFromBuilding += magnificationSize;
+            AllyCountController.Instance.IncreaseMaxAllyCount(magnificationSize);
         }
 
         private void CheckDistance()
         {
             if (_interactingObjectTransform == null) return;
-
-            //if (Vector2.Distance(gameObject.transform.position, _interactingObjectTransform.position) > _circleCollider.radius)
 
             float distanceOnXAxis = Mathf.Abs(transform.position.x - _interactingObjectTransform.position.x);
 
@@ -93,7 +97,22 @@ namespace Buildings
         {
             base.OnDestroy();
             
-            AllyCountController.Instance.ReduceMaxAllyCount(6);
+            AllyCountController.Instance.ReduceMaxAllyCount(_currentMaxAllyCountFromBuilding);
+        }
+
+        public void Upgrade()
+        {
+            UpgradeBuilding();
+        }
+        
+        public bool CanUpgrade()
+        {
+            return BuildingLvl < 3;
+        }
+        
+        public int GetUpgradeCost()
+        {
+            return GetUpgradeToNextLvlCost();
         }
     }
 }

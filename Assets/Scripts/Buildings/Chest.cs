@@ -9,13 +9,13 @@ namespace Buildings
     {
         [SerializeField] private Transform goldSpawner;
         [SerializeField] private float radius = 0.5f;
-        [SerializeField] private GameObject goldPrefab;
         [SerializeField] private float goldSpawnDelay = 0.05f;
     
         private Animator _animator;
 
         private int _animIDOpen;
         private int _animIDClose;
+        private int _animIDDestroy;
 
         private void Awake()
         {
@@ -27,6 +27,7 @@ namespace Buildings
         {
             _animIDOpen = Animator.StringToHash("Open");
             _animIDClose = Animator.StringToHash("Close");
+            _animIDDestroy = Animator.StringToHash("Destroy");
         }
     
         public void CollectGold(int goldCount)
@@ -36,13 +37,18 @@ namespace Buildings
             StartCoroutine(SpawnGold(goldCount));
         }
 
+        public void DestroyChest()
+        {
+            _animator.SetTrigger(_animIDDestroy);
+            
+            Destroy(gameObject, _animator.GetCurrentAnimatorStateInfo(0).length);
+        }
+
         private IEnumerator SpawnGold(int goldCount)
         {
-            GameObject[] golds = new GameObject[goldCount];
-
-            for (int i = 0; i < golds.Length; i++)
+            for (int i = 0; i < goldCount; i++)
             {
-                golds[i] = Instantiate(goldPrefab, GetRandomPoint(goldSpawner.position), quaternion.identity);
+                GoldSpawner.Instance.SpawnGold(GetRandomPoint(goldSpawner.position), quaternion.identity);
                 yield return new WaitForSeconds(goldSpawnDelay);
             }
         

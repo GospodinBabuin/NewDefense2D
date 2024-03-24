@@ -32,8 +32,8 @@ public class DebugFPSmanager : MonoBehaviour
 
     private void Print()
     {
-        Debug.Log(_currentFps);
-        Debug.Log(_maxFps);
-        Debug.Log(_minFps);
+        Debug.Log($"currentFPS: {_currentFps}");
+        Debug.Log($"maxFPS: {_maxFps}");
+        Debug.Log($"minFPS: {_minFps}");
     }
 }

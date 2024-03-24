@@ -11,12 +11,12 @@ GameObject:
   - component: {fileID: 4096968836470692341}
   - component: {fileID: 1436675063292435118}
   - component: {fileID: 6329756190959818054}
-  - component: {fileID: 1142969009124224893}
   - component: {fileID: 8890818758080439745}
   - component: {fileID: 7482711608084819919}
   - component: {fileID: 1396025909275978796}
   - component: {fileID: 6582531203926994418}
   - component: {fileID: 8808750260477863767}
+  - component: {fileID: 7147695570220173652}
   m_Layer: 10
   m_Name: Goblin
   m_TagString: Untagged
@@ -113,19 +113,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.5, y: 0.8}
   m_EdgeRadius: 0
---- !u!114 &1142969009124224893
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 370977602211951480}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 653940fb5c880a94184f7da39b4fc6ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 3
 --- !u!210 &8890818758080439745
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -152,6 +139,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   visionRange: 15
   nearestFoe: {fileID: 0}
+  goldAfterDeath: 3
+  goldSpawnDelay: 0.05
 --- !u!95 &1396025909275978796
 Animator:
   serializedVersion: 5
@@ -211,6 +200,19 @@ MonoBehaviour:
   stopDistance: 1
   minStopDistance: -0.1
   maxStopDistance: 0.3
+--- !u!114 &7147695570220173652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 370977602211951480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e525b5486b892246af31b6c95425290, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 3
 --- !u!1 &5657113198888236271
 GameObject:
   m_ObjectHideFlags: 0

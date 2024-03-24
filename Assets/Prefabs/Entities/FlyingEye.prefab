@@ -11,12 +11,12 @@ GameObject:
   - component: {fileID: 3406187012511739740}
   - component: {fileID: 1566277552265082744}
   - component: {fileID: 2595809904510457289}
-  - component: {fileID: 3408418612440241741}
   - component: {fileID: 8438969338604439953}
   - component: {fileID: 2841902747439229728}
   - component: {fileID: 9168353170450932758}
   - component: {fileID: 5215922037412447282}
   - component: {fileID: 2592729851418203949}
+  - component: {fileID: 5192773856601922718}
   m_Layer: 10
   m_Name: FlyingEye
   m_TagString: Untagged
@@ -113,19 +113,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.6, y: 1.5}
   m_EdgeRadius: 0
---- !u!114 &3408418612440241741
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5502228041930633767}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 653940fb5c880a94184f7da39b4fc6ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 5
 --- !u!210 &8438969338604439953
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -152,6 +139,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   visionRange: 15
   nearestFoe: {fileID: 0}
+  goldAfterDeath: 4
+  goldSpawnDelay: 0.05
 --- !u!95 &9168353170450932758
 Animator:
   serializedVersion: 5
@@ -211,6 +200,19 @@ MonoBehaviour:
   stopDistance: 0.85
   minStopDistance: -0.2
   maxStopDistance: 0
+--- !u!114 &5192773856601922718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5502228041930633767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e525b5486b892246af31b6c95425290, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 5
 --- !u!1 &8851036976566908524
 GameObject:
   m_ObjectHideFlags: 0

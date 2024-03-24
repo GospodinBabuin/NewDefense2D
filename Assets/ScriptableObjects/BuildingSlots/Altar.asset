@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df8a2975bb2ee9f43bf79929f0c52bed, type: 3}
+  m_Name: Altar
+  m_EditorClassIdentifier: 
+  sprite: {fileID: 21300150, guid: 7810966f0f690954c87305933cabf2b0, type: 3}
+  description: A statue of a sorceress whose name has long been forgotten, but this
+    does not prevent people from worshiping her. Legends say that she once saved
+    the king at the cost of her life.
+  cost: 50
+  prefab: {fileID: 1831187617911501948, guid: 53606df0bb5773e4aaa941b7ad1f209a, type: 3}
+  needToInvoke: 1

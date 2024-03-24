@@ -53,6 +53,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": ""Press"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""UpgradeObject"",
+                    ""type"": ""Button"",
+                    ""id"": ""0769f7d9-afb0-428a-8948-9a7d61a5a3c7"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press"",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RepairObject"",
+                    ""type"": ""Button"",
+                    ""id"": ""5d9c3c49-2de9-44a5-a1bf-3e9f71f32e3e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press"",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -108,6 +126,28 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""179def00-830a-4dad-8b32-cb8a210d9ccc"",
+                    ""path"": ""<Keyboard>/g"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UpgradeObject"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""051f61f9-c1d7-4dda-9665-665a6de5eae8"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RepairObject"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -197,6 +237,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
+        m_Player_UpgradeObject = m_Player.FindAction("UpgradeObject", throwIfNotFound: true);
+        m_Player_RepairObject = m_Player.FindAction("RepairObject", throwIfNotFound: true);
         // Building
         m_Building = asset.FindActionMap("Building", throwIfNotFound: true);
         m_Building_Confirm = m_Building.FindAction("Confirm", throwIfNotFound: true);
@@ -268,6 +310,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_Attack;
+    private readonly InputAction m_Player_UpgradeObject;
+    private readonly InputAction m_Player_RepairObject;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -275,6 +319,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_Player_Move;
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
+        public InputAction @UpgradeObject => m_Wrapper.m_Player_UpgradeObject;
+        public InputAction @RepairObject => m_Wrapper.m_Player_RepairObject;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -293,6 +339,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Attack.started += instance.OnAttack;
             @Attack.performed += instance.OnAttack;
             @Attack.canceled += instance.OnAttack;
+            @UpgradeObject.started += instance.OnUpgradeObject;
+            @UpgradeObject.performed += instance.OnUpgradeObject;
+            @UpgradeObject.canceled += instance.OnUpgradeObject;
+            @RepairObject.started += instance.OnRepairObject;
+            @RepairObject.performed += instance.OnRepairObject;
+            @RepairObject.canceled += instance.OnRepairObject;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -306,6 +358,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Attack.started -= instance.OnAttack;
             @Attack.performed -= instance.OnAttack;
             @Attack.canceled -= instance.OnAttack;
+            @UpgradeObject.started -= instance.OnUpgradeObject;
+            @UpgradeObject.performed -= instance.OnUpgradeObject;
+            @UpgradeObject.canceled -= instance.OnUpgradeObject;
+            @RepairObject.started -= instance.OnRepairObject;
+            @RepairObject.performed -= instance.OnRepairObject;
+            @RepairObject.canceled -= instance.OnRepairObject;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -428,6 +486,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
+        void OnUpgradeObject(InputAction.CallbackContext context);
+        void OnRepairObject(InputAction.CallbackContext context);
     }
     public interface IBuildingActions
     {

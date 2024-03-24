@@ -95,12 +95,12 @@ GameObject:
   - component: {fileID: 1878921945090368347}
   - component: {fileID: 872104996406523988}
   - component: {fileID: 2709053989709039443}
-  - component: {fileID: 4829062340001395568}
   - component: {fileID: 4320074579940800515}
   - component: {fileID: 8485182656106427664}
   - component: {fileID: 8338167757517660656}
   - component: {fileID: 2210754365796246609}
   - component: {fileID: 4137261450506067106}
+  - component: {fileID: 1206918109856183990}
   m_Layer: 8
   m_Name: SoldierLvl3
   m_TagString: Untagged
@@ -197,19 +197,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.5, y: 1.2}
   m_EdgeRadius: 0
---- !u!114 &4829062340001395568
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2227431682754589603}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 653940fb5c880a94184f7da39b4fc6ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 7
 --- !u!114 &4320074579940800515
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -295,6 +282,19 @@ MonoBehaviour:
   stopDistance: 1
   minStopDistance: -0.1
   maxStopDistance: 0.35
+--- !u!114 &1206918109856183990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2227431682754589603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e525b5486b892246af31b6c95425290, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 7
 --- !u!1 &6792137595694930221
 GameObject:
   m_ObjectHideFlags: 0

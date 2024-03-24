@@ -1,8 +1,9 @@
+using Interfaces;
 using UnityEngine;
 
 namespace Buildings
 {
-    public class BuildingGoldBringer : Building, IInteractable
+    public class BuildingGoldBringer : Building, IInteractable, IUpgradeable
     {
         [SerializeField] private int goldPerIteration = 1;
         [SerializeField] private float iterationTimerInSeconds;
@@ -13,7 +14,7 @@ namespace Buildings
         private int _collectedGold;
         private float _timerDelta;
 
-        private void Awake()
+        private void Start()
         {
             _timerDelta = iterationTimerInSeconds;
             _chest = GetComponentInChildren<Chest>();
@@ -48,6 +49,35 @@ namespace Buildings
         {
             _chest.CollectGold(_collectedGold);
             _collectedGold = 0;
+        }
+        
+        [ContextMenu("UpgradeBuildingGoldBringer")]
+        public override void UpgradeBuilding()
+        {
+            base.UpgradeBuilding();
+            goldPerIteration++;
+            maxGold *= 2;
+        }
+        
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            _chest.DestroyChest();
+        }
+
+        public void Upgrade()
+        {
+            UpgradeBuilding();
+        }
+        
+        public bool CanUpgrade()
+        {
+            return BuildingLvl < 3;
+        }
+        
+        public int GetUpgradeCost()
+        {
+            return GetUpgradeToNextLvlCost();
         }
     }
 }
