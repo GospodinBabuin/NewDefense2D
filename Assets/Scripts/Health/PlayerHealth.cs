@@ -1,4 +1,3 @@
-using System;
 using Prefabs.Particles;
 using UI;
 using UnityEngine;

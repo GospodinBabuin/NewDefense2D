@@ -12,17 +12,17 @@ namespace Buildings
 
         public void Upgrade()
         {
-            throw new System.NotImplementedException();
+            UpgradeBuilding();
         }
 
         public bool CanUpgrade()
         {
-            throw new System.NotImplementedException();
+            return BuildingLvl < 3;
         }
 
         public int GetUpgradeCost()
         {
-            throw new System.NotImplementedException();
+            return GetUpgradeToNextLvlCost();
         }
     }
 }

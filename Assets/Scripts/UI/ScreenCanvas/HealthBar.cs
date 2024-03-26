@@ -37,6 +37,7 @@ namespace UI
             _slider.value = currentHealth;
         }
 
+        
         private void SetHealthCount(int currentHealth, int maxHealth)
         {
             _healthValue.text = $"{currentHealth}/{maxHealth}";

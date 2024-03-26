@@ -21,6 +21,7 @@ namespace Buildings
         [SerializeField] private byte repairCostPerDamage = 5;
 
         private Animator _animator;
+        protected Animator Animator { get => _animator; private set => _animator = value; }
         
         private int _animIDUpgradeToLvl2;
         private int _animIDUpgradeToLvl3;
