@@ -1,8 +1,10 @@
 using Buildings;
+using Environment;
 using Interfaces;
 using UI;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.Netcode;
 
 public class PlayerController : Entity
 {
@@ -13,18 +15,17 @@ public class PlayerController : Entity
     [SerializeField] private Text upgradeCost;
     [SerializeField] private GameObject repairNotice;
     [SerializeField] private Text repairCost;
-    [SerializeField] private GameObject notices;
     
     private InputReader _input;
 
     private bool _canInteract;
     private bool _canUpgrade;
     private bool _canRepair;
-    
-    protected override void Start()
-    {
-        base.Start();
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        
         ObjectsInWorld.Instance.AddPlayerToList(this);
 
         _input = GetComponent<InputReader>();
@@ -32,8 +33,8 @@ public class PlayerController : Entity
 
     private void Update()
     {
-        Rotate();
-        Move();
+        Locomotion.Rotate(_input.Move);
+        Locomotion.Move(_input.Move);
         Attack();
         Interact();
         UpgradeObject();
@@ -45,27 +46,6 @@ public class PlayerController : Entity
         CheckInteractionObjects();
         CheckUpgradeableObjects();
         CheckBuildingsToRepair();
-    }
-    
-    private void Move()
-    {
-        if (_input.Move == 0f)
-        {
-            Locomotion.SetMoveAnimation(false);
-            return;
-        }
-
-        transform.position += new Vector3(_input.Move, 0, 0) * (Locomotion.Speed * Time.deltaTime);
-
-        Locomotion.SetMoveAnimation(true);
-    }
-
-    private void Rotate()
-    {
-        if (_input.Move == 0) return;
-        
-        transform.rotation = _input.Move < 0 ? Quaternion.Euler(0, 180, 0) : Quaternion.identity;
-        notices.transform.rotation = Quaternion.identity;
     }
 
     private void Attack()

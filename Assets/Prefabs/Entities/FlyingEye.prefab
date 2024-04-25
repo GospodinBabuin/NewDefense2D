@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1566277552265082744}
   - component: {fileID: 2595809904510457289}
   - component: {fileID: 8438969338604439953}
+  - component: {fileID: 3232202143611377759}
   - component: {fileID: 2841902747439229728}
   - component: {fileID: 9168353170450932758}
   - component: {fileID: 5215922037412447282}
@@ -125,6 +126,27 @@ SortingGroup:
   m_SortingLayer: 3
   m_SortingOrder: 1
   m_SortAtRoot: 0
+--- !u!114 &3232202143611377759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5502228041930633767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3255974244
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &2841902747439229728
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,7 +162,6 @@ MonoBehaviour:
   visionRange: 15
   nearestFoe: {fileID: 0}
   goldAfterDeath: 4
-  goldSpawnDelay: 0.05
 --- !u!95 &9168353170450932758
 Animator:
   serializedVersion: 5
@@ -213,6 +234,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 5
+  _currentHealth: 0
 --- !u!1 &8851036976566908524
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 using Buildings;
+using Unity.Netcode;
 using UnityEngine;
 
 public class Health : MonoBehaviour
@@ -21,8 +22,8 @@ public class Health : MonoBehaviour
         
         _currentHealth = maxHealth;
     }
-
-    public virtual void Damage(int damageAmount)
+    [ServerRpc]
+    public virtual void DamageServerRpc(int damageAmount)
     {
         _currentHealth -= damageAmount;
         

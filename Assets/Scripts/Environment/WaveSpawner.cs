@@ -1,8 +1,10 @@
 using System.Collections;
+using Environment;
+using Unity.Netcode;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class WaveSpawner : MonoBehaviour
+public class WaveSpawner : NetworkBehaviour
 {
     public static WaveSpawner Instance { get; private set; }
 
@@ -22,20 +24,25 @@ public class WaveSpawner : MonoBehaviour
 
     private bool _isMonstersAppeared = false;
 
-    private void Awake()
+    public override void OnNetworkSpawn()
     {
+        if (!IsServer)
+        {
+            enabled = false;
+            return;
+        }
+        
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
             return;
         }
-
-        Destroy(gameObject);
-    }
-
-    private void Start()
-    {
+        else
+        {
+            Destroy(gameObject);
+        }
+        
         DayManager.Instance.OnDayStateChangedEvent += CheckDay;
 
         CheckDayWithNewWave(DayManager.Instance.CurrentDay);
@@ -90,7 +97,8 @@ public class WaveSpawner : MonoBehaviour
     {
         Debug.Log("spawning enemy: " + enemy.name);
         Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-        Instantiate(enemy, spawnPoint.position, Quaternion.identity);
+        Transform newEnemy = Instantiate(enemy, spawnPoint.position, Quaternion.identity);
+        newEnemy.GetComponent<NetworkObject>().Spawn(true);
     }
 
     public bool IsMonstersDead()

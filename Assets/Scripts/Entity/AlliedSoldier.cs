@@ -1,4 +1,5 @@
 using System;
+using Environment;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -7,9 +8,9 @@ public class AlliedSoldier : Entity
     public Transform SelectedBorder { get; private set; }
     private Vector2 _selectedBorderPosition;
     
-    protected override void Start()
+    public override void OnNetworkSpawn()
     {
-        base.Start();
+        base.OnNetworkSpawn();
 
         ObjectsInWorld.Instance.AddSoldierToList(this);
         GreenZoneBorders.Instance.OnBordersPositionChangedEvent += SelectBordersPosition;

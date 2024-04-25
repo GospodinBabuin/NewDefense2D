@@ -1,4 +1,5 @@
 using System.Collections;
+using Environment;
 using Unity.Mathematics;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -6,11 +7,11 @@ using Random = UnityEngine.Random;
 public class Enemy : Entity
 {
     [SerializeField] private byte goldAfterDeath = 5; 
-    
-    protected override void Start()
-    {
-        base.Start();
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        
         ObjectsInWorld.Instance.AddEnemyToList(this);
     }
 

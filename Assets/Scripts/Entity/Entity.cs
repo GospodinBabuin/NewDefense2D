@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Environment;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -9,7 +11,7 @@ using UnityEngine.Rendering;
 [RequireComponent(typeof(Combat))]
 [RequireComponent(typeof(Locomotion))]
 [RequireComponent(typeof(SortingGroup))]
-public class Entity : MonoBehaviour
+public class Entity : NetworkBehaviour
 {
     private EntityHealth _health;
     private Combat _combat;
@@ -21,16 +23,25 @@ public class Entity : MonoBehaviour
 
     [SerializeField] private byte visionRange = 15;
     [SerializeField] protected MonoBehaviour nearestFoe;
-    
-    protected virtual void Start()
+
+    public override void OnNetworkSpawn()
     {
-        _health = GetComponent<EntityHealth>();
-        _combat = GetComponent<Combat>();
-        _locomotion = GetComponent<Locomotion>();
+        if (IsOwner)
+        {
+            _health = GetComponent<EntityHealth>();
+            _combat = GetComponent<Combat>();
+            _locomotion = GetComponent<Locomotion>();
         
-        SetPositionOnGround();
+            SetPositionOnGround();
+        }
+        else
+        if (!IsServer)
+        {
+            enabled = false;
+            return;
+        }
     }
-    
+
     private void SetPositionOnGround()
     {
         LayerMask groundLayerMask = LayerMask.GetMask("Ground");

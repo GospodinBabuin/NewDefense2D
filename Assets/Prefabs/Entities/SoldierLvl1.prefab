@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5785703300764087162}
   - component: {fileID: 7607788357010757831}
   - component: {fileID: 8549052057786448576}
+  - component: {fileID: 3889154374992292232}
   - component: {fileID: 318997465868848182}
   - component: {fileID: 9176569278474405686}
   - component: {fileID: 5354089972089214069}
@@ -113,6 +114,27 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.55, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &3889154374992292232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 976354504409958526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3461152276
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &318997465868848182
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,6 +233,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 5
+  _currentHealth: 0
 --- !u!1 &2624662061937727573
 GameObject:
   m_ObjectHideFlags: 0

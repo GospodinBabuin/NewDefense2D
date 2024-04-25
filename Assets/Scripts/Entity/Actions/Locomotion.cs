@@ -13,9 +13,13 @@ public class Locomotion : MonoBehaviour
     
     private int _animIDMove;
     private Animator _animator;
+    
+    private Transform _spriteTransform;
 
     private void Start()
     {
+        _spriteTransform = GetComponentInChildren<SpriteRenderer>().transform;
+        
         _animator = GetComponent<Animator>();
         
         _animIDMove = Animator.StringToHash("IsMoving");
@@ -29,9 +33,29 @@ public class Locomotion : MonoBehaviour
         SetMoveAnimation(true);
     }
     
+    public void Move(float direction)
+    {
+        if (direction == 0f)
+        {
+            SetMoveAnimation(false);
+            return;
+        }
+        
+        transform.position += new Vector3(direction, 0, 0) * (speed * Time.deltaTime);
+        SetMoveAnimation(true);
+    }
+    
     private void Rotate(Vector2 direction)
     {
-        transform.rotation = direction.x > transform.position.x ?
+        _spriteTransform.rotation = direction.x > transform.position.x ?
+            Quaternion.identity : Quaternion.Euler(0, 180, 0);
+    }
+    
+    public void Rotate(float direction)
+    {
+        if (direction == 0) return;
+        
+        _spriteTransform.rotation = direction > 0 ? 
             Quaternion.identity : Quaternion.Euler(0, 180, 0);
     }
 

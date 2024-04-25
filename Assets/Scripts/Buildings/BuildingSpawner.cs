@@ -1,6 +1,8 @@
 using Buildings;
+using Environment;
 using UI;
 using Unity.Mathematics;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -82,6 +84,7 @@ namespace BuildingSystem
             ActivateBuildingsCollider(_buildingToSpawn);
             Destroy(_buildingToSpawn.GetComponent<SortingGroup>());
             ObjectsInWorld.Instance.AddBuildingToList(_buildingToSpawn.GetComponent<Building>(), _needToInvoke);
+            _buildingToSpawn.GetComponent<NetworkObject>().Spawn(true);
         }
 
         private void SetBuildingPosition()

@@ -127,6 +127,7 @@ GameObject:
   - component: {fileID: 5533822638266180372}
   - component: {fileID: 6112071792885190449}
   - component: {fileID: 4562469189284075409}
+  - component: {fileID: -7319414752624835502}
   - component: {fileID: 569408080559603710}
   - component: {fileID: 6032241304707931129}
   - component: {fileID: 1645394345867444827}
@@ -240,6 +241,27 @@ SortingGroup:
   m_SortingLayer: 3
   m_SortingOrder: 0
   m_SortAtRoot: 0
+--- !u!114 &-7319414752624835502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6660158501230954954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1260220026
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &569408080559603710
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,6 +276,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   visionRange: 15
   nearestFoe: {fileID: 0}
+  goldAfterDeath: 5
 --- !u!95 &6032241304707931129
 Animator:
   serializedVersion: 5
@@ -326,3 +349,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 8
+  _currentHealth: 0

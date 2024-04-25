@@ -13,11 +13,11 @@ public class EntityHealth : Health
         _combat = GetComponent<Combat>();
     }
 
-    public override void Damage(int damageAmount)
+    public override void DamageServerRpc(int damageAmount)
     {
         animator.SetTrigger(_animIDTakeDamage);
         
-        base.Damage(damageAmount);
+        base.DamageServerRpc(damageAmount);
         
         _combat.StopAllCoroutines();
         _combat.StartCoroutine(_combat.StartNextAttackCooldown(_combat.AttackDelay / 4));

@@ -16,9 +16,9 @@ public class PlayerHealth : EntityHealth
         _healParticles = GetComponentInChildren<HealParticles>();
     }
 
-    public override void Damage(int damageAmount)
+    public override void DamageServerRpc(int damageAmount)
     {
-        base.Damage(damageAmount);
+        base.DamageServerRpc(damageAmount);
         
         OnHealthValueChangedEvent?.Invoke(CurrentHealth, MaxHealth);
     }

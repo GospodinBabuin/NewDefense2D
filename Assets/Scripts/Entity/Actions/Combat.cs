@@ -72,7 +72,7 @@ public class Combat : MonoBehaviour
             
             if (health == null) continue;
             
-            health.Damage(damage);
+            health.DamageServerRpc(damage);
                 
             if (!canDamageMultipleTargets)
                 return;

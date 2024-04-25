@@ -18,7 +18,7 @@ public class BuildingHealth : Health
         _building = GetComponent<Building>();
     }
 
-    public override void Damage(int damageAmount)
+    public override void DamageServerRpc(int damageAmount)
     {
         switch (_building.BuildingLvl)
         {
@@ -33,7 +33,7 @@ public class BuildingHealth : Health
                 break;
         }
         
-        base.Damage(damageAmount);
+        base.DamageServerRpc(damageAmount);
     }
 
     [ContextMenu("Destroy")]
