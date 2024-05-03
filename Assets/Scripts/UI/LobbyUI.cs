@@ -11,6 +11,7 @@ namespace UI
         private void Start()
         {
             lobbyCodeText.text = $"Lobby Code: {GameLobbyManager.Instance.GetLobbyCode()}";
+            Debug.Log(GameLobbyManager.Instance.GetLobbyCode());
         }
     
     }

@@ -6,25 +6,11 @@ namespace MainMenu
 {
     public class MainMenuController : MonoBehaviour
     {
-        [SerializeField] private Button hostButton;
-        [SerializeField] private Button submitCodeButton;
-        
         [SerializeField] private Text lobbyCodeText;
-        private void OnEnable()
-        {
-            hostButton.onClick.AddListener(OnHostButtonClicked);
-            submitCodeButton.onClick.AddListener(OnsubmitCodeButtonClicked);
-        }
 
-        private void OnDisable()
+        public async void OnHostButtonClicked()
         {
-            hostButton.onClick.RemoveListener(OnHostButtonClicked);
-            submitCodeButton.onClick.RemoveListener(OnsubmitCodeButtonClicked);
-        }
-
-        private async void OnHostButtonClicked()
-        {
-            bool succeeded = await GameLobbyManager.Instance.CreateGameLobby();
+            bool succeeded = await GameLobbyManager.Instance.CreateLobby();
 
             if (succeeded)
             {
@@ -32,10 +18,17 @@ namespace MainMenu
             }
         }
         
-        private void OnsubmitCodeButtonClicked()
+        public async void OnSubmitCodeButtonClicked()
         {
-            string code = lobbyCodeText.text; 
+            string code = lobbyCodeText.text;
+            //code = code.Substring(0, code.Length - 1);
             Debug.Log(code);
+            
+            bool succeeded = await GameLobbyManager.Instance.JoinLobby(code);
+            if (succeeded)
+            {
+                SceneManager.LoadSceneAsync("Lobby");
+            }
         }
     }
 }

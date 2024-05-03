@@ -7,7 +7,7 @@ namespace MainMenu
 {
     public class GameLobbyManager : Singleton<GameLobbyManager>
     {
-        public async Task<bool> CreateGameLobby()
+        public async Task<bool> CreateLobby()
         {
             Dictionary<string, string> playerData = new Dictionary<string, string>()
             {
@@ -21,6 +21,17 @@ namespace MainMenu
         public string GetLobbyCode()
         {
             return LobbyManager.Instance.GetLobbyCode();
+        }
+
+        public async Task<bool> JoinLobby(string code)
+        {
+            Dictionary<string, string> playerData = new Dictionary<string, string>()
+            {
+                { "GameTag", "JoinPlayer" }
+            };
+            
+            bool succeeded = await LobbyManager.Instance.JoinLobby(code, playerData);
+            return succeeded;
         }
     }
 }

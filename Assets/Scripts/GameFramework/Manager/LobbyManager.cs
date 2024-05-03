@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -92,6 +93,27 @@ namespace GameFramework.Manager
             {
                 LobbyService.Instance.DeleteLobbyAsync(_lobby.Id);
             }
+        }
+
+        public async Task<bool> JoinLobby(string code, Dictionary<string, string> playerData)
+        {
+            JoinLobbyByCodeOptions options = new JoinLobbyByCodeOptions();
+            Player player = new Player(AuthenticationService.Instance.PlayerId, null, SerializePlayerData(playerData));
+            
+            options.Player = player;
+
+            try
+            {
+                _lobby = await LobbyService.Instance.JoinLobbyByCodeAsync(code, options);
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+                return false; 
+            }
+            
+            _refreshLobbyCoroutine = StartCoroutine(RefreshLobbyCoroutine(_lobby.Id, 1f));
+            return true;
         }
     }
 }

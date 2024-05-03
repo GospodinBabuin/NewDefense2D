@@ -820,8 +820,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37bfb5373f25667409374d76783a3544, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hostButton: {fileID: 882257815}
-  submitCodeButton: {fileID: 1275009358}
   lobbyCodeText: {fileID: 1501132257}
 --- !u!1 &810036202
 GameObject:
@@ -1063,7 +1061,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 882257816}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 596320795}
+        m_TargetAssemblyTypeName: MainMenu.MainMenuController, Assembly-CSharp
+        m_MethodName: OnHostButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &882257816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1338,7 +1348,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1275009359}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 596320795}
+        m_TargetAssemblyTypeName: MainMenu.MainMenuController, Assembly-CSharp
+        m_MethodName: OnSubmitCodeButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1275009359
 MonoBehaviour:
   m_ObjectHideFlags: 0
