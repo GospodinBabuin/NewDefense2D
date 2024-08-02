@@ -16,7 +16,7 @@ public class Locomotion : MonoBehaviour
     
     private Transform _spriteTransform;
 
-    private void Start()
+    private void Awake()
     {
         _spriteTransform = GetComponentInChildren<SpriteRenderer>().transform;
         

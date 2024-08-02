@@ -1,4 +1,3 @@
-using System.Collections;
 using Environment;
 using Unity.Mathematics;
 using UnityEngine;

@@ -1,21 +1,22 @@
 using Buildings;
+using Cinemachine;
 using Environment;
 using Interfaces;
 using UI;
 using UnityEngine;
 using UnityEngine.UI;
-using Unity.Netcode;
 
 public class PlayerController : Entity
 {
     [SerializeField] private float interactionRadius = 1.3f;
-    
+
     [SerializeField] private GameObject interactionNotice;
     [SerializeField] private GameObject upgradeNotice;
     [SerializeField] private Text upgradeCost;
     [SerializeField] private GameObject repairNotice;
     [SerializeField] private Text repairCost;
-    
+
+    private CinemachineVirtualCamera _cvm;
     private InputReader _input;
 
     private bool _canInteract;
@@ -25,7 +26,18 @@ public class PlayerController : Entity
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        
+
+        _cvm = GetComponentInChildren<CinemachineVirtualCamera>();
+
+        if (IsOwner)
+        {
+            _cvm.Priority = 1;
+        }
+        else
+        {
+            _cvm.Priority = 0;
+        }
+
         ObjectsInWorld.Instance.AddPlayerToList(this);
 
         _input = GetComponent<InputReader>();
@@ -33,25 +45,31 @@ public class PlayerController : Entity
 
     private void Update()
     {
-        Locomotion.Rotate(_input.Move);
-        Locomotion.Move(_input.Move);
-        Attack();
-        Interact();
-        UpgradeObject();
-        RepairObject();
+        if (IsLocalPlayer)
+        {
+            Locomotion.Rotate(_input.Move);
+            Locomotion.Move(_input.Move);
+            Attack();
+            Interact();
+            UpgradeObject();
+            RepairObject();
+        }
     }
 
     private void FixedUpdate()
     {
-        CheckInteractionObjects();
-        CheckUpgradeableObjects();
-        CheckBuildingsToRepair();
+        if (IsLocalPlayer)
+        {
+            CheckInteractionObjects();
+            CheckUpgradeableObjects();
+            CheckBuildingsToRepair();
+        }
     }
 
     private void Attack()
     {
         if (!_input.Attack) return;
-        
+
         Combat.Attack();
     }
 
@@ -61,17 +79,17 @@ public class PlayerController : Entity
         interactionObjects = Physics2D.OverlapCircleAll(transform.position, interactionRadius);
 
         if (interactionObjects == null) return;
-        
+
         foreach (Collider2D interactionObject in interactionObjects)
         {
-            if (interactionObject.GetComponent<IInteractable>() != null )
+            if (interactionObject.GetComponent<IInteractable>() != null)
             {
                 interactionNotice.SetActive(true);
                 _canInteract = true;
                 return;
             }
         }
-        
+
         interactionNotice.SetActive(false);
         _canInteract = false;
     }
@@ -82,42 +100,42 @@ public class PlayerController : Entity
         upgradeableObjects = Physics2D.OverlapCircleAll(transform.position, interactionRadius);
 
         if (upgradeableObjects == null) return;
-        
+
         foreach (Collider2D upgradeableObject in upgradeableObjects)
         {
             if (!upgradeableObject.TryGetComponent<IUpgradeable>(out IUpgradeable upgradeable)) continue;
-            
+
             if (!upgradeable.CanUpgrade()) continue;
-            
+
             upgradeNotice.SetActive(true);
             upgradeCost.text = upgradeable.GetUpgradeCost().ToString();
             _canUpgrade = true;
             return;
         }
-        
+
         upgradeNotice.SetActive(false);
         _canUpgrade = false;
     }
-    
+
     private void CheckBuildingsToRepair()
     {
         Collider2D[] ObjectsToRepair;
         ObjectsToRepair = Physics2D.OverlapCircleAll(transform.position, interactionRadius);
 
         if (ObjectsToRepair == null) return;
-        
+
         foreach (Collider2D objectToRepair in ObjectsToRepair)
         {
             if (!objectToRepair.TryGetComponent<Building>(out Building building)) continue;
-            
+
             if (building.Health.IsMaxHealth()) continue;
-            
+
             repairNotice.SetActive(true);
             repairCost.text = building.CostToRepairBuilding().ToString();
             _canRepair = true;
             return;
         }
-        
+
         repairNotice.SetActive(false);
         _canRepair = false;
     }
@@ -125,7 +143,7 @@ public class PlayerController : Entity
     private void Interact()
     {
         if (!_input.Interact || !_canInteract) return;
-        
+
         if (GameUI.Instance.IsMenuOpen())
             return;
 
@@ -133,7 +151,7 @@ public class PlayerController : Entity
         interactionObjects = Physics2D.OverlapCircleAll(transform.position, interactionRadius);
 
         if (interactionObjects == null) return;
-        
+
         foreach (Collider2D interactionObject in interactionObjects)
         {
             if (!interactionObject.TryGetComponent(out IInteractable interactable)) continue;
@@ -145,7 +163,7 @@ public class PlayerController : Entity
     private void UpgradeObject()
     {
         if (!_input.UpgradeObject || !_canUpgrade) return;
-        
+
         if (GameUI.Instance.IsMenuOpen())
             return;
 
@@ -153,7 +171,7 @@ public class PlayerController : Entity
         upgradeableObjects = Physics2D.OverlapCircleAll(transform.position, interactionRadius);
 
         if (upgradeableObjects == null) return;
-        
+
         foreach (Collider2D upgradeableObject in upgradeableObjects)
         {
             if (!upgradeableObject.TryGetComponent(out IUpgradeable upgradeable)) continue;
@@ -161,11 +179,11 @@ public class PlayerController : Entity
             return;
         }
     }
-    
+
     private void RepairObject()
     {
         if (!_input.RepairObject || !_canRepair) return;
-        
+
         if (GameUI.Instance.IsMenuOpen())
             return;
 
@@ -173,7 +191,7 @@ public class PlayerController : Entity
         ObjectsToRepair = Physics2D.OverlapCircleAll(transform.position, interactionRadius);
 
         if (ObjectsToRepair == null) return;
-        
+
         foreach (Collider2D ObjectToRepair in ObjectsToRepair)
         {
             if (!ObjectToRepair.TryGetComponent(out Building building)) continue;
@@ -181,7 +199,7 @@ public class PlayerController : Entity
             return;
         }
     }
-    
+
     protected override void OnDestroy()
     {
         base.OnDestroy();

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Buildings;
 using Unity.Netcode;
@@ -49,7 +48,6 @@ namespace Environment
                 return;
             }
             Destroy(gameObject);
-            
         }
 
         public override void OnNetworkSpawn()
