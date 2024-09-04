@@ -1,8 +1,11 @@
+using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Environment
 {
-    public class Parallax : MonoBehaviour
+    public class Parallax : NetworkBehaviour
     {
         [SerializeField] private float parallaxEffect;
     
@@ -11,9 +14,9 @@ namespace Environment
         private float _startPosition;
         private bool _swapPlaces = false;
 
-        private void Awake()
+        public void Initialize(Camera camera)
         {
-            _camera = Camera.main;
+            _camera = camera;
             _startPosition = transform.position.x;
         
             if (TryGetComponent<SpriteRenderer>(out SpriteRenderer spriteRenderer))
@@ -29,6 +32,8 @@ namespace Environment
 
         private void Update()
         {
+            if (!_camera) return;
+            
             float temp = _camera.transform.position.x * (1 - parallaxEffect);
             float distance = _camera.transform.position.x * parallaxEffect;
 

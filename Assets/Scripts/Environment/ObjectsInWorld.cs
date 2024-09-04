@@ -44,13 +44,12 @@ namespace Environment
             if (Instance == null)
             {
                 Instance = this;
-                DontDestroyOnLoad(this);
                 return;
             }
             Destroy(gameObject);
         }
 
-        public override void OnNetworkSpawn()
+        private void Start()
         {
             if (IsServer) return;
             enabled = false;

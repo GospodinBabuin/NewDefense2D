@@ -1,4 +1,5 @@
 using Buildings;
+using BuildingSystem;
 using UnityEngine;
 
 namespace UI
@@ -6,6 +7,7 @@ namespace UI
     public class GameUI : MonoBehaviour
     {
         public static GameUI Instance { get; private set; }
+        public BuildingSpawner buildingSpawner;
     
         [SerializeField] private GameObject buildingMenu;
         [SerializeField] private UnitMenu unitMenu;
@@ -21,7 +23,6 @@ namespace UI
             if (Instance == null)
             {
                 Instance = this;
-                DontDestroyOnLoad(this);
                 return;
             }
         
@@ -71,6 +72,17 @@ namespace UI
             altarMenu.gameObject.SetActive(true);
             altarMenu.ShowMenu(buildingLvl, currentAltar);
             PlayerResources.Instance.ShowResources();
+        }
+
+        public void OnExitToMenuButtonClicked()
+        {
+            GameNetworkManager.Instance.Disconnected();
+            SceneTransitionHandler.Instance.SwitchScene("MainMenu");
+        }
+        
+        public void OnExitToDesktopButtonClicked()
+        {
+            Application.Quit();
         }
     }
 }

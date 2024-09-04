@@ -24,7 +24,7 @@ public class WaveSpawner : NetworkBehaviour
 
     private bool _isMonstersAppeared = false;
 
-    public override void OnNetworkSpawn()
+    private void Start()
     {
         if (!IsServer)
         {
@@ -35,12 +35,11 @@ public class WaveSpawner : NetworkBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
-            return;
         }
         else
         {
             Destroy(gameObject);
+            return;
         }
         
         DayManager.Instance.OnDayStateChangedEvent += CheckDay;

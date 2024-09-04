@@ -7,9 +7,9 @@ public class Enemy : Entity
 {
     [SerializeField] private byte goldAfterDeath = 5; 
 
-    public override void OnNetworkSpawn()
+    protected override void Awake()
     {
-        base.OnNetworkSpawn();
+        base.Awake();
         
         ObjectsInWorld.Instance.AddEnemyToList(this);
     }
@@ -49,7 +49,7 @@ public class Enemy : Entity
         return spawnPoint;
     }
     
-    protected override void OnDestroy()
+    public override void OnDestroy()
     {
         for (int i = 0; i < goldAfterDeath; i++)
         {

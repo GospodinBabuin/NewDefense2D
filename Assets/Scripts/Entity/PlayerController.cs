@@ -1,3 +1,4 @@
+using System;
 using Buildings;
 using Cinemachine;
 using Environment;
@@ -16,54 +17,50 @@ public class PlayerController : Entity
     [SerializeField] private GameObject repairNotice;
     [SerializeField] private Text repairCost;
 
-    private CinemachineVirtualCamera _cvm;
     private InputReader _input;
 
     private bool _canInteract;
     private bool _canUpgrade;
     private bool _canRepair;
 
-    public override void OnNetworkSpawn()
+    protected override void Awake()
     {
-        base.OnNetworkSpawn();
-
-        _cvm = GetComponentInChildren<CinemachineVirtualCamera>();
-
-        if (IsOwner)
-        {
-            _cvm.Priority = 1;
-        }
-        else
-        {
-            _cvm.Priority = 0;
-        }
-
-        ObjectsInWorld.Instance.AddPlayerToList(this);
+        base.Awake();
+        
+        ObjectsInWorld.Instance?.AddPlayerToList(this);
 
         _input = GetComponent<InputReader>();
     }
 
+    private void Start()
+    {
+        if (!IsOwner)
+        {
+            _input.enabled = false;
+            enabled = false;
+            return;
+        }
+        _input.Enable();
+        ParalaxManager.Instance.Initialize(GetComponentInChildren<Camera>());
+    }
+
     private void Update()
     {
-        if (IsLocalPlayer)
-        {
-            Locomotion.Rotate(_input.Move);
-            Locomotion.Move(_input.Move);
-            Attack();
-            Interact();
-            UpgradeObject();
-            RepairObject();
-        }
+        Locomotion.Rotate(_input.Move);
+        Locomotion.Move(_input.Move);
+        Attack();
+        Interact();
+        UpgradeObject();
+        RepairObject();
+        OpenOrCloseChat();
+        TryToSendMessage();
     }
 
     private void FixedUpdate()
     {
-        if (IsLocalPlayer)
-        {
-            CheckInteractionObjects();
-            CheckUpgradeableObjects();
-            CheckBuildingsToRepair();
-        }
+        CheckInteractionObjects();
+        CheckUpgradeableObjects();
+        CheckBuildingsToRepair();
     }
 
     private void Attack()
@@ -200,10 +197,26 @@ public class PlayerController : Entity
         }
     }
 
-    protected override void OnDestroy()
+    private void OpenOrCloseChat()
+    {
+        if (_input.Chat)
+        {
+            Chat.Instance.OpenOrCloseChat(_input.InputActions);
+        }
+    }
+
+    private void TryToSendMessage()
+    {
+        if (_input.Confirm)
+        {
+            Chat.Instance.TryToSendMessage();
+        }
+    }
+
+    public override void OnDestroy()
     {
         base.OnDestroy();
-        ObjectsInWorld.Instance.RemovePlayerFromList(this);
+        ObjectsInWorld.Instance?.RemovePlayerFromList(this);
         this.enabled = false;
     }
 

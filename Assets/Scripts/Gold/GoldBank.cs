@@ -1,7 +1,8 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
 
-public class GoldBank : MonoBehaviour
+public class GoldBank : NetworkBehaviour
 {
     public static GoldBank Instance { get; private set; }
     

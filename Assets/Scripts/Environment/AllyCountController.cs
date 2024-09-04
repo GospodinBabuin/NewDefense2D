@@ -22,12 +22,12 @@ namespace Environment
             {
                 Destroy(this);
             }
+            
+            _unitsCount = GetComponentInChildren<Text>();
         }
 
         private void Start()
         {
-            _unitsCount = GetComponentInChildren<Text>();
-        
             SetAllyCountTextValue(ObjectsInWorld.Instance.AlliedSoldiers.Count, _maxAllyCount);
 
             ObjectsInWorld.Instance.OnAlliedSoldiersListChangedEvent += AllyCountChange;

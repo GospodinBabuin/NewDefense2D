@@ -1,9 +1,9 @@
-using MenuSlots;
+using BuildingSystem;
 using UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace BuildingSystem
+namespace MenuSlots
 {
     public class BuildingSlot : MonoBehaviour
     {
@@ -26,7 +26,7 @@ namespace BuildingSystem
 
         public void SelectBuilding()
         {
-            GameObject.FindWithTag("Player").GetComponentInChildren<BuildingSpawner>().StartPlacement(slotSO.Prefab, slotSO.NeedToInvoke,slotSO.Cost);
+            GameUI.Instance.buildingSpawner.StartPlacement(slotSO.Prefab, slotSO.NeedToInvoke,slotSO.Cost);
             GameUI.Instance.OpenOrCloseBuildingMenu();
         }
     }

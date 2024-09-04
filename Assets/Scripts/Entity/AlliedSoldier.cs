@@ -7,11 +7,11 @@ public class AlliedSoldier : Entity
 {
     public Transform SelectedBorder { get; private set; }
     private Vector2 _selectedBorderPosition;
-    
-    public override void OnNetworkSpawn()
-    {
-        base.OnNetworkSpawn();
 
+    protected override void Awake()
+    {
+        base.Awake();
+        
         ObjectsInWorld.Instance.AddSoldierToList(this);
         GreenZoneBorders.Instance.OnBordersPositionChangedEvent += SelectBordersPosition;
         GreenZoneBorders.Instance.SelectBorder(this);
@@ -88,7 +88,7 @@ public class AlliedSoldier : Entity
         return newPosition;
     }
     
-    protected override void OnDestroy()
+    public override void OnDestroy()
     {
         base.OnDestroy();
         ObjectsInWorld.Instance.RemoveSoldierFromList(this);

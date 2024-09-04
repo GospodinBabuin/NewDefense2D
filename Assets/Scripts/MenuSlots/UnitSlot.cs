@@ -1,9 +1,8 @@
-using BuildingSystem;
-using MenuSlots;
+using UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI
+namespace MenuSlots
 {
     public class UnitSlot : MonoBehaviour
     {

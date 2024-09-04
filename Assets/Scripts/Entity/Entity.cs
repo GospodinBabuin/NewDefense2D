@@ -1,6 +1,7 @@
 using Environment;
 using System;
 using System.Collections.Generic;
+using HealthSystem;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -24,7 +25,7 @@ public class Entity : NetworkBehaviour
     [SerializeField] private byte visionRange = 15;
     [SerializeField] protected MonoBehaviour nearestFoe;
 
-    public override void OnNetworkSpawn()
+    protected virtual void Awake()
     {
         _health = GetComponent<EntityHealth>();
         _combat = GetComponent<Combat>();
@@ -69,9 +70,9 @@ public class Entity : NetworkBehaviour
     }
 
 
-    protected virtual void OnDestroy()
+    public override void OnDestroy()
     {
-        ObjectsInWorld.Instance.AddDeadBodiesToList(gameObject);
+        ObjectsInWorld.Instance?.AddDeadBodiesToList(gameObject);
         GetComponent<Collider2D>().enabled = false;
         _health.enabled = false;
         _combat.enabled = false;

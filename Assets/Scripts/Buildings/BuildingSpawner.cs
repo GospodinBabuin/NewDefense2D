@@ -1,3 +1,4 @@
+using System;
 using Buildings;
 using Environment;
 using UI;
@@ -8,7 +9,7 @@ using UnityEngine.Rendering;
 
 namespace BuildingSystem
 {
-    public class BuildingSpawner : MonoBehaviour
+    public class BuildingSpawner : NetworkBehaviour
     {
         [SerializeField] private LayerMask groundLayerMask;
     
@@ -19,9 +20,24 @@ namespace BuildingSystem
 
         private InputReader _input;
 
-        private void Start()
+        private void Awake()
         {
             _input = GetComponentInParent<InputReader>();
+        }
+
+        private void Start()
+        {
+            if (IsOwner)
+            {
+                if (GameUI.Instance != null)
+                {
+                    GameUI.Instance.buildingSpawner = this;
+                }
+            }
+            else
+            {
+                enabled = false;
+            }
         }
 
         private void Update()
@@ -52,7 +68,7 @@ namespace BuildingSystem
             }
             
             GoldBank.Instance.SpendGold(this, _buildingCost);
-            PlaceBuilding();
+            PlaceBuildingServerRPC();
             StopPlacement();
         }
 
@@ -77,8 +93,9 @@ namespace BuildingSystem
             _buildingToSpawn = null;
             _buildingCost = int.MaxValue;
         }
-
-        private void PlaceBuilding()
+        
+        [ServerRpc(RequireOwnership = false)]
+        private void PlaceBuildingServerRPC()
         {
             _buildingToSpawn.GetComponent<Building>().enabled = true;
             ActivateBuildingsCollider(_buildingToSpawn);

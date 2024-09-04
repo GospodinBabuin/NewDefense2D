@@ -9,6 +9,8 @@ TagManager:
   - BuildingBoundaries
   - Chest
   - UnitMenu
+  - ChatMessage
+  - PlayerCard
   layers:
   - Default
   - TransparentFX

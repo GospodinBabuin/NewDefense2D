@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using HealthSystem;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -72,7 +73,7 @@ public class Combat : MonoBehaviour
             
             if (health == null) continue;
             
-            health.DamageServerRpc(damage);
+            health.Damage(damage);
                 
             if (!canDamageMultipleTargets)
                 return;

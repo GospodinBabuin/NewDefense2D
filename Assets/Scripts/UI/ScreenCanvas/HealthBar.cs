@@ -1,24 +1,43 @@
+using System;
+using HealthSystem;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI
+namespace UI.ScreenCanvas
 {
-    public class HealthBar : MonoBehaviour
+    public class HealthBar : NetworkBehaviour
     {
+        public static HealthBar Instance;
+        
         private Slider _slider;
         private Text _healthValue;
-        [SerializeField] private PlayerHealth playerHealth;
-    
-        private void Start()
+        private PlayerHealth _playerHealth;
+
+        private void Awake()
         {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+            
             _slider = GetComponent<Slider>();
             _healthValue = GetComponentInChildren<Text>();
+        }
+
+        public void Initialize(PlayerHealth playerHealth)
+        {
+            _playerHealth = playerHealth;
+            
+            SetMaxHealth(_playerHealth.MaxHealth);
+            SetCurrentHealth(_playerHealth.CurrentHealth);
+            SetHealthCount(_playerHealth.CurrentHealth, _playerHealth.MaxHealth);
         
-            SetMaxHealth(playerHealth.MaxHealth);
-            SetCurrentHealth(playerHealth.CurrentHealth);
-            SetHealthCount(playerHealth.CurrentHealth, playerHealth.MaxHealth);
-        
-            playerHealth.OnHealthValueChangedEvent += SetUIBarValues;
+            _playerHealth.OnHealthValueChangedEvent += SetUIBarValues;
         }
 
         private void SetUIBarValues(int currentHealth, int maxHealth)

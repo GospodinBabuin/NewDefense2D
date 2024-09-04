@@ -3120,6 +3120,7 @@ GameObject:
   m_Component:
   - component: {fileID: 312112743460210970}
   - component: {fileID: 552214260142661960}
+  - component: {fileID: 7805154294515208898}
   - component: {fileID: 4432713649985089127}
   m_Layer: 0
   m_Name: 11
@@ -3199,6 +3200,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7805154294515208898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2471008147787202274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1373521495
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &4432713649985089127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6539,6 +6561,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 585785636098190161}
+  - component: {fileID: 5057846130341771458}
   m_Layer: 0
   m_Name: Paralax
   m_TagString: Untagged
@@ -6573,6 +6596,31 @@ Transform:
   - {fileID: 8014705894870368243}
   m_Father: {fileID: 7153765937986615570}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5057846130341771458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6073270408608406550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1035deec6d3c1084cac115e6d07c8c73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parallaxList:
+  - {fileID: 4432713649985089127}
+  - {fileID: 5162413391468611556}
+  - {fileID: 4100810422944288887}
+  - {fileID: 2244361918246416666}
+  - {fileID: 4287764754375810048}
+  - {fileID: 9205901680728048528}
+  - {fileID: 2973730744819569564}
+  - {fileID: 4283292966208917829}
+  - {fileID: 2905295367345348163}
+  - {fileID: 1399689028733604187}
+  - {fileID: 5622422956649884371}
+  - {fileID: 4378749089347720404}
 --- !u!1 &6661196395281285361
 GameObject:
   m_ObjectHideFlags: 0
