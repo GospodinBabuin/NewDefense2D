@@ -16,4 +16,4 @@ MonoBehaviour:
   description: Road lamp that allows you to see in the dark.
   cost: 2
   prefab: {fileID: 3226521009676847256, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
-  needToInvoke: 0
+  id: 3

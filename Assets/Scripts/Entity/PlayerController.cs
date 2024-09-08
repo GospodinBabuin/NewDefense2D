@@ -3,11 +3,12 @@ using Buildings;
 using Cinemachine;
 using Environment;
 using Interfaces;
+using SaveLoadSystem;
 using UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerController : Entity
+public class PlayerController : Entity, IBind<PlayerData>
 {
     [SerializeField] private float interactionRadius = 1.3f;
 
@@ -23,12 +24,21 @@ public class PlayerController : Entity
     private bool _canUpgrade;
     private bool _canRepair;
 
+    [field: SerializeField] public SerializableGuid Id { get; set; } = SerializableGuid.NewGuid();
+    [SerializeField] private PlayerData data;
+
+    public void Bind(PlayerData playerData)
+    {
+        data = playerData;
+        data.Id = Id;
+        Health.MaxHealth = data.maxHealth;
+        Health.CurrentHealth = data.currentHealth;
+    }
+
     protected override void Awake()
     {
         base.Awake();
         
-        ObjectsInWorld.Instance?.AddPlayerToList(this);
-
         _input = GetComponent<InputReader>();
     }
 
@@ -42,6 +52,7 @@ public class PlayerController : Entity
         }
         _input.Enable();
         ParalaxManager.Instance.Initialize(GetComponentInChildren<Camera>());
+        ObjectsInWorld.Instance?.AddPlayerToList(this);
     }
 
     private void Update()
@@ -224,4 +235,14 @@ public class PlayerController : Entity
     {
         Gizmos.DrawWireSphere(transform.position, interactionRadius);
     }
+    
+    
+}
+
+[Serializable]
+public class PlayerData : ISaveable
+{
+    [field: SerializeField]public SerializableGuid Id { get; set; }
+    public int maxHealth;
+    public int currentHealth;
 }

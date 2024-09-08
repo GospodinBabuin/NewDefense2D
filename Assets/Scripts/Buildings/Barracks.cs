@@ -17,10 +17,11 @@ namespace Buildings
         [SerializeField] private int startAllyCoutSize = 6;
         [SerializeField] private int magnificationSize = 2;
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
+            
             _circleCollider = GetComponentInChildren<CircleCollider2D>();
-
             AllyCountController.Instance.IncreaseMaxAllyCount(startAllyCoutSize);
         }
         

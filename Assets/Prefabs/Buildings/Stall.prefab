@@ -631,9 +631,9 @@ GameObject:
   - component: {fileID: 7382494629343020040}
   - component: {fileID: 404610172904505260}
   - component: {fileID: 1446850357737514553}
+  - component: {fileID: -2011899575785707301}
   - component: {fileID: 1726873556756374246}
   - component: {fileID: 4299375645487318811}
-  - component: {fileID: -2011899575785707301}
   m_Layer: 9
   m_Name: Stall
   m_TagString: Untagged
@@ -768,12 +768,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4af621f3ca2199a4f9ecb1fb6f147a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  needToCheckBorders: 1
   upgradeToLvl2Cost: 75
   upgradeToLvl3Cost: 100
   repairCostPerDamage: 5
   goldPerIteration: 1
   iterationTimerInSeconds: 2
   maxGold: 10
+--- !u!114 &-2011899575785707301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8880890979157700241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2694828697
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &1726873556756374246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -787,7 +809,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 5
-  _currentHealth: 0
 --- !u!95 &4299375645487318811
 Animator:
   serializedVersion: 5
@@ -809,27 +830,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &-2011899575785707301
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8880890979157700241}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 0
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
 --- !u!1 &8880890979189036120
 GameObject:
   m_ObjectHideFlags: 0

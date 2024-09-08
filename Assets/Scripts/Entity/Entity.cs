@@ -5,6 +5,7 @@ using HealthSystem;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
@@ -39,6 +40,7 @@ public class Entity : NetworkBehaviour
         LayerMask groundLayerMask = LayerMask.GetMask("Ground");
         RaycastHit2D hit = Physics2D.Raycast(transform.position, -transform.up, float.MaxValue, groundLayerMask);
         if (hit) transform.position = hit.point + new Vector2(0, GetComponent<BoxCollider2D>().size.y / 2);
+        transform.position += new Vector3(0, 0, Random.Range(0f, 1f));
     }
 
     protected T FindNearestFoe<T>(List<T> foes, bool activateVisionRange) where T : MonoBehaviour

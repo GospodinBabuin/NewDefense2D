@@ -16,4 +16,4 @@ MonoBehaviour:
   description: Sharp spikes that prevent the passage of monsters. Break after use.
   cost: 10
   prefab: {fileID: 0}
-  needToInvoke: 0
+  id: 4

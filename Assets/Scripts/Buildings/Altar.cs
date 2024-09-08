@@ -10,8 +10,10 @@ namespace Buildings
         private CircleCollider2D _circleCollider;
         [SerializeField] private LayerMask enemyLayerMask;
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
+            
             _circleCollider = GetComponentInChildren<CircleCollider2D>();
         }
 

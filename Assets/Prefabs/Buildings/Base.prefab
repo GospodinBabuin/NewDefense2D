@@ -93,10 +93,10 @@ GameObject:
   - component: {fileID: 3067657705464389106}
   - component: {fileID: 6218444103166222258}
   - component: {fileID: 3379720851374286934}
+  - component: {fileID: 5671456402527389671}
   - component: {fileID: 1892376212921217150}
   - component: {fileID: 3160529769979456093}
   - component: {fileID: 2557171857842594000}
-  - component: {fileID: 5671456402527389671}
   m_Layer: 9
   m_Name: Base
   m_TagString: Untagged
@@ -208,6 +208,27 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 3.4, y: 2}
   m_EdgeRadius: 0
+--- !u!114 &5671456402527389671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8270543974253747906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2992159018
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &1892376212921217150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -221,7 +242,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 10
-  _currentHealth: 0
 --- !u!95 &3160529769979456093
 Animator:
   serializedVersion: 5
@@ -255,30 +275,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 548009bf44f23c8409b2c39e448645a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  needToCheckBorders: 0
   upgradeToLvl2Cost: 100
   upgradeToLvl3Cost: 250
   repairCostPerDamage: 10
---- !u!114 &5671456402527389671
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8270543974253747906}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 0
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
 --- !u!1001 &15407571400226809
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1642,6 +1642,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3067657705464389106}
     m_Modifications:
+    - target: {fileID: -9181966938353155775, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3001193731
+      objectReference: {fileID: 0}
     - target: {fileID: -4617507743873188636, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
       propertyPath: m_Enabled
       value: 1

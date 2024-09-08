@@ -5,12 +5,10 @@ using Random = UnityEngine.Random;
 
 public class Enemy : Entity
 {
-    [SerializeField] private byte goldAfterDeath = 5; 
+    [SerializeField] private byte goldAfterDeath = 5;
 
-    protected override void Awake()
+    private void Start()
     {
-        base.Awake();
-        
         ObjectsInWorld.Instance.AddEnemyToList(this);
     }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -80,6 +81,8 @@ public class PlayerInfoHandler : MonoBehaviour
 
     private void ShowOrHidePlayerFieldBoxHandler(string sceneName)
     {
+        if (playerFieldBoxCanvas == null) return;
+        
         if (sceneName == "Lobby")
         {
             playerFieldBoxCanvas.rootCanvas.enabled = true;
@@ -88,5 +91,10 @@ public class PlayerInfoHandler : MonoBehaviour
         {
             playerFieldBoxCanvas.rootCanvas.enabled = false;
         }
+    }
+
+    private void OnDestroy()
+    {
+        SceneTransitionHandler.Instance.OnFadeOutStartedEvent -= ShowOrHidePlayerFieldBoxHandler;
     }
 }

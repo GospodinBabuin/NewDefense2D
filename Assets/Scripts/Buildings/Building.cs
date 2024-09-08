@@ -2,7 +2,6 @@ using System;
 using Environment;
 using HealthSystem;
 using UI;
-using Unity.Netcode;
 using UnityEngine;
 
 namespace Buildings
@@ -13,30 +12,34 @@ namespace Buildings
     [RequireComponent(typeof(Animator))]
     public class Building : MonoBehaviour
     {
-        private BuildingHealth _health;
-        public BuildingHealth Health { get => _health; private set => _health = value; }
-        
+        public BuildingHealth Health { get; private set; }
+        protected Animator Animator { get; private set; }
         public byte BuildingLvl { get; private set; }
+
+        [SerializeField] private bool needToCheckBorders;
 
         [SerializeField] private byte upgradeToLvl2Cost;
         [SerializeField] private byte upgradeToLvl3Cost;
 
         [SerializeField] private byte repairCostPerDamage = 5;
 
-        private Animator _animator;
-        protected Animator Animator { get => _animator; private set => _animator = value; }
-        
+
         private int _animIDUpgradeToLvl2;
         private int _animIDUpgradeToLvl3;
 
         
         private void Awake()
         {
-            _health = GetComponent<BuildingHealth>();
-            _animator = GetComponent<Animator>();
+            Health = GetComponent<BuildingHealth>();
+            Animator = GetComponent<Animator>();
             BuildingLvl = 1;
             
             SetAnimIDs();
+        }
+
+        protected virtual void Start()
+        {
+            ObjectsInWorld.Instance.AddBuildingToList(this, needToCheckBorders);
         }
 
         [ContextMenu("Upgrade")]
@@ -50,7 +53,7 @@ namespace Buildings
                         GameUI.Instance.Notifications.ShowNotEnoughMoneyNotification();
                         return;
                     }
-                    _animator.SetTrigger(_animIDUpgradeToLvl2);
+                    Animator.SetTrigger(_animIDUpgradeToLvl2);
                     GoldBank.Instance.SpendGold(this, upgradeToLvl2Cost);
                     break;
                 case 2:
@@ -59,14 +62,14 @@ namespace Buildings
                         GameUI.Instance.Notifications.ShowNotEnoughMoneyNotification();
                         return;
                     }
-                    _animator.SetTrigger(_animIDUpgradeToLvl3); 
+                    Animator.SetTrigger(_animIDUpgradeToLvl3); 
                     GoldBank.Instance.SpendGold(this, upgradeToLvl3Cost);
                     break;
             }
             
             BuildingLvl++;
-            _health.IncreaseMaxHealth(_health.MaxHealth/2);
-            _health.Heal(_health.MaxHealth/2);
+            Health.IncreaseMaxHealth(Health.MaxHealth/2);
+            Health.Heal(Health.MaxHealth/2);
         }
 
         protected int GetUpgradeToNextLvlCost()
@@ -91,12 +94,12 @@ namespace Buildings
             }
 
             GoldBank.Instance.SpendGold(this, CostToRepairBuilding());
-            _health.HealToMaxHealth();
+            Health.HealToMaxHealth();
         }
 
         public int CostToRepairBuilding()
         { 
-            return _health.HealthToMax() * repairCostPerDamage * BuildingLvl;
+            return Health.HealthToMax() * repairCostPerDamage * BuildingLvl;
         }
 
         protected virtual void OnDestroy()

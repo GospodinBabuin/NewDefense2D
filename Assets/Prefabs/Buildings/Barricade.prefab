@@ -229,7 +229,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3642655534
+  GlobalObjectIdHash: 3265284438
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -263,6 +263,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45d8cbd760a09134a9f92a9b5c9ae1b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  needToCheckBorders: 1
   upgradeToLvl2Cost: 40
   upgradeToLvl3Cost: 55
   repairCostPerDamage: 5

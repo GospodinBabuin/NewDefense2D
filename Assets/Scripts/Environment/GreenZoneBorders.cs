@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Buildings;
 using Environment;
@@ -113,5 +114,10 @@ public class GreenZoneBorders : MonoBehaviour
     {
         return (objectsPosition.x > defaultLeftBorder.position.x &&
             objectsPosition.x < defaultRightBorder.position.x);
+    }
+
+    private void OnDestroy()
+    {
+        ObjectsInWorld.Instance.OnBuildingsListChangedEvent -= SetBorders;
     }
 }

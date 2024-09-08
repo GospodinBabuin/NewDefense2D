@@ -8,10 +8,8 @@ public class AlliedSoldier : Entity
     public Transform SelectedBorder { get; private set; }
     private Vector2 _selectedBorderPosition;
 
-    protected override void Awake()
+    private void Start()
     {
-        base.Awake();
-        
         ObjectsInWorld.Instance.AddSoldierToList(this);
         GreenZoneBorders.Instance.OnBordersPositionChangedEvent += SelectBordersPosition;
         GreenZoneBorders.Instance.SelectBorder(this);

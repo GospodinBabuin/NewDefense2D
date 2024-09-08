@@ -75,6 +75,10 @@ public class SceneTransitionHandler : NetworkBehaviour
         else
         {
             Debug.Log("Coroutine transition");
+            if (PlayerInfoHandler.Instance != null)
+            {
+                Destroy(PlayerInfoHandler.Instance.gameObject);
+            }
             StartCoroutine(LoadSceneCoroutine(sceneName));
         }
     }

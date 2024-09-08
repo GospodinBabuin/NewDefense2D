@@ -16,4 +16,4 @@ MonoBehaviour:
   description: A weapon rack that allows you to recruit warriors.
   cost: 20
   prefab: {fileID: 1417126715660350475, guid: db3033d1b9a69204ebc8a3bc98f3c254, type: 3}
-  needToInvoke: 1
+  id: 1

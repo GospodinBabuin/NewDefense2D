@@ -523,8 +523,8 @@ MonoBehaviour:
   globalLight: {fileID: 619394801}
   globalLightIntensityChangeSpeed: 15
   dayTimeGlobalLightIntensity: 1
-  eveningTimeGlobalLightIntensity: 0.65
-  nightTimeGlobalLightIntensity: 0.05
+  eveningTimeGlobalLightIntensity: 0.55
+  nightTimeGlobalLightIntensity: 0.01
   dayTime: 0
   eveningTime: 60
   nightTime: 120

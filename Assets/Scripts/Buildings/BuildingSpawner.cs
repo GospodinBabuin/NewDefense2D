@@ -6,17 +6,20 @@ using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Serialization;
 
 namespace BuildingSystem
 {
     public class BuildingSpawner : NetworkBehaviour
     {
         [SerializeField] private LayerMask groundLayerMask;
+        [SerializeField] private BuildingDatabaseSO database;
     
         private GameObject _buildingToSpawn;
+        private int _selectedObjectIndex = -1;
+        
         private int _buildingCost;
         private bool _previewMode = false;
-        private bool _needToInvoke = true;
 
         private InputReader _input;
 
@@ -32,6 +35,7 @@ namespace BuildingSystem
                 if (GameUI.Instance != null)
                 {
                     GameUI.Instance.buildingSpawner = this;
+                    StopPlacement();
                 }
             }
             else
@@ -68,40 +72,55 @@ namespace BuildingSystem
             }
             
             GoldBank.Instance.SpendGold(this, _buildingCost);
-            PlaceBuildingServerRPC();
+            PlaceBuilding();
             StopPlacement();
         }
 
-        public void StartPlacement(GameObject buildingPrefab, bool needToInvoke, int buildingCost)
+        public void StartPlacement(int buildingId, int buildingCost)
         {
             if (_buildingToSpawn != null)
                 Destroy(_buildingToSpawn);
-        
+
+            _selectedObjectIndex = database.buildingsData.FindIndex(data => data.ID == buildingId);
+            if (_selectedObjectIndex < 0)
+                Debug.Log($"No id found {buildingId}");
+            
+            GameObject buildingPrefab = database.buildingsData[_selectedObjectIndex].Prefab;
             buildingPrefab.GetComponent<Building>().enabled = false;
+           
             _buildingToSpawn = Instantiate(buildingPrefab, transform.position, quaternion.identity);
             DeactivateBuildingsCollider(_buildingToSpawn);
             _buildingToSpawn.AddComponent<SortingGroup>().sortingLayerName = "BuildingToSpawn";
-            _needToInvoke = needToInvoke;
             _buildingCost = buildingCost;
             _previewMode = true;
         }
 
         private void StopPlacement()
         {
-            _needToInvoke = false;
+            _selectedObjectIndex = -1;
             _previewMode = false;
             _buildingToSpawn = null;
             _buildingCost = int.MaxValue;
         }
         
-        [ServerRpc(RequireOwnership = false)]
-        private void PlaceBuildingServerRPC()
+        private void PlaceBuilding()
         {
-            _buildingToSpawn.GetComponent<Building>().enabled = true;
+            /*_buildingToSpawn.GetComponent<Building>().enabled = true;
             ActivateBuildingsCollider(_buildingToSpawn);
             Destroy(_buildingToSpawn.GetComponent<SortingGroup>());
-            ObjectsInWorld.Instance.AddBuildingToList(_buildingToSpawn.GetComponent<Building>(), _needToInvoke);
-            _buildingToSpawn.GetComponent<NetworkObject>().Spawn(true);
+            _buildingToSpawn.GetComponent<NetworkObject>().Spawn(true);*/
+
+            Vector2 buildingPosition = _buildingToSpawn.transform.position;
+            Destroy(_buildingToSpawn);
+            SpawnBuildingServerRPC(_selectedObjectIndex, buildingPosition);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void SpawnBuildingServerRPC(int buildingId, Vector2 position)
+        {
+            GameObject buildingPrefab = Instantiate(database.buildingsData[buildingId].Prefab, position, quaternion.identity);
+            buildingPrefab.GetComponent<Building>().enabled = true;
+            buildingPrefab.GetComponent<NetworkObject>().Spawn(true);
         }
 
         private void SetBuildingPosition()

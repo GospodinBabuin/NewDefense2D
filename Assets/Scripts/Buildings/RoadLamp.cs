@@ -11,8 +11,10 @@ namespace Buildings
 
         private bool _lightsOn = false;
         
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
+            
             _animIDTurnOn = Animator.StringToHash("TurnOn");
             _animIDTurnOff = Animator.StringToHash("TurnOff");
             

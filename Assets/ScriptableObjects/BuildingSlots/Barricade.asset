@@ -16,4 +16,4 @@ MonoBehaviour:
   description: A reliable mount that can contain a large pressure.
   cost: 15
   prefab: {fileID: 5373330553216305747, guid: e0868e2099f22704cb8f4781f4dffe5f, type: 3}
-  needToInvoke: 1
+  id: 2

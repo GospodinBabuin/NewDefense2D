@@ -5,8 +5,17 @@ namespace HealthSystem
 {
     public class Health : NetworkBehaviour
     {
-        public int MaxHealth => maxHealth;
-        public int CurrentHealth => _currentHealth;
+        public int MaxHealth
+        {
+            get => maxHealth;
+            set => maxHealth = value;
+        }
+
+        public int CurrentHealth
+        {
+            get => _currentHealth;
+            set => _currentHealth = value;
+        }
 
         [SerializeField] private int maxHealth;
         private int _currentHealth;

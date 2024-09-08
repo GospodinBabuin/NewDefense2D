@@ -14,8 +14,10 @@ namespace Buildings
         private int _collectedGold;
         private float _timerDelta;
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
+            
             _timerDelta = iterationTimerInSeconds;
             _chest = GetComponentInChildren<Chest>();
         }
@@ -62,7 +64,7 @@ namespace Buildings
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            _chest.DestroyChest();
+            _chest?.DestroyChest();
         }
 
         public void Upgrade()
