@@ -1,14 +1,15 @@
 using System;
 using Buildings;
-using Cinemachine;
 using Environment;
 using Interfaces;
 using SaveLoadSystem;
+using Steamworks;
 using UI;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerController : Entity, IBind<PlayerData>
+public class PlayerController : Entity, IBind<PlayerController.PlayerDataStruct>
 {
     [SerializeField] private float interactionRadius = 1.3f;
 
@@ -24,15 +25,36 @@ public class PlayerController : Entity, IBind<PlayerData>
     private bool _canUpgrade;
     private bool _canRepair;
 
-    [field: SerializeField] public SerializableGuid Id { get; set; } = SerializableGuid.NewGuid();
-    [SerializeField] private PlayerData data;
-
-    public void Bind(PlayerData playerData)
+    public ulong SteamId { get; set; }
+    
+    public struct PlayerDataStruct : INetworkSerializable, ISaveable
     {
-        data = playerData;
-        data.Id = Id;
-        Health.MaxHealth = data.maxHealth;
-        Health.CurrentHealth = data.currentHealth;
+        public ulong id;
+        public int maxHealth;
+        public int currentHealth;
+        public int goldCount;
+        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+        {
+            serializer.SerializeValue(ref id);
+            serializer.SerializeValue(ref maxHealth);
+            serializer.SerializeValue(ref currentHealth);
+            serializer.SerializeValue(ref goldCount);
+        }
+    }
+    
+    public void Bind(PlayerDataStruct playerData)
+    {
+        Health.SetMaxHealth(playerData.maxHealth);
+        Health.SetCurrentHealth(playerData.currentHealth);
+        GoldBank.Instance.SetGoldCount(this, playerData.goldCount);
+        
+        Debug.Log($"SaveLoadSystem bind {gameObject}, ID: {SteamClient.SteamId}");
+    }
+
+    [ContextMenu("SavePlayerData")]
+    public void SaveData()
+    {
+        SaveLoad.Instance.SavePlayerServerRpc(SteamId, Health.MaxHealth, Health.CurrentHealth, GoldBank.Instance.Gold);
     }
 
     protected override void Awake()
@@ -52,7 +74,10 @@ public class PlayerController : Entity, IBind<PlayerData>
         }
         _input.Enable();
         ParalaxManager.Instance.Initialize(GetComponentInChildren<Camera>());
-        ObjectsInWorld.Instance?.AddPlayerToList(this);
+        //ObjectsInWorld.Instance?.AddPlayerToDictionaryClientRpc(Id);
+        ObjectsInWorld.Instance?.AddPlayerToDictionary(this, SteamId);
+
+        NetworkTransmission.Instance?.PlayerLoadedInGameServerRPC(true, NetworkManager.Singleton.LocalClientId);
     }
 
     private void Update()
@@ -227,7 +252,8 @@ public class PlayerController : Entity, IBind<PlayerData>
     public override void OnDestroy()
     {
         base.OnDestroy();
-        ObjectsInWorld.Instance?.RemovePlayerFromList(this);
+        //ObjectsInWorld.Instance?.RemovePlayerFromListClientRpc(Id);
+        ObjectsInWorld.Instance?.RemovePlayerFromList(this, SteamId);
         this.enabled = false;
     }
 
@@ -235,14 +261,13 @@ public class PlayerController : Entity, IBind<PlayerData>
     {
         Gizmos.DrawWireSphere(transform.position, interactionRadius);
     }
-    
-    
 }
 
 [Serializable]
 public class PlayerData : ISaveable
 {
-    [field: SerializeField]public SerializableGuid Id { get; set; }
-    public int maxHealth;
-    public int currentHealth;
+    public ulong id;
+    public int maxHealth = 10;
+    public int currentHealth = 10;
+    public int goldCount = 100;
 }

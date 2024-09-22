@@ -13,7 +13,9 @@ public class Enemy : Entity
     }
 
     private void Update()
-    {
+    {   
+        if (!IsHost) return;
+
         if (nearestFoe != null)
         {
             if (!Locomotion.CloseEnough(nearestFoe.transform.position))
@@ -34,6 +36,8 @@ public class Enemy : Entity
 
     private void FixedUpdate()
     {
+        if (!IsHost) return;
+
         nearestFoe = FindNearestFoe(ObjectsInWorld.Instance.AlliedObjects, false);
     }
     

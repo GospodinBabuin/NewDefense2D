@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
 using HealthSystem;
+using Unity.Netcode;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class Combat : MonoBehaviour
+public class Combat : NetworkBehaviour
 {
     private Animator _animator;
 

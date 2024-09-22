@@ -49,5 +49,19 @@ namespace HealthSystem
         
             OnHealthValueChangedEvent?.Invoke(CurrentHealth, MaxHealth);
         }
+
+        public override void SetMaxHealth(int newMaxHealth)
+        {
+            base.SetMaxHealth(newMaxHealth);
+            
+            OnHealthValueChangedEvent?.Invoke(CurrentHealth, MaxHealth);
+        }
+
+        public override void SetCurrentHealth(int newCurrentHealth)
+        {
+            base.SetCurrentHealth(newCurrentHealth);
+            
+            OnHealthValueChangedEvent?.Invoke(CurrentHealth, MaxHealth);
+        }
     }
 }

@@ -12,14 +12,14 @@ namespace Environment
         [SerializeField] private List<Building> _buildings = new List<Building>();
         [SerializeField] private List<AlliedSoldier> _alliedSoldiers = new List<AlliedSoldier>();
         [SerializeField] private List<Enemy> _enemies = new List<Enemy>();
-        [SerializeField] private List<Entity> _players = new List<Entity>();
         [SerializeField] private List<MonoBehaviour> _alliedObjects  = new List<MonoBehaviour>();
         [SerializeField] private List<GameObject> _deadBodies = new List<GameObject>();
+        [SerializeField] private Dictionary<ulong, PlayerController> _players = new Dictionary<ulong, PlayerController>();
 
+        public Dictionary<ulong, PlayerController> Players => _players;
         public List<Building> Buildings => _buildings;
         public List<AlliedSoldier> AlliedSoldiers => _alliedSoldiers;
         public List<Enemy> Enemies => _enemies;
-        public List<Entity> Players => _players;
         public List<MonoBehaviour> AlliedObjects => _alliedObjects;
         public List<GameObject> DeadBodies => _deadBodies;
 
@@ -33,8 +33,8 @@ namespace Environment
         public delegate void EnemiesHandler(List<Enemy> enemies);
         public event EnemiesHandler OnEnemiesListChangedEvent;
 
-        public delegate void PlayersHandler(List<Entity> players);
-        public event PlayersHandler OnPlayersListChangedEvent;
+        public delegate void PlayersHandler(Dictionary<ulong, PlayerController> players);
+        public event PlayersHandler OnPlayersDictionaryChangedEvent;
     
         public delegate void DeadBodiesHandler(List<GameObject> deadBodies);
         public event DeadBodiesHandler OnDeadBodiesListChangedEvent;
@@ -102,21 +102,47 @@ namespace Environment
 
             OnEnemiesListChangedEvent?.Invoke(_enemies);
         }
-        public void AddPlayerToList(Entity player)
+        
+        public void AddPlayerToDictionary(PlayerController player, ulong id)
         {
-            _players.Add(player);
+            _players.Add(id, player);
             _alliedObjects.Add(player.GetComponent<MonoBehaviour>());
-
-
-            OnPlayersListChangedEvent?.Invoke(_players);
+            
+            OnPlayersDictionaryChangedEvent?.Invoke(_players);
         }
 
-        public void RemovePlayerFromList(Entity player)
+        public void RemovePlayerFromList(PlayerController player, ulong id)
         {
-            _players.Remove(player);
+            _players.Remove(id);
             _alliedObjects.Remove(player.GetComponent<MonoBehaviour>());
 
-            OnPlayersListChangedEvent?.Invoke(_players);
+            OnPlayersDictionaryChangedEvent?.Invoke(_players);
+        }
+        
+        [ClientRpc(RequireOwnership = false)]
+        public void AddPlayerToDictionaryClientRpc(ulong id)
+        {
+            PlayerController[] players = FindObjectsByType<PlayerController>(FindObjectsSortMode.None);
+            foreach (PlayerController player in players)
+            {
+                if (player.SteamId == id)
+                {
+                    _players.Add(id, player);
+                    _alliedObjects.Add(player.GetComponent<MonoBehaviour>());
+            
+                    OnPlayersDictionaryChangedEvent?.Invoke(_players);
+                    return;
+                }
+            }
+        }
+        
+        [ClientRpc(RequireOwnership = false)]
+        public void RemovePlayerFromListClientRpc(ulong id)
+        {
+            _alliedObjects.Remove(_players[id]);
+            _players.Remove(id);
+
+            OnPlayersDictionaryChangedEvent?.Invoke(_players);
         }
     
         public void AddDeadBodiesToList(GameObject deadBodies)

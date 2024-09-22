@@ -12,6 +12,8 @@ namespace BuildingSystem
 {
     public class BuildingSpawner : NetworkBehaviour
     {
+        public static BuildingSpawner Instance;
+        
         [SerializeField] private LayerMask groundLayerMask;
         [SerializeField] private BuildingDatabaseSO database;
     
@@ -32,9 +34,9 @@ namespace BuildingSystem
         {
             if (IsOwner)
             {
-                if (GameUI.Instance != null)
+                if (Instance == null)
                 {
-                    GameUI.Instance.buildingSpawner = this;
+                    Instance = this;
                     StopPlacement();
                 }
             }
@@ -120,8 +122,19 @@ namespace BuildingSystem
         {
             GameObject buildingPrefab = Instantiate(database.buildingsData[buildingId].Prefab, position, quaternion.identity);
             buildingPrefab.GetComponent<Building>().enabled = true;
+            buildingPrefab.GetComponent<Building>().SetBuildingsId(buildingId);
             buildingPrefab.GetComponent<NetworkObject>().Spawn(true);
         }
+        
+        /*[ServerRpc(RequireOwnership = false)]
+        public void SpawnBuildingServerRPC(BuildingData data)
+        {
+            GameObject buildingPrefab = Instantiate(database.buildingsData[data.id].Prefab, data.position, quaternion.identity);
+            buildingPrefab.GetComponent<Building>().enabled = true;
+            buildingPrefab.GetComponent<Building>().SetBuildingsId(data.id);
+            buildingPrefab.GetComponent<Building>().Bind(data);
+            buildingPrefab.GetComponent<NetworkObject>().Spawn(true);
+        } */
 
         private void SetBuildingPosition()
         {

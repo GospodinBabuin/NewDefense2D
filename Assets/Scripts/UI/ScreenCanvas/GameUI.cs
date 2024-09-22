@@ -7,7 +7,6 @@ namespace UI
     public class GameUI : MonoBehaviour
     {
         public static GameUI Instance { get; private set; }
-        public BuildingSpawner buildingSpawner;
     
         [SerializeField] private GameObject buildingMenu;
         [SerializeField] private UnitMenu unitMenu;

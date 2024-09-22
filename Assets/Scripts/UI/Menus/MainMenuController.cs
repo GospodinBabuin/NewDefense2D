@@ -1,10 +1,8 @@
-using System;
-using System.IO;
+using SaveLoadSystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
-namespace Game
+namespace UI.Menus
 {
     public class MainMenuController : MonoBehaviour
     {
@@ -13,7 +11,7 @@ namespace Game
 
         private void Start()
         {
-            if (!File.Exists(Application.persistentDataPath + "/GameSave.save"))
+            if (!SaveLoad.Instance.IsSaveFileExists())
             {
                 continueGame.SetActive(false);
             }
@@ -21,6 +19,8 @@ namespace Game
         
         public void OnContinueGameButtonClicked()
         {
+            SaveLoad.Instance.LoadGame();
+            
             SceneManager.LoadSceneAsync("Lobby");
         }
         
@@ -38,10 +38,8 @@ namespace Game
         
         public void OnStartNewGameConfirmationButtonClicked()
         {
-            if (File.Exists(Application.persistentDataPath + "/GameSave.save"))
-            {
-                File.Delete(Application.persistentDataPath + "/GameSave.save");
-            }
+            SaveLoad.Instance.DeleteGame();
+            SaveLoad.Instance.NewGame();
 
             SceneTransitionHandler.Instance.SwitchScene("Lobby");
         }

@@ -1,17 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Buildings;
+using Environment;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace SaveLoadSystem
 {
-    public class SaveLoad : MonoBehaviour
+    public class SaveLoad : NetworkBehaviour
     {
         public static SaveLoad Instance { get; private set; }
 
-        [SerializeField] public GameData gameData;
+        [SerializeField] public GameData GameData;
+        
         private IDataService _dataService;
 
         private void Awake()
@@ -19,6 +22,7 @@ namespace SaveLoadSystem
             if (Instance == null)
             {
                 Instance = this;
+                DontDestroyOnLoad(gameObject);
 
                 _dataService = new FileDataService(new JsonSerializer());
             }
@@ -35,14 +39,14 @@ namespace SaveLoadSystem
             {
                 if (data == null)
                 {
-                    data = new TData { Id = entity.Id };
+                    data = new TData();
                 }
 
                 entity.Bind(data);
             }
         }
         
-        private void Bind<T, TData>(List<TData> datas) where T : NetworkBehaviour, IBind<TData> where TData : ISaveable, new()
+        /*private void Bind<T, TData>(List<TData> datas) where T : NetworkBehaviour, IBind<TData> where TData : ISaveable, new()
         {
             var entities = FindObjectsByType<T>(FindObjectsSortMode.None);
 
@@ -51,69 +55,133 @@ namespace SaveLoadSystem
                 var data = datas.FirstOrDefault(d => d.Id == entity.Id);
                 if (data == null)
                 {
-                    data = new TData { Id = entity.Id };
+                    data = new TData();
                     datas.Add(data);
                 }
 
                 entity.Bind(data);
             }
-        }
-
-        public void NewGame()
+        }*/
+        
+        private void LoadPlayers(List<PlayerData> playerDatas)
         {
-            gameData = new GameData
-            {
-                name = "New Game",
-                currentLevelName = "Lobby"
-            };
+            if (!IsHost) return;
             
-            SceneTransitionHandler.Instance.SwitchScene("Lobby");
-        }
+            PlayerController[] players = FindObjectsByType<PlayerController>(FindObjectsSortMode.None); /// TODO: use ObjInWorld
 
-        public void SaveGame() => _dataService.Save(gameData);
-
-        public void LoadGame(string gameName)
-        {
-            gameData = _dataService.Load(gameName);
-
-            if (String.IsNullOrWhiteSpace(gameData.currentLevelName))
+            foreach (PlayerController player in players)
             {
-                gameData.currentLevelName = "Lobby";
+                //PlayerData data = playerDatas.FirstOrDefault(d => d.id == player.Id);
+                //PlayerData data = playerDatas.Find(d => d.id == player.Id);
+                PlayerData data = null;
+                Debug.Log(player.SteamId);
+                foreach (PlayerData playerData in playerDatas)
+                {
+                    if (playerData.id == player.SteamId)
+                    {
+                        data = playerData;
+                        continue;
+                    }
+                }
+                if (data == null)
+                {
+                    data = new PlayerData{id = player.SteamId};
+                    playerDatas.Add(data);
+                }
+
+                BindPlayerClientRPC(player.SteamId,ConvertPlayerData(data));
+                //player.Bind(data);
             }
-            
-            SceneTransitionHandler.Instance.SwitchScene(gameData.currentLevelName);
         }
 
-        public void DeleteGame(string gameName) => _dataService.Delete(gameName);
-
-        private void OnEnable() => NetworkManager.Singleton.SceneManager.OnLoadComplete += OnSceneLoaded;
-
-        private void OnSceneLoaded(ulong clientid, string scenename, LoadSceneMode loadscenemode)
+        [ClientRpc]
+        private void BindPlayerClientRPC(ulong playerId, PlayerController.PlayerDataStruct data)
         {
-            if (scenename is "MainMenu" or "Lobby") return;
+            //ObjectsInWorld.Instance.Players[playerId].Bind(data);
             
-            Bind<PlayerController, PlayerData>(gameData.playerData);
+            PlayerController[] players = FindObjectsByType<PlayerController>(FindObjectsSortMode.None); /// TODO: use ObjInWorld
+            foreach (PlayerController player in players)
+            {
+                if (player.SteamId == playerId)
+                {
+                    player.Bind(data);
+                    return;
+                }
+            }
         }
 
-        private void OnDisable() => NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnSceneLoaded;
+        private PlayerController.PlayerDataStruct ConvertPlayerData(PlayerData playerData)
+        {
+            return new PlayerController.PlayerDataStruct
+            {
+                id = playerData.id,
+                maxHealth = playerData.maxHealth,
+                currentHealth = playerData.currentHealth,
+                goldCount = playerData.goldCount
+            };
+        }
+        
+        [ServerRpc(RequireOwnership = false)]
+        public void SavePlayerServerRpc(ulong id, int maxHealth, int currentHealth, int gold)
+        {
+            PlayerData data = GameData.playerData.FirstOrDefault(d => d.id == id);
+            data.maxHealth = maxHealth;
+            data.currentHealth = currentHealth;
+            data.goldCount = gold;
+            Debug.Log($"Players data saved, ID: {id}");
+        }
+
+        private void LoadBuildings(List<BuildingData> buildingDatas)
+        {
+            foreach (BuildingData buildingData in buildingDatas)
+            {
+                //BuildingSpawner.Instance.SpawnBuildingServerRPC(buildingData);
+            }
+        }
+
+        public void CheckIfAllPlayersLoadedInGame()
+        {
+            foreach (KeyValuePair<ulong, GameObject> player in PlayerInfoHandler.Instance.PlayerInfos)
+            {
+                if (!player.Value.GetComponent<PlayerInfo>().isInGame)
+                {
+                    return;
+                }
+            }
+
+            BindPlayersData();
+        }
+
+        [ContextMenu("NewGame")]
+        public void NewGame() => GameData = new GameData();
+        
+        [ContextMenu("SaveGame")]
+        public void SaveGame() => _dataService.Save(GameData);
+        
+        [ContextMenu("LoadGame")]
+        public void LoadGame() => GameData = _dataService.Load();
+        
+        [ContextMenu("DeleteGame")]
+        public void DeleteGame() => _dataService.Delete();
+
+        public bool IsSaveFileExists() => _dataService.IsSaveFileExists();
+
+        [ContextMenu("BindPlayers")]
+        public void BindPlayersData() => LoadPlayers(GameData.playerData);
     }
 
-    public interface ISaveable
-    {
-        SerializableGuid Id { get; set; }
-    }
+    public interface ISaveable { }
 
     public interface IBind<TData> where TData : ISaveable
-    {
-        SerializableGuid Id { get; set; }
+    { 
         void Bind(TData data);
+        void SaveData();
     }
 
     [Serializable]
     public class GameData
-    {
-        public string name;
-        public string currentLevelName;
-        public PlayerData playerData;
+    { 
+        public List<PlayerData> playerData = new List<PlayerData>();
+        public List<BuildingData> buildingData = new List<BuildingData>();
     }
 }

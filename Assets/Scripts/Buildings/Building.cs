@@ -1,6 +1,7 @@
 using System;
 using Environment;
 using HealthSystem;
+using SaveLoadSystem;
 using UI;
 using UnityEngine;
 
@@ -10,11 +11,12 @@ namespace Buildings
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(BoxCollider2D))]
     [RequireComponent(typeof(Animator))]
-    public class Building : MonoBehaviour
+    public class Building : MonoBehaviour, IBind<BuildingData>
     {
         public BuildingHealth Health { get; private set; }
         protected Animator Animator { get; private set; }
         public byte BuildingLvl { get; private set; }
+        public int Id { get; private set; }
 
         [SerializeField] private bool needToCheckBorders;
 
@@ -22,11 +24,11 @@ namespace Buildings
         [SerializeField] private byte upgradeToLvl3Cost;
 
         [SerializeField] private byte repairCostPerDamage = 5;
-
-
+        
         private int _animIDUpgradeToLvl2;
         private int _animIDUpgradeToLvl3;
 
+        private BuildingData _buildingData;
         
         private void Awake()
         {
@@ -102,6 +104,8 @@ namespace Buildings
             return Health.HealthToMax() * repairCostPerDamage * BuildingLvl;
         }
 
+        public void SetBuildingsId(int id) => Id = id;
+
         protected virtual void OnDestroy()
         {
             if (ObjectsInWorld.Instance.Buildings.Contains(this))
@@ -113,5 +117,44 @@ namespace Buildings
             _animIDUpgradeToLvl2 = Animator.StringToHash("UpToLvl2");
             _animIDUpgradeToLvl3 = Animator.StringToHash("UpToLvl3");
         }
+
+        public void Bind(BuildingData data)
+        {
+            _buildingData = data;
+            data.id = Id;
+            BuildingLvl = data.level;
+            switch (BuildingLvl)
+            {
+                case 2:
+                    Animator.SetTrigger(_animIDUpgradeToLvl2);
+                    break;
+                case 3:
+                    Animator.SetTrigger(_animIDUpgradeToLvl3); 
+                    break;
+            }
+
+            for (int i = 1; i < BuildingLvl; i++)
+            {
+                Health.IncreaseMaxHealth(Health.MaxHealth/2);
+            }
+
+            Health.SetCurrentHealth(data.currentHealth);
+        }
+
+        public void SaveData()
+        {
+            _buildingData.position = transform.position;
+            _buildingData.currentHealth = Health.CurrentHealth;
+            _buildingData.level = BuildingLvl;
+        }
+    }
+
+    [Serializable]
+    public class BuildingData : ISaveable
+    {
+        public int id;
+        public Vector2 position;
+        public int currentHealth;
+        public byte level;
     }
 }

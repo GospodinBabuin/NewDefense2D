@@ -1,3 +1,4 @@
+using SaveLoadSystem;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -56,6 +57,28 @@ public class NetworkTransmission : NetworkBehaviour
     public void UpdateClientsPlayerInfoClientRpc(ulong steamId, string steamName, ulong clientId)
     {
         PlayerInfoHandler.Instance.AddPlayerToDictionary(clientId, steamName, steamId);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void PlayerLoadedInGameServerRPC(bool inGame, ulong clientId)
+    {
+        UpdatePlayerInfoInGameStateClientRpc(inGame, clientId);
+    }
+
+    [ClientRpc]
+    private void UpdatePlayerInfoInGameStateClientRpc(bool inGame, ulong clientId)
+    {
+        foreach (KeyValuePair<ulong, GameObject> player in PlayerInfoHandler.Instance.PlayerInfos)
+        {
+            if (player.Key == clientId)
+            {
+                player.Value.GetComponent<PlayerInfo>().isInGame = inGame;
+
+                if (!NetworkManager.Singleton.IsHost) continue;
+
+                SaveLoad.Instance.CheckIfAllPlayersLoadedInGame();
+            }
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]

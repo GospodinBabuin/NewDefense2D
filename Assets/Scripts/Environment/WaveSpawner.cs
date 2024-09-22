@@ -81,13 +81,13 @@ public class WaveSpawner : NetworkBehaviour
     {
         Debug.Log("spawning wave: " + wave.Name + " day: " + day);
 
-        _isMonstersAppeared = true;
-
         for (int i = 0; i < wave.Count + day; i++)
         {
             SpawnEnemy(wave.Enemy[Random.Range(0, wave.Enemy.Length)]);
             yield return new WaitForSeconds(1);
         }
+
+        _isMonstersAppeared = true;
 
         yield break;
     }

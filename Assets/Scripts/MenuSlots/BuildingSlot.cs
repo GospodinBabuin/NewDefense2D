@@ -26,7 +26,7 @@ namespace MenuSlots
 
         public void SelectBuilding()
         {
-            GameUI.Instance.buildingSpawner.StartPlacement(slotSO.ID ,slotSO.Cost);
+            BuildingSpawner.Instance.StartPlacement(slotSO.ID ,slotSO.Cost);
             GameUI.Instance.OpenOrCloseBuildingMenu();
         }
     }

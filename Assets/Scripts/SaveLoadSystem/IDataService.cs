@@ -5,9 +5,10 @@ namespace SaveLoadSystem
     public interface IDataService
     {
         void Save(GameData data, bool overwrite = true);
-        GameData Load(string name);
-        void Delete(string name);
+        GameData Load();
+        void Delete();
         void DeleteAll();
+        bool IsSaveFileExists();
         IEnumerable<string> ListSaves();
     }
 }

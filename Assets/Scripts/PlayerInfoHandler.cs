@@ -1,7 +1,10 @@
+using Steamworks;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
+using static UnityEngine.Rendering.DebugUI;
 
 public class PlayerInfoHandler : MonoBehaviour
 {
@@ -39,6 +42,7 @@ public class PlayerInfoHandler : MonoBehaviour
             PlayerInfo playerInfo = Instantiate(playerCardPrefab, playerFieldBox.transform).GetComponent<PlayerInfo>();
             playerInfo.steamId = steamId;
             playerInfo.steamName = steamName;
+            playerInfo.localId = clientId;
             PlayerInfos.Add(clientId, playerInfo.gameObject);
         }
     }
@@ -91,6 +95,21 @@ public class PlayerInfoHandler : MonoBehaviour
         {
             playerFieldBoxCanvas.rootCanvas.enabled = false;
         }
+    }
+
+    public ulong ReturnSteamIdByLocalId(ulong localId)
+    {
+        ulong tempSteamId = 0;
+        foreach (KeyValuePair<ulong, GameObject> player in PlayerInfos)
+        {
+            if (player.Value.GetComponent<PlayerInfo>().localId == localId)
+            {
+                tempSteamId = player.Value.GetComponent<PlayerInfo>().steamId;
+                break;
+            }
+        }
+        
+        return tempSteamId;
     }
 
     private void OnDestroy()

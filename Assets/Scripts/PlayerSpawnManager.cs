@@ -46,6 +46,7 @@ public class PlayerSpawnManager : NetworkBehaviour
     public void SpawnPlayerServerRPC(ulong clientId, bool destroyWithScene)
     {
         GameObject player = Instantiate(playerPrefab);
+        player.GetComponent<PlayerController>().SteamId = PlayerInfoHandler.Instance.ReturnSteamIdByLocalId(clientId);
         player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, destroyWithScene);
         Debug.Log($"Player {clientId} spawned");
     }

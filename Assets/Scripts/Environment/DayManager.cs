@@ -1,8 +1,10 @@
+using SaveLoadSystem;
 using UI;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-public class DayManager : MonoBehaviour
+public class DayManager : NetworkBehaviour
 {
     public static DayManager Instance { get; private set; }
 
@@ -13,10 +15,11 @@ public class DayManager : MonoBehaviour
     public event DayStateHandler OnDayStateChangedEvent;
 
     [SerializeField] private int _currentDay = 1;
-    [SerializeField] private float _currentTime;
+    private float _currentTime;
     private bool _globalLightIntensityOnPosition = true;
 
     [SerializeField] private Light2D globalLight;
+    [SerializeField] private float globalLightIntensity;
 
     [SerializeField] private float globalLightIntensityChangeSpeed = 15f;
 
@@ -51,72 +54,90 @@ public class DayManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        ChangeDayTime();
+        if (IsHost) 
+            ChangeDayTime();
+    }
+
+    [ClientRpc]
+    public void ChangeGlobalLightIntensityClientRPC(float targetIntencity)
+    {
+        globalLight.intensity = targetIntencity;
+    }
+
+    private void ChangeGlobalLightIntensity(float targetIntencity, DayState tragetDayState)
+    {
+        _globalLightIntensityOnPosition = false;
+        if (!_globalLightIntensityOnPosition)
+        {
+            float intensity;
+            if (tragetDayState == DayState.Day)
+            {
+                intensity = globalLight.intensity + Time.deltaTime / globalLightIntensityChangeSpeed;
+                ChangeGlobalLightIntensityClientRPC(intensity);
+                if (globalLight.intensity >= targetIntencity)
+                    ChangeDayStateClientRPC(targetIntencity, tragetDayState);
+            }
+            else
+            {
+                intensity = globalLight.intensity - Time.deltaTime / globalLightIntensityChangeSpeed;
+                ChangeGlobalLightIntensityClientRPC(intensity);
+                if (globalLight.intensity <= targetIntencity)
+                    ChangeDayStateClientRPC(targetIntencity, tragetDayState);
+            }
+        }
+    }
+
+    [ClientRpc]
+    private void ChangeDayStateClientRPC(float targetIntencity, DayState tragetDayState)
+    {
+        globalLight.intensity = targetIntencity;
+        _globalLightIntensityOnPosition = true;
+        dayState = tragetDayState;
+
+        if (tragetDayState == DayState.Day)
+        {
+            _currentTime = dayTime;
+            _currentDay++;
+            GameUI.Instance.Notifications.ShowNewDayNotification(_currentDay);
+        }
+        
+        OnDayStateChangedEvent?.Invoke(dayState, _currentDay);
+
+        if (IsHost && tragetDayState == DayState.Day)
+        {
+            SaveLoad.Instance.SaveGame();
+        }
     }
 
     private void ChangeDayTime()
     {
-        _currentTime += Time.deltaTime;
+        _currentTime += Time.fixedDeltaTime;
+        Debug.Log($"{_currentTime}, {Time.fixedDeltaTime}");
+
+        if (_currentTime >= eveningTime)
+        {
+            Debug.Log(_currentTime);
+        }
 
         if (_currentTime >= eveningTime && dayState == DayState.Day)
         {
-            _globalLightIntensityOnPosition = false;
-            if (!_globalLightIntensityOnPosition)
-            {
-                globalLight.intensity -= Time.deltaTime / globalLightIntensityChangeSpeed;
-
-                if (globalLight.intensity <= eveningTimeGlobalLightIntensity)
-                {
-                    globalLight.intensity = eveningTimeGlobalLightIntensity;
-                    _globalLightIntensityOnPosition = true;
-                    dayState = DayState.Evening;
-
-                    OnDayStateChangedEvent?.Invoke(dayState, _currentDay);
-                    return;
-                }
-            }
+            ChangeGlobalLightIntensity(eveningTimeGlobalLightIntensity, DayState.Evening);
         }
 
         if (_currentTime >= nightTime && dayState == DayState.Evening)
         {
-            _globalLightIntensityOnPosition = false;
-            if (!_globalLightIntensityOnPosition)
-            {
-                globalLight.intensity -= Time.deltaTime / globalLightIntensityChangeSpeed;
-
-                if (globalLight.intensity <= nightTimeGlobalLightIntensity)
-                {
-                    globalLight.intensity = nightTimeGlobalLightIntensity;
-                    _globalLightIntensityOnPosition = true;
-                    dayState = DayState.Night;
-
-                    OnDayStateChangedEvent?.Invoke(dayState, _currentDay);
-                    return;
-                }
-            }
+            ChangeGlobalLightIntensity(nightTimeGlobalLightIntensity, DayState.Night);
         }
 
         if (_currentTime >= newDayTime && dayState == DayState.Night || (dayState == DayState.Night && WaveSpawner.Instance.IsMonstersDead()))
         {
-            _globalLightIntensityOnPosition = false;
-            if (!_globalLightIntensityOnPosition)
-            {
-                globalLight.intensity += Time.deltaTime / globalLightIntensityChangeSpeed;
-
-                if (globalLight.intensity >= dayTimeGlobalLightIntensity)
-                {
-                    globalLight.intensity = dayTimeGlobalLightIntensity;
-                    _globalLightIntensityOnPosition = true;
-                    dayState = DayState.Day;
-                    _currentTime = dayTime;
-                    _currentDay++;
-
-                    GameUI.Instance.Notifications.ShowNewDayNotification(_currentDay);
-
-                    OnDayStateChangedEvent?.Invoke(dayState, _currentDay);
-                    return;
-                }
-            }
+            ChangeGlobalLightIntensity(dayTimeGlobalLightIntensity, DayState.Day);
         }
+    }
+
+    [ContextMenu("Add30SecToCurrentTime")]
+    public void Add30SecToCurrentTime()
+    {
+        _currentTime += 30f;
     }
 }

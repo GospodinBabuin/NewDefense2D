@@ -1,4 +1,5 @@
 using System;
+using SaveLoadSystem;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -46,6 +47,13 @@ public class GoldBank : NetworkBehaviour
     public bool IsEnoughGold(int amount)
     {
         return amount <= Gold;
+    }
+
+    public void SetGoldCount(object sender, int newGoldCount)
+    {
+        int oldGoldValue = Gold;
+        Gold = newGoldCount;
+        OnGoldValueChangedEvent?.Invoke(sender, oldGoldValue, Gold);
     }
 
     [ContextMenu("Add100Gold")]
