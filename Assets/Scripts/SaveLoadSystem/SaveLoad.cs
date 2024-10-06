@@ -1,11 +1,11 @@
+using Buildings;
+using Environment;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Buildings;
-using Environment;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using static Buildings.Building;
 
 namespace SaveLoadSystem
 {
@@ -14,7 +14,7 @@ namespace SaveLoadSystem
         public static SaveLoad Instance { get; private set; }
 
         [SerializeField] public GameData GameData;
-        
+
         private IDataService _dataService;
 
         private void Awake()
@@ -45,68 +45,39 @@ namespace SaveLoadSystem
                 entity.Bind(data);
             }
         }
-        
-        /*private void Bind<T, TData>(List<TData> datas) where T : NetworkBehaviour, IBind<TData> where TData : ISaveable, new()
-        {
-            var entities = FindObjectsByType<T>(FindObjectsSortMode.None);
 
-            foreach (var entity in entities)
-            {
-                var data = datas.FirstOrDefault(d => d.Id == entity.Id);
-                if (data == null)
-                {
-                    data = new TData();
-                    datas.Add(data);
-                }
-
-                entity.Bind(data);
-            }
-        }*/
-        
         private void LoadPlayers(List<PlayerData> playerDatas)
         {
             if (!IsHost) return;
-            
-            PlayerController[] players = FindObjectsByType<PlayerController>(FindObjectsSortMode.None); /// TODO: use ObjInWorld
 
-            foreach (PlayerController player in players)
+            foreach (NetworkClient client in NetworkManager.Singleton.ConnectedClients.Values)
             {
-                //PlayerData data = playerDatas.FirstOrDefault(d => d.id == player.Id);
-                //PlayerData data = playerDatas.Find(d => d.id == player.Id);
+                PlayerController player = client.PlayerObject.GetComponent<PlayerController>();
                 PlayerData data = null;
-                Debug.Log(player.SteamId);
                 foreach (PlayerData playerData in playerDatas)
                 {
                     if (playerData.id == player.SteamId)
                     {
                         data = playerData;
-                        continue;
+                        break;
                     }
                 }
                 if (data == null)
                 {
-                    data = new PlayerData{id = player.SteamId};
+                    data = new PlayerData { id = player.SteamId };
                     playerDatas.Add(data);
                 }
 
-                BindPlayerClientRPC(player.SteamId,ConvertPlayerData(data));
-                //player.Bind(data);
+                BindPlayerClientRPC(client.ClientId, ConvertPlayerData(data));
             }
         }
 
         [ClientRpc]
-        private void BindPlayerClientRPC(ulong playerId, PlayerController.PlayerDataStruct data)
+        private void BindPlayerClientRPC(ulong clientId, PlayerController.PlayerDataStruct data)
         {
-            //ObjectsInWorld.Instance.Players[playerId].Bind(data);
-            
-            PlayerController[] players = FindObjectsByType<PlayerController>(FindObjectsSortMode.None); /// TODO: use ObjInWorld
-            foreach (PlayerController player in players)
+            if (NetworkManager.Singleton.LocalClientId == clientId)
             {
-                if (player.SteamId == playerId)
-                {
-                    player.Bind(data);
-                    return;
-                }
+                NetworkManager.LocalClient.PlayerObject.GetComponent<PlayerController>().Bind(data);
             }
         }
 
@@ -120,7 +91,7 @@ namespace SaveLoadSystem
                 goldCount = playerData.goldCount
             };
         }
-        
+
         [ServerRpc(RequireOwnership = false)]
         public void SavePlayerServerRpc(ulong id, int maxHealth, int currentHealth, int gold)
         {
@@ -135,32 +106,66 @@ namespace SaveLoadSystem
         {
             foreach (BuildingData buildingData in buildingDatas)
             {
-                //BuildingSpawner.Instance.SpawnBuildingServerRPC(buildingData);
+                BuildingDataStruct convertedBuildingData = ConvertBuildingData(buildingData);
+                Building building;
+
+                if (buildingData.id == -1) continue;
+
+                if (buildingData.id == 6)
+                {
+                    building = GameObject.FindGameObjectWithTag("Base").GetComponent<Building>();
+                }
+                else
+                {
+                    building = BuildingSystem.BuildingSpawner.SpawnBuilding(convertedBuildingData);
+                }
+
+                building.Bind(convertedBuildingData);
             }
         }
 
-        public void CheckIfAllPlayersLoadedInGame()
+        private BuildingDataStruct ConvertBuildingData(BuildingData buildingData)
         {
-            foreach (KeyValuePair<ulong, GameObject> player in PlayerInfoHandler.Instance.PlayerInfos)
+            return new BuildingDataStruct
             {
-                if (!player.Value.GetComponent<PlayerInfo>().isInGame)
-                {
-                    return;
-                }
-            }
+                id = buildingData.id,
+                level = buildingData.level,
+                currentHealth = buildingData.currentHealth,
+                position = buildingData.position
+            };
+        }
 
-            BindPlayersData();
+        private void SaveBuildingData()
+        {
+            GameData.buildingData.Clear();
+            foreach (Building building in ObjectsInWorld.Instance.Buildings)
+            {
+                building.SaveData();
+                BuildingData buildingData = building.GetBuildingData();
+                GameData.buildingData.Add(buildingData);
+            }
         }
 
         [ContextMenu("NewGame")]
         public void NewGame() => GameData = new GameData();
-        
+
         [ContextMenu("SaveGame")]
-        public void SaveGame() => _dataService.Save(GameData);
-        
+        public void SaveGame()
+        {
+            PlayerController[] players = FindObjectsByType<PlayerController>(FindObjectsSortMode.None);
+            foreach (PlayerController player in players)
+            {
+                player.SaveData();
+            }
+
+            SaveBuildingData();
+
+            _dataService.Save(GameData);
+        }
+
         [ContextMenu("LoadGame")]
         public void LoadGame() => GameData = _dataService.Load();
-        
+
         [ContextMenu("DeleteGame")]
         public void DeleteGame() => _dataService.Delete();
 
@@ -168,19 +173,20 @@ namespace SaveLoadSystem
 
         [ContextMenu("BindPlayers")]
         public void BindPlayersData() => LoadPlayers(GameData.playerData);
+        public void BindBuildingsData() => LoadBuildings(GameData.buildingData);
     }
 
     public interface ISaveable { }
 
     public interface IBind<TData> where TData : ISaveable
-    { 
+    {
         void Bind(TData data);
         void SaveData();
     }
 
     [Serializable]
     public class GameData
-    { 
+    {
         public List<PlayerData> playerData = new List<PlayerData>();
         public List<BuildingData> buildingData = new List<BuildingData>();
     }

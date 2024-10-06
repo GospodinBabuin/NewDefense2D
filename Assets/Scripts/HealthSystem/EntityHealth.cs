@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 namespace HealthSystem
@@ -15,7 +16,7 @@ namespace HealthSystem
             _combat = GetComponent<Combat>();
         }
 
-        public override void Damage(int damageAmount)
+        protected override void Damage(int damageAmount)
         {
             animator.SetTrigger(_animIDTakeDamage);
         

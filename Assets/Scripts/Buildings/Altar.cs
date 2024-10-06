@@ -31,7 +31,7 @@ namespace Buildings
             
             _interactingObjectTransform = interactingObject.transform;
             
-            GameUI.Instance.OpenAltarMenu(BuildingLvl, this);
+            GameUI.Instance.OpenAltarMenu(BuildingLvl.Value, this);
         }
         
         private void CheckDistance()
@@ -68,7 +68,7 @@ namespace Buildings
 
         public bool CanUpgrade()
         {
-            return BuildingLvl < 3;
+            return BuildingLvl.Value < 3;
         }
         
         public int GetUpgradeCost()

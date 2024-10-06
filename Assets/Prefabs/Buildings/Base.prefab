@@ -99,7 +99,7 @@ GameObject:
   - component: {fileID: 2557171857842594000}
   m_Layer: 9
   m_Name: Base
-  m_TagString: Untagged
+  m_TagString: Base
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -241,7 +241,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a65c04055e59f004b9f078d39ac6e23c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 10
+  maxHealth:
+    m_InternalValue: 10
+  currentHealth:
+    m_InternalValue: 10
 --- !u!95 &3160529769979456093
 Animator:
   serializedVersion: 5
@@ -275,6 +278,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 548009bf44f23c8409b2c39e448645a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  BuildingLvl:
+    m_InternalValue: 1
+  id: 6
   needToCheckBorders: 0
   upgradeToLvl2Cost: 100
   upgradeToLvl3Cost: 250

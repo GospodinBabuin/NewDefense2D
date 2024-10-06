@@ -112,6 +112,21 @@ public class PlayerInfoHandler : MonoBehaviour
         return tempSteamId;
     }
 
+    public ulong ReturnLocalIdBySteamId(ulong steamId)
+    {
+        ulong tempLocalId = 0;
+        foreach (KeyValuePair<ulong, GameObject> player in PlayerInfos)
+        {
+            if (player.Value.GetComponent<PlayerInfo>().steamId == steamId)
+            {
+                tempLocalId = player.Value.GetComponent<PlayerInfo>().localId;
+                break;
+            }
+        }
+
+        return tempLocalId;
+    }
+
     private void OnDestroy()
     {
         SceneTransitionHandler.Instance.OnFadeOutStartedEvent -= ShowOrHidePlayerFieldBoxHandler;

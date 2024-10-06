@@ -1,3 +1,4 @@
+using Cainos.LucidEditor;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -5,11 +6,11 @@ namespace HealthSystem
 {
     public class Health : NetworkBehaviour
     {
-        public int MaxHealth => maxHealth;
-        public int CurrentHealth => _currentHealth;
+        public int GetMaxHealth => maxHealth.Value;
+        public int GetCurrentHealth => currentHealth.Value;
 
-        [SerializeField] private int maxHealth;
-        private int _currentHealth;
+        [SerializeField] private NetworkVariable<int> maxHealth = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        [SerializeField] private NetworkVariable<int> currentHealth = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     
         private int _animIDDie;
 
@@ -20,73 +21,87 @@ namespace HealthSystem
             animator = GetComponent<Animator>();
 
             SetAnimIDs();
-        
-            _currentHealth = maxHealth;
+
+            currentHealth.Value = maxHealth.Value;
         }
-        
-        public virtual void Damage(int damageAmount)
+
+        [ServerRpc(RequireOwnership = false)]
+        public void DamageServerRPC(int damageAmount)
         {
-            _currentHealth -= damageAmount;
-        
+            Damage(damageAmount);
+        }
+
+        protected virtual void Damage(int damageAmount)
+        {
+            currentHealth.Value -= damageAmount;
+            
+            Debug.Log($"{gameObject.name}, now have {GetCurrentHealth} health");
+
             CheckHealth();
         }
 
         public virtual void Heal(int healAmount)
         {
-            _currentHealth += healAmount;
+            currentHealth.Value += healAmount;
 
             CheckHealth();
         }
 
         public void HealToMaxHealth()
         {
-            _currentHealth = maxHealth;
+            currentHealth.Value = maxHealth.Value;
         }
 
         public int HealthToMax()
         {
-            return maxHealth - _currentHealth;
+            return maxHealth.Value - currentHealth.Value;
         }
 
         public virtual void IncreaseMaxHealth(int increaseAmount)
         {
-            maxHealth += increaseAmount;
+            maxHealth.Value += increaseAmount;
         }
 
         public virtual void ReduceMaxHealth(int reduceAmount)
         {
-            maxHealth -= reduceAmount;
+            maxHealth.Value -= reduceAmount;
         
             CheckHealth();
         }
     
         public bool IsMaxHealth()
         {
-            return _currentHealth == maxHealth;
+            return currentHealth.Value == maxHealth.Value;
         }
 
         public virtual void SetMaxHealth(int newMaxHealth)
         {
-            maxHealth = newMaxHealth;
+            maxHealth.Value = newMaxHealth;
             CheckHealth();
         }
 
         public virtual void SetCurrentHealth(int newCurrentHealth)
         {
-            _currentHealth = newCurrentHealth;
+            currentHealth.Value = newCurrentHealth;
             CheckHealth();
         }
 
         private void CheckHealth()
         {
-            if (_currentHealth > maxHealth)
+            if (currentHealth.Value > maxHealth.Value)
             {
-                _currentHealth = maxHealth;
+                currentHealth.Value = maxHealth.Value;
                 return;
             }
 
-            if (_currentHealth <= 0)
+            if (currentHealth.Value <= 0)
                 Die();
+        }
+
+        [ContextMenu("Damage")]
+        public void DebugDamage()
+        {
+            DamageServerRPC(1);
         }
 
         protected virtual void Die()

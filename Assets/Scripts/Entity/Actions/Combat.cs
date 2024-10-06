@@ -74,10 +74,9 @@ public class Combat : NetworkBehaviour
             
             if (health == null) continue;
             
-            health.Damage(damage);
+            health.DamageServerRPC(damage);
                 
-            if (!canDamageMultipleTargets)
-                return;
+            if (!canDamageMultipleTargets) return;
         }
     }
 
@@ -89,6 +88,8 @@ public class Combat : NetworkBehaviour
     
     public void AttackAnimationEvent()
     {
+        if (!IsHost) return;
+
         DealDamage();
     }
 

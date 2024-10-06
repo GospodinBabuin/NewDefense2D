@@ -1,4 +1,5 @@
 using Buildings;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace HealthSystem
@@ -20,9 +21,9 @@ namespace HealthSystem
             _building = GetComponent<Building>();
         }
 
-        public override void Damage(int damageAmount)
+        protected override void Damage(int damageAmount)
         {
-            switch (_building.BuildingLvl)
+            switch (_building.BuildingLvl.Value)
             {
                 case 1:
                     animator.SetTrigger(_animIDTakeDamageLvl1); 
@@ -41,7 +42,7 @@ namespace HealthSystem
         [ContextMenu("Destroy")]
         protected override void Die()
         {
-            switch (_building.BuildingLvl)
+            switch (_building.BuildingLvl.Value)
             {
                 case 1:
                     animator.SetTrigger(_animIDDestroyLvl1); 

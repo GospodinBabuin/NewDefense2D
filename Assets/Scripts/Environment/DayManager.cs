@@ -103,7 +103,7 @@ public class DayManager : NetworkBehaviour
         
         OnDayStateChangedEvent?.Invoke(dayState, _currentDay);
 
-        if (IsHost && tragetDayState == DayState.Day)
+        if (IsHost && dayState == DayState.Day)
         {
             SaveLoad.Instance.SaveGame();
         }
@@ -112,12 +112,6 @@ public class DayManager : NetworkBehaviour
     private void ChangeDayTime()
     {
         _currentTime += Time.fixedDeltaTime;
-        Debug.Log($"{_currentTime}, {Time.fixedDeltaTime}");
-
-        if (_currentTime >= eveningTime)
-        {
-            Debug.Log(_currentTime);
-        }
 
         if (_currentTime >= eveningTime && dayState == DayState.Day)
         {

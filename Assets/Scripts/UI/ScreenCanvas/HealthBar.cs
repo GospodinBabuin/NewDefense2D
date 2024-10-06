@@ -33,9 +33,9 @@ namespace UI.ScreenCanvas
         {
             _playerHealth = playerHealth;
             
-            SetMaxHealth(_playerHealth.MaxHealth);
-            SetCurrentHealth(_playerHealth.CurrentHealth);
-            SetHealthCount(_playerHealth.CurrentHealth, _playerHealth.MaxHealth);
+            SetMaxHealth(_playerHealth.GetMaxHealth);
+            SetCurrentHealth(_playerHealth.GetCurrentHealth);
+            SetHealthCount(_playerHealth.GetCurrentHealth, _playerHealth.GetMaxHealth);
         
             _playerHealth.OnHealthValueChangedEvent += SetUIBarValues;
         }

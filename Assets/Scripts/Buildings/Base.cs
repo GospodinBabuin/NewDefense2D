@@ -17,7 +17,7 @@ namespace Buildings
 
         public bool CanUpgrade()
         {
-            return BuildingLvl < 3;
+            return BuildingLvl.Value < 3;
         }
 
         public int GetUpgradeCost()

@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using Buildings;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -12,7 +12,7 @@ namespace Environment
         [SerializeField] private List<Building> _buildings = new List<Building>();
         [SerializeField] private List<AlliedSoldier> _alliedSoldiers = new List<AlliedSoldier>();
         [SerializeField] private List<Enemy> _enemies = new List<Enemy>();
-        [SerializeField] private List<MonoBehaviour> _alliedObjects  = new List<MonoBehaviour>();
+        [SerializeField] private List<MonoBehaviour> _alliedObjects = new List<MonoBehaviour>();
         [SerializeField] private List<GameObject> _deadBodies = new List<GameObject>();
         [SerializeField] private Dictionary<ulong, PlayerController> _players = new Dictionary<ulong, PlayerController>();
 
@@ -35,7 +35,7 @@ namespace Environment
 
         public delegate void PlayersHandler(Dictionary<ulong, PlayerController> players);
         public event PlayersHandler OnPlayersDictionaryChangedEvent;
-    
+
         public delegate void DeadBodiesHandler(List<GameObject> deadBodies);
         public event DeadBodiesHandler OnDeadBodiesListChangedEvent;
 
@@ -102,12 +102,12 @@ namespace Environment
 
             OnEnemiesListChangedEvent?.Invoke(_enemies);
         }
-        
+
         public void AddPlayerToDictionary(PlayerController player, ulong id)
         {
             _players.Add(id, player);
             _alliedObjects.Add(player.GetComponent<MonoBehaviour>());
-            
+
             OnPlayersDictionaryChangedEvent?.Invoke(_players);
         }
 
@@ -118,7 +118,7 @@ namespace Environment
 
             OnPlayersDictionaryChangedEvent?.Invoke(_players);
         }
-        
+
         [ClientRpc(RequireOwnership = false)]
         public void AddPlayerToDictionaryClientRpc(ulong id)
         {
@@ -129,13 +129,25 @@ namespace Environment
                 {
                     _players.Add(id, player);
                     _alliedObjects.Add(player.GetComponent<MonoBehaviour>());
-            
+
                     OnPlayersDictionaryChangedEvent?.Invoke(_players);
                     return;
                 }
             }
         }
-        
+
+        public void AddAllPlayersInGameToDictionary()
+        {
+            PlayerController[] players = FindObjectsByType<PlayerController>(FindObjectsSortMode.None);
+            foreach (PlayerController player in players)
+            {
+                _players.Add(player.SteamId, player);
+                _alliedObjects.Add(player.GetComponent<MonoBehaviour>());
+
+                OnPlayersDictionaryChangedEvent?.Invoke(_players);
+            }
+        }
+
         [ClientRpc(RequireOwnership = false)]
         public void RemovePlayerFromListClientRpc(ulong id)
         {
@@ -144,7 +156,7 @@ namespace Environment
 
             OnPlayersDictionaryChangedEvent?.Invoke(_players);
         }
-    
+
         public void AddDeadBodiesToList(GameObject deadBodies)
         {
             _deadBodies.Add(deadBodies);

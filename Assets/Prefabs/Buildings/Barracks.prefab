@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 1417126715660350473}
   - component: {fileID: 5253586374323188379}
   - component: {fileID: 4412931395423573578}
-  - component: {fileID: 4170521594944429958}
   - component: {fileID: -5061647224190624379}
+  - component: {fileID: 4170521594944429958}
   - component: {fileID: 1366867422491836059}
   - component: {fileID: 435550697548225014}
   m_Layer: 9
@@ -120,28 +120,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.125, y: 1.03125}
   m_EdgeRadius: 0
---- !u!114 &4170521594944429958
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1417126715660350475}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c9e3300edbde8054abddb927f1d2147a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  needToCheckBorders: 1
-  upgradeToLvl2Cost: 45
-  upgradeToLvl3Cost: 75
-  repairCostPerDamage: 5
-  unitSpawner: {fileID: 5047610176106228618}
-  enemyLayerMask:
-    serializedVersion: 2
-    m_Bits: 1024
-  startAllyCoutSize: 6
-  magnificationSize: 2
 --- !u!114 &-5061647224190624379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,6 +141,28 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &4170521594944429958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1417126715660350475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9e3300edbde8054abddb927f1d2147a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  needToCheckBorders: 1
+  upgradeToLvl2Cost: 45
+  upgradeToLvl3Cost: 75
+  repairCostPerDamage: 5
+  unitSpawner: {fileID: 5047610176106228618}
+  enemyLayerMask:
+    serializedVersion: 2
+    m_Bits: 1024
+  startAllyCoutSize: 6
+  magnificationSize: 2
 --- !u!114 &1366867422491836059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,7 +175,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a65c04055e59f004b9f078d39ac6e23c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 5
+  maxHealth:
+    m_InternalValue: 5
+  currentHealth:
+    m_InternalValue: 5
 --- !u!95 &435550697548225014
 Animator:
   serializedVersion: 5

@@ -3,7 +3,6 @@ using Buildings;
 using Environment;
 using Interfaces;
 using SaveLoadSystem;
-using Steamworks;
 using UI;
 using Unity.Netcode;
 using UnityEngine;
@@ -48,13 +47,23 @@ public class PlayerController : Entity, IBind<PlayerController.PlayerDataStruct>
         Health.SetCurrentHealth(playerData.currentHealth);
         GoldBank.Instance.SetGoldCount(this, playerData.goldCount);
         
-        Debug.Log($"SaveLoadSystem bind {gameObject}, ID: {SteamClient.SteamId}");
+        Debug.Log($"SaveLoadSystem bind {this.gameObject}, ID: {this.SteamId}");
     }
 
     [ContextMenu("SavePlayerData")]
     public void SaveData()
     {
-        SaveLoad.Instance.SavePlayerServerRpc(SteamId, Health.MaxHealth, Health.CurrentHealth, GoldBank.Instance.Gold);
+        SaveLoad.Instance.SavePlayerServerRpc(SteamId, Health.GetMaxHealth, Health.GetCurrentHealth, GoldBank.Instance.Gold);
+    }
+
+    public ulong GetSteamId()
+    {
+        return PlayerInfoHandler.Instance.ReturnSteamIdByLocalId(NetworkManager.Singleton.LocalClientId);
+    }
+
+    public ulong GetLocalId()
+    {
+        return NetworkManager.Singleton.LocalClientId;
     }
 
     protected override void Awake()
@@ -75,9 +84,8 @@ public class PlayerController : Entity, IBind<PlayerController.PlayerDataStruct>
         _input.Enable();
         ParalaxManager.Instance.Initialize(GetComponentInChildren<Camera>());
         //ObjectsInWorld.Instance?.AddPlayerToDictionaryClientRpc(Id);
-        ObjectsInWorld.Instance?.AddPlayerToDictionary(this, SteamId);
-
-        NetworkTransmission.Instance?.PlayerLoadedInGameServerRPC(true, NetworkManager.Singleton.LocalClientId);
+        //ObjectsInWorld.Instance?.AddPlayerToDictionary(this, SteamId);
+        NetworkTransmission.Instance.PlayerLoadedInGameServerRPC(true, NetworkManager.Singleton.LocalClientId);
     }
 
     private void Update()

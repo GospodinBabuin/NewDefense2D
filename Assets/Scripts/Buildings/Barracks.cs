@@ -1,6 +1,7 @@
 using Environment;
 using Interfaces;
 using UI;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Buildings
@@ -16,6 +17,16 @@ namespace Buildings
         private int _currentMaxAllyCountFromBuilding = 0;
         [SerializeField] private int startAllyCoutSize = 6;
         [SerializeField] private int magnificationSize = 2;
+
+        struct Vector3Struct : INetworkSerializable
+        {
+            public Vector3 Position;
+
+            public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+            {
+                serializer.SerializeValue(ref Position);
+            }
+        }
 
         protected override void Start()
         {
@@ -39,10 +50,10 @@ namespace Buildings
             
             _interactingObjectTransform = interactingObject.transform;
 
-            GameUI.Instance.OpenUnitMenu(BuildingLvl, this);
+            GameUI.Instance.OpenUnitMenu(BuildingLvl.Value, this);
         }
 
-        public void SpawnUnit(GameObject unitPrefab, int unitCost)
+        public void SpawnUnit(int unitId, int unitCost)
         {
             if (!GoldBank.Instance.IsEnoughGold(unitCost))
             {
@@ -56,8 +67,16 @@ namespace Buildings
                 return;
             }
 
-            Instantiate(unitPrefab, unitSpawner.position, Quaternion.identity);
             GoldBank.Instance.SpendGold(this, unitCost);
+
+            SpawnUnitServerRPC(unitId, unitSpawner.position);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void SpawnUnitServerRPC(int unitId, Vector2 position)
+        {
+            GameObject unit = Instantiate(ObjectsDatabase.Instance.UnitDatabase.unitSO[unitId].Prefab, position, Quaternion.identity);
+            unit.GetComponent<NetworkObject>().Spawn(true);
         }
         
         [ContextMenu("UpgradeBarracks")]
@@ -109,7 +128,7 @@ namespace Buildings
         
         public bool CanUpgrade()
         {
-            return BuildingLvl < 3;
+            return BuildingLvl.Value < 3;
         }
         
         public int GetUpgradeCost()

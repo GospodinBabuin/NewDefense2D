@@ -15,16 +15,17 @@ namespace HealthSystem
         {
             if (IsOwner)
             {
-                HealthBar.Instance?.Initialize(this);
+                if (HealthBar.Instance != null)
+                    HealthBar.Instance.Initialize(this);
             }
             _healParticles = GetComponentInChildren<HealParticles>();
         }
 
-        public override void Damage(int damageAmount)
+        protected override void Damage(int damageAmount)
         {
             base.Damage(damageAmount);
-        
-            OnHealthValueChangedEvent?.Invoke(CurrentHealth, MaxHealth);
+            
+            OnHealthValueChangedEvent?.Invoke(GetCurrentHealth, GetMaxHealth);
         }
 
         public override void Heal(int healAmount)
@@ -33,35 +34,35 @@ namespace HealthSystem
         
             _healParticles.PlayHealParticles(healAmount);
         
-            OnHealthValueChangedEvent?.Invoke(CurrentHealth, MaxHealth);
+            OnHealthValueChangedEvent?.Invoke(GetCurrentHealth, GetMaxHealth);
         }
 
         public override void IncreaseMaxHealth(int increaseAmount)
         {
             base.IncreaseMaxHealth(increaseAmount);
         
-            OnHealthValueChangedEvent?.Invoke(CurrentHealth, MaxHealth);
+            OnHealthValueChangedEvent?.Invoke(GetCurrentHealth, GetMaxHealth);
         }
 
         public override void ReduceMaxHealth(int reduceAmount)
         {
             base.ReduceMaxHealth(reduceAmount);
         
-            OnHealthValueChangedEvent?.Invoke(CurrentHealth, MaxHealth);
+            OnHealthValueChangedEvent?.Invoke(GetCurrentHealth, GetMaxHealth);
         }
 
         public override void SetMaxHealth(int newMaxHealth)
         {
             base.SetMaxHealth(newMaxHealth);
             
-            OnHealthValueChangedEvent?.Invoke(CurrentHealth, MaxHealth);
+            OnHealthValueChangedEvent?.Invoke(GetCurrentHealth, GetMaxHealth);
         }
 
         public override void SetCurrentHealth(int newCurrentHealth)
         {
             base.SetCurrentHealth(newCurrentHealth);
             
-            OnHealthValueChangedEvent?.Invoke(CurrentHealth, MaxHealth);
+            OnHealthValueChangedEvent?.Invoke(GetCurrentHealth, GetMaxHealth);
         }
     }
 }

@@ -11,6 +11,7 @@ TagManager:
   - UnitMenu
   - ChatMessage
   - PlayerCard
+  - Base
   layers:
   - Default
   - TransparentFX
