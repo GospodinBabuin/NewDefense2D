@@ -1,3 +1,4 @@
+using AudioSystem;
 using UnityEngine;
 
 public class Locomotion : MonoBehaviour
@@ -7,6 +8,8 @@ public class Locomotion : MonoBehaviour
 
     [SerializeField] private float minStopDistance = -0.1f;
     [SerializeField] private float maxStopDistance = 0.35f;
+
+    [SerializeField] private SoundData soundData;
     
     public float Speed { get => speed; private set => speed = value; }
     public float StopDistance { get => stopDistance; private set => stopDistance = value; }
@@ -84,5 +87,14 @@ public class Locomotion : MonoBehaviour
     private void AddRandomToStopDistance()
     {
         stopDistance += Random.Range(minStopDistance, maxStopDistance);
+    }
+
+    public void OnFootstepAnimEvent()
+    {
+        SoundManager.Instance.CreateSound()
+            .WithSoundData(soundData)
+            .WithRandomPitch()
+            .WithPosition(transform.position)
+            .Play();
     }
 }

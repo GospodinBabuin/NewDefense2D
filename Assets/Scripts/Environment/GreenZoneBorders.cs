@@ -59,14 +59,14 @@ public class GreenZoneBorders : MonoBehaviour
         {
             if (building.transform.position.x < LeftBorder.transform.position.x)
             {
-                LeftBorder.transform.position = building.transform.position + new Vector3(2, -3);
+                LeftBorder.transform.position = building.transform.position + new Vector3(1, -3);
                 Debug.Log($"New left border position: {LeftBorder.transform.position.x}");
                 continue;
             }
 
             if (building.transform.position.x > RightBorder.transform.position.x)
             {
-                RightBorder.transform.position = building.transform.position + new Vector3(-2, -3);
+                RightBorder.transform.position = building.transform.position + new Vector3(-1, -3);
                 Debug.Log($"New Right border position: {RightBorder.transform.position.x}");
                 continue;
             }

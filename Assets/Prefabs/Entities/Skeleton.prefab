@@ -354,6 +354,13 @@ MonoBehaviour:
     m_Bits: 2816
   canDamageMultipleTargets: 0
   IsSoldierLvl1: 0
+  soundData:
+    AudioClips:
+    - {fileID: 8300000, guid: 62bfb764dceb3074ab41a2d99d91ed0f, type: 3}
+    AudioMixerGroup: {fileID: 6796627095166606692, guid: 79ac129588dcbb24ca3e68edbd7ad34d, type: 2}
+    Loop: 0
+    PlayOnAwake: 0
+    FrequentSound: 0
 --- !u!114 &7587110335185255281
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -370,6 +377,14 @@ MonoBehaviour:
   stopDistance: 1
   minStopDistance: -0.1
   maxStopDistance: 0.35
+  soundData:
+    AudioClips:
+    - {fileID: 8300000, guid: b9f11bfc6bed4d44dad08996213685b8, type: 3}
+    - {fileID: 8300000, guid: 55ada7a8cfc11ee42a21382aa21b0719, type: 3}
+    AudioMixerGroup: {fileID: 6796627095166606692, guid: 79ac129588dcbb24ca3e68edbd7ad34d, type: 2}
+    Loop: 0
+    PlayOnAwake: 0
+    FrequentSound: 0
 --- !u!114 &3446300336156007830
 MonoBehaviour:
   m_ObjectHideFlags: 0

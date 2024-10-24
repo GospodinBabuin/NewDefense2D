@@ -25,7 +25,7 @@ namespace HealthSystem
         {
             base.Damage(damageAmount);
             
-            OnHealthValueChangedEvent?.Invoke(GetCurrentHealth, GetMaxHealth);
+            OnHealthValueChangedEvent?.Invoke(GetCurrentHealth(), GetMaxHealth());
         }
 
         public override void Heal(int healAmount)
@@ -34,35 +34,35 @@ namespace HealthSystem
         
             _healParticles.PlayHealParticles(healAmount);
         
-            OnHealthValueChangedEvent?.Invoke(GetCurrentHealth, GetMaxHealth);
+            OnHealthValueChangedEvent?.Invoke(GetCurrentHealth(), GetMaxHealth());
         }
 
         public override void IncreaseMaxHealth(int increaseAmount)
         {
             base.IncreaseMaxHealth(increaseAmount);
         
-            OnHealthValueChangedEvent?.Invoke(GetCurrentHealth, GetMaxHealth);
+            OnHealthValueChangedEvent?.Invoke(GetCurrentHealth(), GetMaxHealth());
         }
 
         public override void ReduceMaxHealth(int reduceAmount)
         {
             base.ReduceMaxHealth(reduceAmount);
         
-            OnHealthValueChangedEvent?.Invoke(GetCurrentHealth, GetMaxHealth);
+            OnHealthValueChangedEvent?.Invoke(GetCurrentHealth(), GetMaxHealth());
         }
 
         public override void SetMaxHealth(int newMaxHealth)
         {
             base.SetMaxHealth(newMaxHealth);
             
-            OnHealthValueChangedEvent?.Invoke(GetCurrentHealth, GetMaxHealth);
+            OnHealthValueChangedEvent?.Invoke(GetCurrentHealth(), GetMaxHealth());
         }
 
         public override void SetCurrentHealth(int newCurrentHealth)
         {
             base.SetCurrentHealth(newCurrentHealth);
             
-            OnHealthValueChangedEvent?.Invoke(GetCurrentHealth, GetMaxHealth);
+            OnHealthValueChangedEvent?.Invoke(GetCurrentHealth(), GetMaxHealth());
         }
     }
 }

@@ -1,6 +1,6 @@
-using System;
-using System.Collections;
+using AudioSystem;
 using HealthSystem;
+using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -18,30 +18,32 @@ public class Combat : NetworkBehaviour
     [SerializeField] private bool canDamageMultipleTargets = false;
 
     [SerializeField] private bool IsSoldierLvl1 = false;
+
+    [SerializeField] private SoundData soundData;
     public float AttackDelay => attackDelay;
-    
+
     private bool _canAttack = true;
     private int _animIDAttack1;
     private int _animIDAttack2;
     private int _animIDAttack3;
     private int _animIDAttack4;
-    
+
     private byte _attackAnimationIndexForSoldierLvl1;
-    
+
     protected virtual void Start()
     {
         _animator = GetComponent<Animator>();
-        
+
         SetAnimIDs();
 
         if (IsSoldierLvl1)
             _attackAnimationIndexForSoldierLvl1 = (byte)Random.Range(1, attackAnimationCount + 1);
     }
-    
+
     public void Attack()
-    { 
+    {
         if (!_canAttack) return;
-        
+
         _animator.SetTrigger(ChoseAttackAnimation());
         _canAttack = false;
         StartCoroutine(StartNextAttackCooldown(attackDelay));
@@ -50,12 +52,12 @@ public class Combat : NetworkBehaviour
     private int ChoseAttackAnimation()
     {
         byte attackAnimation;
-        
+
         if (IsSoldierLvl1)
             attackAnimation = _attackAnimationIndexForSoldierLvl1;
         else
             attackAnimation = (byte)Random.Range(1, attackAnimationCount + 1);
-        
+
         return attackAnimation switch
         {
             1 => _animIDAttack1,
@@ -71,11 +73,11 @@ public class Combat : NetworkBehaviour
         foreach (Collider2D collider2D in Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, attackLayers))
         {
             Health health = collider2D.GetComponent<Health>();
-            
+
             if (health == null) continue;
-            
+
             health.DamageServerRPC(damage);
-                
+
             if (!canDamageMultipleTargets) return;
         }
     }
@@ -85,19 +87,25 @@ public class Combat : NetworkBehaviour
         yield return new WaitForSeconds(attackDelay);
         _canAttack = true;
     }
-    
+
     public void AttackAnimationEvent()
     {
         if (!IsHost) return;
 
         DealDamage();
+
+        SoundManager.Instance.CreateSound()
+        .WithSoundData(soundData)
+        .WithRandomPitch()
+        .WithPosition(transform.position)
+        .Play();
     }
 
     public void IncreaseDamage(int increaseDamage)
     {
         damage += increaseDamage;
     }
-    
+
     private void SetAnimIDs()
     {
         _animIDAttack1 = Animator.StringToHash("Attack1");

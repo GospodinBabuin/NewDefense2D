@@ -53,7 +53,7 @@ public class PlayerController : Entity, IBind<PlayerController.PlayerDataStruct>
     [ContextMenu("SavePlayerData")]
     public void SaveData()
     {
-        SaveLoad.Instance.SavePlayerServerRpc(SteamId, Health.GetMaxHealth, Health.GetCurrentHealth, GoldBank.Instance.Gold);
+        SaveLoad.Instance.SavePlayerServerRpc(SteamId, Health.GetMaxHealth(), Health.GetCurrentHealth(), GoldBank.Instance.Gold);
     }
 
     public ulong GetSteamId()

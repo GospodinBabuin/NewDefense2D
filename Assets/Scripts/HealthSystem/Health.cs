@@ -1,3 +1,4 @@
+using AudioSystem;
 using Cainos.LucidEditor;
 using Unity.Netcode;
 using UnityEngine;
@@ -6,12 +7,15 @@ namespace HealthSystem
 {
     public class Health : NetworkBehaviour
     {
-        public int GetMaxHealth => maxHealth.Value;
-        public int GetCurrentHealth => currentHealth.Value;
+        public int GetMaxHealth() => maxHealth.Value;
+        public int GetCurrentHealth() => currentHealth.Value;
 
         [SerializeField] private NetworkVariable<int> maxHealth = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         [SerializeField] private NetworkVariable<int> currentHealth = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    
+
+        [SerializeField] private SoundData soundDataHit;
+        [SerializeField] private SoundData soundDataDeath;
+
         private int _animIDDie;
 
         protected Animator animator;
@@ -35,7 +39,16 @@ namespace HealthSystem
         {
             currentHealth.Value -= damageAmount;
             
-            Debug.Log($"{gameObject.name}, now have {GetCurrentHealth} health");
+            Debug.Log($"{gameObject.name}, now have {GetCurrentHealth()} health");
+
+            if (!IsDead())
+            {
+                SoundManager.Instance.CreateSound()
+                .WithSoundData(soundDataHit)
+                .WithRandomPitch()
+                .WithPosition(transform.position)
+                .Play();
+            }
 
             CheckHealth();
         }
@@ -98,6 +111,11 @@ namespace HealthSystem
                 Die();
         }
 
+        private bool IsDead()
+        {
+            return currentHealth.Value <= 0;
+        }
+
         [ContextMenu("Damage")]
         public void DebugDamage()
         {
@@ -107,6 +125,12 @@ namespace HealthSystem
         protected virtual void Die()
         {
             animator.SetBool(_animIDDie, true);
+
+            SoundManager.Instance.CreateSound()
+            .WithSoundData(soundDataDeath)
+            .WithRandomPitch()
+            .WithPosition(transform.position)
+            .Play();
         }
     
         protected virtual void SetAnimIDs()

@@ -61,7 +61,7 @@ namespace Buildings
 
             for (int i = 1; i < BuildingLvl.Value; i++)
             {
-                Health.IncreaseMaxHealth(Health.GetMaxHealth / 2);
+                Health.IncreaseMaxHealth(Health.GetMaxHealth() / 2);
             }
 
             Health.SetCurrentHealth(buildingData.currentHealth);
@@ -71,7 +71,7 @@ namespace Buildings
         {
             _buildingData.id = id;
             _buildingData.position = transform.position;
-            _buildingData.currentHealth = Health.GetCurrentHealth;
+            _buildingData.currentHealth = Health.GetCurrentHealth();
             _buildingData.level = BuildingLvl.Value;
         }
 
@@ -81,7 +81,6 @@ namespace Buildings
         {
             Health = GetComponent<BuildingHealth>();
             Animator = GetComponent<Animator>();
-            BuildingLvl.Value = 1;
             
             SetAnimIDs();
         }
@@ -117,8 +116,8 @@ namespace Buildings
             }
             
             BuildingLvl.Value++;
-            Health.IncreaseMaxHealth(Health.GetMaxHealth/2);
-            Health.Heal(Health.GetMaxHealth/2);
+            Health.IncreaseMaxHealth(Health.GetMaxHealth() /2);
+            Health.Heal(Health.GetMaxHealth() /2);
         }
 
         protected int GetUpgradeToNextLvlCost()

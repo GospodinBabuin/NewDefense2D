@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
+using static AlliedSoldier;
 using static Buildings.Building;
+using static GameProgress;
 
 namespace SaveLoadSystem
 {
@@ -102,6 +104,12 @@ namespace SaveLoadSystem
             Debug.Log($"Players data saved, ID: {id}");
         }
 
+        private void SaveGameProgressData()
+        {
+            GameProgress.Instance.SaveData();
+            GameData.gameProgressData = GameProgress.Instance.GetGameProgressData();
+        }
+
         private void LoadBuildings(List<BuildingData> buildingDatas)
         {
             foreach (BuildingData buildingData in buildingDatas)
@@ -124,6 +132,26 @@ namespace SaveLoadSystem
             }
         }
 
+        private void LoadUnits(List<UnitData> unitDatas)
+        {
+            foreach (UnitData unitData in unitDatas)
+            {
+                UnitDataStruct convertedUnitData = ConvertUnitData(unitData);
+
+                AlliedSoldier unit = EntitySpawner.SpawnUnitOnServer(unitData.id);
+                unit.Bind(convertedUnitData);
+            }
+        }
+
+        private void LoadGameProgressData(GameProgressData progressData)
+        {
+            GameProgressDataStruct ConvertedGameProgressData = ConvertGameProgressData(progressData);
+
+            //GameProgressManager newProgressManager = Instantiate(new GameProgressManager(), new Vector2(), Quaternion.identity);
+            GameProgress newProgressManager = FindFirstObjectByType<GameProgress>();
+            newProgressManager.Bind(ConvertedGameProgressData);
+        }
+
         private BuildingDataStruct ConvertBuildingData(BuildingData buildingData)
         {
             return new BuildingDataStruct
@@ -135,6 +163,23 @@ namespace SaveLoadSystem
             };
         }
 
+        private UnitDataStruct ConvertUnitData(UnitData unitData)
+        {
+            return new UnitDataStruct
+            {
+                id = unitData.id,
+                currentHealth = unitData.currentHealth,
+            };
+        }
+
+        private GameProgressDataStruct ConvertGameProgressData(GameProgressData gameProgressData)
+        {
+            return new GameProgressDataStruct
+            {
+                firstStart = gameProgressData.firstStart,
+            };
+        }
+
         private void SaveBuildingData()
         {
             GameData.buildingData.Clear();
@@ -143,6 +188,17 @@ namespace SaveLoadSystem
                 building.SaveData();
                 BuildingData buildingData = building.GetBuildingData();
                 GameData.buildingData.Add(buildingData);
+            }
+        }
+
+        private void SaveUnitData()
+        {
+            GameData.unitData.Clear();
+            foreach (AlliedSoldier unit in ObjectsInWorld.Instance.AlliedSoldiers)
+            {
+                unit.SaveData();
+                UnitData unitData = unit.GetUnitData();
+                GameData.unitData.Add(unitData);
             }
         }
 
@@ -159,6 +215,8 @@ namespace SaveLoadSystem
             }
 
             SaveBuildingData();
+            SaveUnitData();
+            SaveGameProgressData();
 
             _dataService.Save(GameData);
         }
@@ -174,6 +232,8 @@ namespace SaveLoadSystem
         [ContextMenu("BindPlayers")]
         public void BindPlayersData() => LoadPlayers(GameData.playerData);
         public void BindBuildingsData() => LoadBuildings(GameData.buildingData);
+        public void BindUnitData() => LoadUnits(GameData.unitData);
+        public void BindGameProgressData() => LoadGameProgressData(GameData.gameProgressData);
     }
 
     public interface ISaveable { }
@@ -189,5 +249,7 @@ namespace SaveLoadSystem
     {
         public List<PlayerData> playerData = new List<PlayerData>();
         public List<BuildingData> buildingData = new List<BuildingData>();
+        public List<UnitData> unitData = new List<UnitData>();
+        public GameProgressData gameProgressData = new GameProgressData();
     }
 }

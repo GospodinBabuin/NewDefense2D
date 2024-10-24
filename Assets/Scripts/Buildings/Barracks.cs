@@ -55,28 +55,28 @@ namespace Buildings
 
         public void SpawnUnit(int unitId, int unitCost)
         {
+            if (CanSpawnUnit(unitCost) == false) return;
+
+            GoldBank.Instance.SpendGold(this, unitCost);
+
+            EntitySpawner.Instance.SpawnUnit(unitId, unitSpawner.position);
+        }
+
+        private bool CanSpawnUnit(int unitCost)
+        {
             if (!GoldBank.Instance.IsEnoughGold(unitCost))
             {
                 GameUI.Instance.Notifications.ShowNotEnoughMoneyNotification();
-                return;
+                return false;
             }
 
             if (!AllyCountController.Instance.CanRecruitAlly())
             {
                 GameUI.Instance.Notifications.ShowImpossibleToRecruitMoreSoldiersNotification();
-                return;
+                return false;
             }
 
-            GoldBank.Instance.SpendGold(this, unitCost);
-
-            SpawnUnitServerRPC(unitId, unitSpawner.position);
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        private void SpawnUnitServerRPC(int unitId, Vector2 position)
-        {
-            GameObject unit = Instantiate(ObjectsDatabase.Instance.UnitDatabase.unitSO[unitId].Prefab, position, Quaternion.identity);
-            unit.GetComponent<NetworkObject>().Spawn(true);
+            return true;
         }
         
         [ContextMenu("UpgradeBarracks")]

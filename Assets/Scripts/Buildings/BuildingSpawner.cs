@@ -130,6 +130,13 @@ namespace BuildingSystem
             return buildingPrefab.GetComponent<Building>();
         }
 
+        public static void SpawnBuilding(int buildingId, Vector2 position)
+        {
+            GameObject buildingPrefab = Instantiate(ObjectsDatabase.Instance.BuildingDatabase.buildingSO[buildingId].Prefab, position, quaternion.identity);
+            buildingPrefab.GetComponent<Building>().SetBuildingsId(buildingId);
+            buildingPrefab.GetComponent<NetworkObject>().Spawn(true);
+        }
+
         /*[ServerRpc(RequireOwnership = false)]
         public void SpawnBuildingServerRPC(BuildingData data)
         {

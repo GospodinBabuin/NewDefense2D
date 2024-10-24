@@ -1,12 +1,44 @@
 using System;
+using Buildings;
 using Environment;
+using SaveLoadSystem;
+using Unity.Netcode;
 using UnityEngine;
+using static AlliedSoldier;
 using Random = UnityEngine.Random;
 
-public class AlliedSoldier : Entity
+public class AlliedSoldier : Entity, IBind<UnitDataStruct>
 {
     public Transform SelectedBorder { get; private set; }
     private Vector2 _selectedBorderPosition;
+    [SerializeField] private int id = -1;
+
+    private UnitData _unitData = new UnitData();
+
+    public struct UnitDataStruct : INetworkSerializable, ISaveable
+    {
+        public int id;
+        public int currentHealth;
+        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+        {
+            serializer.SerializeValue(ref id);
+            serializer.SerializeValue(ref currentHealth);
+        }
+    }
+
+    public void Bind(UnitDataStruct unitData)
+    {
+        Health.SetCurrentHealth(unitData.currentHealth);
+    }
+
+    public void SaveData()
+    {
+        _unitData.id = id;
+        _unitData.currentHealth = Health.GetCurrentHealth();
+    }
+
+    public UnitData GetUnitData() => _unitData;
+    public void SetUnitsId(int id) => this.id = id;
 
     private void Start()
     {
@@ -62,8 +94,7 @@ public class AlliedSoldier : Entity
 
     private void SelectBordersPosition()
     {
-        _selectedBorderPosition = SelectedBorder.position;
-        _selectedBorderPosition = AddRandomToTargetPosition(_selectedBorderPosition, 0f, 1.5f);
+        _selectedBorderPosition = AddRandomToTargetPosition(SelectedBorder.position, 0f, 1.5f);
     }
 
     private bool IsOnBorder(Vector2 targetPosition)
@@ -80,11 +111,11 @@ public class AlliedSoldier : Entity
 
         if (newPosition.x < 0)
         {
-            newPosition += new Vector2(Random.Range(minRandomValue, maxRandomValue), newPosition.y);
+            newPosition += new Vector2(Random.Range(minRandomValue, maxRandomValue), 0);
         }
         else
         {
-            newPosition += new Vector2(Random.Range(-minRandomValue, -maxRandomValue), newPosition.y);
+            newPosition += new Vector2(Random.Range(-minRandomValue, -maxRandomValue), 0);
         }
 
         return newPosition;
@@ -95,5 +126,12 @@ public class AlliedSoldier : Entity
         base.OnDestroy();
         ObjectsInWorld.Instance.RemoveSoldierFromList(this);
         GreenZoneBorders.Instance.RemoveFromBorder(this);
+    }
+
+    [Serializable]
+    public class UnitData : ISaveable
+    {
+        public int id;
+        public int currentHealth;
     }
 }
