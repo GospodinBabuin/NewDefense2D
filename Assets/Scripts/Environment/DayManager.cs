@@ -1,3 +1,4 @@
+using System;
 using SaveLoadSystem;
 using UI;
 using Unity.Netcode;
@@ -7,6 +8,8 @@ using UnityEngine.Rendering.Universal;
 public class DayManager : NetworkBehaviour
 {
     public static DayManager Instance { get; private set; }
+    
+    public static event Action OnDayManagerCreated;
 
     public enum DayState { Day, Evening, Night }
     public DayState dayState { get; private set; } = DayState.Day;
@@ -45,6 +48,8 @@ public class DayManager : NetworkBehaviour
         {
             Destroy(gameObject);
         }
+        
+        OnDayManagerCreated?.Invoke();
     }
 
     private void Start()

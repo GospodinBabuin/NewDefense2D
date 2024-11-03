@@ -1,6 +1,7 @@
 using Cinemachine;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Network
 {
@@ -19,7 +20,9 @@ namespace Network
 
         private void Start()
         {
-            if (!IsOwner)
+            string sceneName = SceneManager.GetActiveScene().name;
+            
+            if (!IsOwner || sceneName == "Lobby")
             {
                 _audioListener.enabled = false;
                 _virtualCamera.Priority = 0;

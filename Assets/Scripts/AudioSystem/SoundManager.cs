@@ -11,7 +11,7 @@ namespace AudioSystem
         private IObjectPool<SoundEmitter> _soundEmitterPool;
         private readonly List<SoundEmitter> _activeSoundEmitters = new List<SoundEmitter>();
 
-        public readonly Queue<SoundEmitter> FrequentSoundEmmiters = new Queue<SoundEmitter>();
+        public readonly Queue<SoundEmitter> FrequentSoundEmitters = new Queue<SoundEmitter>();
 
         [SerializeField] private SoundEmitter soundEmitterPrefab;
         [SerializeField] private bool collectionCheck = true;
@@ -41,10 +41,11 @@ namespace AudioSystem
 
         public bool CanPlaySound(SoundData data)
         {
+            if(data.AudioClips.Length == 0) return false;
             if (!data.FrequentSound) return true;
 
-            if (FrequentSoundEmmiters.Count >= maxSoundInstances &&
-                FrequentSoundEmmiters.TryDequeue(out SoundEmitter soundEmitter))
+            if (FrequentSoundEmitters.Count >= maxSoundInstances &&
+                FrequentSoundEmitters.TryDequeue(out SoundEmitter soundEmitter))
             {
                 try
                 {

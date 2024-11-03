@@ -90,15 +90,15 @@ public class Combat : NetworkBehaviour
 
     public void AttackAnimationEvent()
     {
-        if (!IsHost) return;
-
-        DealDamage();
-
         SoundManager.Instance.CreateSound()
         .WithSoundData(soundData)
         .WithRandomPitch()
         .WithPosition(transform.position)
         .Play();
+        
+        if (!IsHost) return;
+        
+        DealDamage();
     }
 
     public void IncreaseDamage(int increaseDamage)

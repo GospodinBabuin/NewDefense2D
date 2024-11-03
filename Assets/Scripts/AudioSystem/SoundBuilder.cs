@@ -48,7 +48,7 @@ namespace AudioSystem
 
             if (_soundData.FrequentSound)
             {
-                _soundManager.FrequentSoundEmmiters.Enqueue(soundEmitter);
+                _soundManager.FrequentSoundEmitters.Enqueue(soundEmitter);
             }
             soundEmitter.Play();
         }

@@ -606,6 +606,7 @@ MonoBehaviour:
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
+  m_ScrollDeltaPerTick: 6
 --- !u!114 &797196900
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1151,7 +1152,7 @@ Transform:
   m_GameObject: {fileID: 2041536418}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.7, z: -50}
+  m_LocalPosition: {x: 0, y: -0.2, z: -50}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

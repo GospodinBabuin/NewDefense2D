@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Environment;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ParalaxManager : MonoBehaviour
 {
@@ -24,6 +25,8 @@ public class ParalaxManager : MonoBehaviour
 
     public void Initialize(Camera camera)
     {
+        if (SceneManager.GetActiveScene().name == "Lobby") return;
+        
         foreach (Parallax parallax in parallaxList)
         {
             parallax.Initialize(camera);

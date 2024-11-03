@@ -253,6 +253,18 @@ MonoBehaviour:
     m_InternalValue: 4
   currentHealth:
     m_InternalValue: 4
+  soundDataHit:
+    AudioClips: []
+    AudioMixerGroup: {fileID: 0}
+    Loop: 0
+    PlayOnAwake: 0
+    FrequentSound: 0
+  soundDataDeath:
+    AudioClips: []
+    AudioMixerGroup: {fileID: 0}
+    Loop: 0
+    PlayOnAwake: 0
+    FrequentSound: 0
 --- !u!114 &2074403987244414515
 MonoBehaviour:
   m_ObjectHideFlags: 0

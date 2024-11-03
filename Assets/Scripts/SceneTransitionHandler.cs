@@ -24,6 +24,9 @@ public class SceneTransitionHandler : NetworkBehaviour
     public delegate void FadeOutStarted(string sceneName);
     public event FadeOutStarted OnFadeOutStartedEvent;
     
+    public delegate void FadeInStarted();
+    public event FadeInStarted OnFadeInStartedEvent;
+    
     private void Awake()
     {
         if (Instance != null)
@@ -178,6 +181,11 @@ public class SceneTransitionHandler : NetworkBehaviour
     public void OnFadeOutAnimEventStarted()
     {
         OnFadeOutStartedEvent?.Invoke(SceneManager.GetActiveScene().name);
+    }
+    
+    public void OnFadeInAnimEventStarted()
+    {
+        OnFadeInStartedEvent?.Invoke();
     }
 
     public void OnInitSceneAnimEvent()
