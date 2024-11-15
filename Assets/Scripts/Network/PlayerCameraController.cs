@@ -13,7 +13,7 @@ namespace Network
 
         private void Awake()
         {
-            _audioListener = GetComponentInChildren<AudioListener>();
+            _audioListener = GetComponentInParent<AudioListener>();
             _virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
             _camera = GetComponentInChildren<Camera>();
         }

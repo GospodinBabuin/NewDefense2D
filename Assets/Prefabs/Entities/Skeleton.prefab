@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 1780063136331254591}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.48000002, y: 0, z: 0}
+  m_LocalPosition: {x: 0.45, y: 0, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -217,7 +217,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 7
+  m_Constraints: 6
 --- !u!61 &6300168410808537022
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -348,7 +348,7 @@ MonoBehaviour:
   attackAnimationCount: 2
   damage: 1
   attackPoint: {fileID: 5151364085921948772}
-  attackRadius: 0.6
+  attackRadius: 0.7
   attackLayers:
     serializedVersion: 2
     m_Bits: 2816
@@ -402,13 +402,15 @@ MonoBehaviour:
   currentHealth:
     m_InternalValue: 5
   soundDataHit:
-    AudioClips: []
+    AudioClips:
+    - {fileID: 8300000, guid: acc03ca276f2cdd47ade70e4493a26bd, type: 3}
     AudioMixerGroup: {fileID: 0}
     Loop: 0
     PlayOnAwake: 0
     FrequentSound: 0
   soundDataDeath:
-    AudioClips: []
+    AudioClips:
+    - {fileID: 8300000, guid: f277e9d6536ff63409c41c3928603ffa, type: 3}
     AudioMixerGroup: {fileID: 0}
     Loop: 0
     PlayOnAwake: 0

@@ -69,7 +69,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 7
+  m_Constraints: 6
 --- !u!61 &5805162675755328793
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -254,13 +254,15 @@ MonoBehaviour:
   currentHealth:
     m_InternalValue: 6
   soundDataHit:
-    AudioClips: []
+    AudioClips:
+    - {fileID: 8300000, guid: a90a2eb0fca4c8544b777fce07a46416, type: 3}
     AudioMixerGroup: {fileID: 0}
     Loop: 0
     PlayOnAwake: 0
     FrequentSound: 0
   soundDataDeath:
-    AudioClips: []
+    AudioClips:
+    - {fileID: 8300000, guid: c1c9dd1b3d73c8b46a98682ac8b65f16, type: 3}
     AudioMixerGroup: {fileID: 0}
     Loop: 0
     PlayOnAwake: 0

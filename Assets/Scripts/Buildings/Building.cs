@@ -1,4 +1,5 @@
 using System;
+using AudioSystem;
 using Environment;
 using HealthSystem;
 using SaveLoadSystem;
@@ -147,7 +148,7 @@ namespace Buildings
 
         public int CostToRepairBuilding()
         { 
-            return Health.HealthToMax() * repairCostPerDamage * BuildingLvl.Value;
+            return Health.HealthToMaxValueRemained() * repairCostPerDamage * BuildingLvl.Value;
         }
 
         public void SetBuildingsId(int id) => this.id = id;

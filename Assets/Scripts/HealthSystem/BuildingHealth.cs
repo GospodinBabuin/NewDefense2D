@@ -56,7 +56,6 @@ namespace HealthSystem
             }
         
             Destroy(_building);
-           // ObjectDespawner.Instance.DespawnObjectServerRPC(gameObject, GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length + 2f);
         }
 
         protected override void SetAnimIDs()

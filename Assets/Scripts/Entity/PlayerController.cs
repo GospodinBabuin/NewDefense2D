@@ -228,12 +228,12 @@ public class PlayerController : Entity, IBind<PlayerController.PlayerDataStruct>
         if (GameUI.Instance.IsMenuOpen())
             return;
 
-        Collider2D[] ObjectsToRepair;
-        ObjectsToRepair = Physics2D.OverlapCircleAll(transform.position, interactionRadius);
+        Collider2D[] objectsToRepair;
+        objectsToRepair = Physics2D.OverlapCircleAll(transform.position, interactionRadius);
 
-        if (ObjectsToRepair == null) return;
+        if (objectsToRepair == null) return;
 
-        foreach (Collider2D ObjectToRepair in ObjectsToRepair)
+        foreach (Collider2D ObjectToRepair in objectsToRepair)
         {
             if (!ObjectToRepair.TryGetComponent(out Building building)) continue;
             building.RepairBuilding();

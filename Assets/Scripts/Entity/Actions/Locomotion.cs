@@ -95,6 +95,7 @@ public class Locomotion : MonoBehaviour
             .WithSoundData(soundData)
             .WithRandomPitch()
             .WithPosition(transform.position)
+            .WithParent(transform)
             .Play();
     }
 }

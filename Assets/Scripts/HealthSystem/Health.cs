@@ -15,7 +15,8 @@ namespace HealthSystem
 
         [SerializeField] private SoundData soundDataHit;
         [SerializeField] private SoundData soundDataDeath;
-
+        [SerializeField] private SoundData soundDataHealing;
+        
         private int _animIDDie;
 
         protected Animator animator;
@@ -56,16 +57,18 @@ namespace HealthSystem
         public virtual void Heal(int healAmount)
         {
             currentHealth.Value += healAmount;
-
+            PlayHealSound();
+            
             CheckHealth();
         }
 
         public void HealToMaxHealth()
         {
             currentHealth.Value = maxHealth.Value;
+            PlayHealSound();
         }
 
-        public int HealthToMax()
+        public int HealthToMaxValueRemained()
         {
             return maxHealth.Value - currentHealth.Value;
         }
@@ -114,6 +117,15 @@ namespace HealthSystem
         private bool IsDead()
         {
             return currentHealth.Value <= 0;
+        }
+        
+        private void PlayHealSound()
+        {
+            SoundManager.Instance.CreateSound()
+                .WithSoundData(soundDataHealing)
+                .WithRandomPitch()
+                .WithPosition(transform.position)
+                .Play();
         }
 
         [ContextMenu("Damage")]

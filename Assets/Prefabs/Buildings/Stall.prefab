@@ -692,7 +692,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8880890979157700241}
-  m_BodyType: 0
+  m_BodyType: 2
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -789,6 +789,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4af621f3ca2199a4f9ecb1fb6f147a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  BuildingLvl:
+    m_InternalValue: 1
+  id: -1
   needToCheckBorders: 1
   upgradeToLvl2Cost: 75
   upgradeToLvl3Cost: 100
@@ -812,6 +815,18 @@ MonoBehaviour:
     m_InternalValue: 5
   currentHealth:
     m_InternalValue: 5
+  soundDataHit:
+    AudioClips: []
+    AudioMixerGroup: {fileID: 0}
+    Loop: 0
+    PlayOnAwake: 0
+    FrequentSound: 0
+  soundDataDeath:
+    AudioClips: []
+    AudioMixerGroup: {fileID: 0}
+    Loop: 0
+    PlayOnAwake: 0
+    FrequentSound: 0
 --- !u!95 &4299375645487318811
 Animator:
   serializedVersion: 5

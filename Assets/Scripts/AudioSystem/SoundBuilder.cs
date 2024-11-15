@@ -8,6 +8,7 @@ namespace AudioSystem
         private SoundData _soundData;
         private Vector3 _position = Vector3.zero;
         private bool _randomPitch;
+        private Transform _parent;
 
         public SoundBuilder(SoundManager soundManager)
         {
@@ -32,6 +33,12 @@ namespace AudioSystem
             return this;
         }
 
+        public SoundBuilder WithParent(Transform parent)
+        {
+            _parent = parent;
+            return this;
+        }
+
         public void Play()
         {
             if (!_soundManager.CanPlaySound(_soundData)) return;
@@ -39,7 +46,9 @@ namespace AudioSystem
             SoundEmitter soundEmitter = _soundManager.GetSoundEmitter();
             soundEmitter.Initialize(_soundData);
             soundEmitter.transform.position = _position;
-            soundEmitter.transform.parent = SoundManager.Instance.transform;
+            
+            if (_parent != null) soundEmitter.transform.SetParent(_parent);
+            else soundEmitter.transform.SetParent(SoundManager.Instance.transform);
 
             if (_randomPitch)
             {
