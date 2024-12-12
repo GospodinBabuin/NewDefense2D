@@ -18,7 +18,7 @@ public class Entity : NetworkBehaviour
     private EntityHealth _health;
     private Combat _combat;
     private Locomotion _locomotion;
-
+    
     public Combat Combat => _combat;
     public Locomotion Locomotion => _locomotion;
     public EntityHealth Health => _health;
@@ -71,7 +71,6 @@ public class Entity : NetworkBehaviour
         return tempNearestFoe;
     }
 
-
     public override void OnDestroy()
     {
         ObjectsInWorld.Instance?.AddDeadBodiesToList(gameObject);
@@ -79,5 +78,11 @@ public class Entity : NetworkBehaviour
         _health.enabled = false;
         _combat.enabled = false;
         _locomotion.enabled = false;
+
+        Collider2D collider2D = GetComponent<Collider2D>();
+        collider2D.enabled = false;
+        
+        Rigidbody2D rigidbody2D = GetComponent<Rigidbody2D>();
+        rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
     }
 }

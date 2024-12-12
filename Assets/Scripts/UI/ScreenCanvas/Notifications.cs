@@ -15,6 +15,9 @@ namespace UI
         private int _animIDShowImpossibleToPlaceBuildingNotification;
         private int _animIDShowImpossibleToRecruitMoreSoldiersNotification;
         private int _animIDShowCantAddMoreHealthNotification;
+        private int _animIDShowCreatingLobbyNotification;
+        private int _animIDShowLobbyCreatedNotification;
+        private int _animIDShowOfflineModeNotification;
     
         private void Start()
         {
@@ -25,6 +28,9 @@ namespace UI
             _animIDShowImpossibleToPlaceBuildingNotification = Animator.StringToHash("ShowImpossibleToPlaceBuilding");
             _animIDShowImpossibleToRecruitMoreSoldiersNotification = Animator.StringToHash("ShowImpossibleToRecruitMoreSoldiersNotification");
             _animIDShowCantAddMoreHealthNotification = Animator.StringToHash("ShowCantAddMoreHealthNotification");
+            _animIDShowCreatingLobbyNotification = Animator.StringToHash("ShowCreatingLobbyNotification");
+            _animIDShowLobbyCreatedNotification = Animator.StringToHash("ShowLobbyCreatedNotification");
+            _animIDShowOfflineModeNotification = Animator.StringToHash("ShowOfflineModeNotification");
         }
 
         public void ShowNewDayNotification(int currentDay)
@@ -51,6 +57,21 @@ namespace UI
         public void ShowCantAddMoreHealthNotification()
         {
             _animator.SetTrigger(_animIDShowCantAddMoreHealthNotification);
+        }
+
+        public void ShowCreatingLobbyNotification()
+        {
+            _animator.SetTrigger(_animIDShowCreatingLobbyNotification);
+        }
+
+        public void ShowLobbyCreatedNotification()
+        {
+            _animator.SetTrigger(_animIDShowLobbyCreatedNotification);
+        }
+
+        public void ShowLobbyWasNotCreatedNotification()
+        {
+            _animator.SetTrigger(_animIDShowOfflineModeNotification);
         }
     }
 }

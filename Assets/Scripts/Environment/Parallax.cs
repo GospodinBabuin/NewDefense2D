@@ -1,32 +1,26 @@
-using System.Collections.Generic;
-using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 namespace Environment
 {
-    public class Parallax : NetworkBehaviour
+    public class Parallax : MonoBehaviour
     {
         [SerializeField] private float parallaxEffect;
     
         private Camera _camera;
         private float _length;
         private float _startPosition;
-        private bool _swapPlaces = false;
+        
+        [SerializeField] private bool swapPlaces = true;
 
         public void Initialize(Camera camera)
         {
             _camera = camera;
             _startPosition = transform.position.x;
         
-            if (TryGetComponent<SpriteRenderer>(out SpriteRenderer spriteRenderer))
+            if (swapPlaces && TryGetComponent<SpriteRenderer>(out SpriteRenderer spriteRenderer))
             {
                 _length = spriteRenderer.bounds.size.x;
-                _swapPlaces = true;
-            }
-            else
-            {
-                _swapPlaces = false;
             }
         }
 
@@ -39,7 +33,7 @@ namespace Environment
 
             transform.position = new Vector3(_startPosition + distance, transform.position.y, transform.position.z);
 
-            if (!_swapPlaces) return;
+            if (!swapPlaces) return;
             if (temp > _startPosition + _length)
                 _startPosition += _length;
             else if (temp < _startPosition - _length)

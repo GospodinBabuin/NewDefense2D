@@ -12,6 +12,7 @@ TagManager:
   - ChatMessage
   - PlayerCard
   - Base
+  - RoadLamp
   layers:
   - Default
   - TransparentFX
@@ -27,8 +28,8 @@ TagManager:
   - Player
   - BuildingBoundaries
   - RoadLampBoundaries
-  - 
-  - 
+  - EnemyBuilding
+  - LitUI
   - 
   - 
   - 
@@ -58,17 +59,26 @@ TagManager:
   - name: Entity
     uniqueID: 3436038377
     locked: 0
+  - name: Collectables
+    uniqueID: 185054111
+    locked: 0
   - name: Buildings2
     uniqueID: 232126305
     locked: 0
   - name: BuildingToSpawn
     uniqueID: 1173366909
     locked: 0
-  - name: Collectables
-    uniqueID: 185054111
-    locked: 0
   - name: Ground
     uniqueID: 3384545185
+    locked: 0
+  - name: Water
+    uniqueID: 2068182103
+    locked: 0
+  - name: WaterFoam
+    uniqueID: 211304771
+    locked: 0
+  - name: Firefly
+    uniqueID: 2614190935
     locked: 0
   - name: UI
     uniqueID: 3960787737

@@ -1,4 +1,5 @@
 using Environment;
+using GoldSystem;
 using Interfaces;
 using UI;
 using Unity.Netcode;

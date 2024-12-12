@@ -18,9 +18,8 @@ namespace HealthSystem
         [SerializeField] private SoundData soundDataHealing;
         
         private int _animIDDie;
-
         protected Animator animator;
-    
+        
         protected virtual void Awake()
         {
             animator = GetComponent<Animator>();
@@ -42,7 +41,7 @@ namespace HealthSystem
             
             Debug.Log($"{gameObject.name}, now have {GetCurrentHealth()} health");
 
-            if (!IsDead())
+            if (currentHealth.Value > 0)
             {
                 SoundManager.Instance.CreateSound()
                 .WithSoundData(soundDataHit)
@@ -114,7 +113,7 @@ namespace HealthSystem
                 Die();
         }
 
-        private bool IsDead()
+        public bool IsDead()
         {
             return currentHealth.Value <= 0;
         }

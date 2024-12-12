@@ -64,42 +64,42 @@ public class DayManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void ChangeGlobalLightIntensityClientRPC(float targetIntencity)
+    public void ChangeGlobalLightIntensityClientRPC(float targetIntensity)
     {
-        globalLight.intensity = targetIntencity;
+        globalLight.intensity = targetIntensity;
     }
 
-    private void ChangeGlobalLightIntensity(float targetIntencity, DayState tragetDayState)
+    private void ChangeGlobalLightIntensity(float targetIntensity, DayState targetDayState)
     {
         _globalLightIntensityOnPosition = false;
         if (!_globalLightIntensityOnPosition)
         {
             float intensity;
-            if (tragetDayState == DayState.Day)
+            if (targetDayState == DayState.Day)
             {
                 intensity = globalLight.intensity + Time.deltaTime / globalLightIntensityChangeSpeed;
                 ChangeGlobalLightIntensityClientRPC(intensity);
-                if (globalLight.intensity >= targetIntencity)
-                    ChangeDayStateClientRPC(targetIntencity, tragetDayState);
+                if (globalLight.intensity >= targetIntensity)
+                    ChangeDayStateClientRPC(targetIntensity, targetDayState);
             }
             else
             {
                 intensity = globalLight.intensity - Time.deltaTime / globalLightIntensityChangeSpeed;
                 ChangeGlobalLightIntensityClientRPC(intensity);
-                if (globalLight.intensity <= targetIntencity)
-                    ChangeDayStateClientRPC(targetIntencity, tragetDayState);
+                if (globalLight.intensity <= targetIntensity)
+                    ChangeDayStateClientRPC(targetIntensity, targetDayState);
             }
         }
     }
 
     [ClientRpc]
-    private void ChangeDayStateClientRPC(float targetIntencity, DayState tragetDayState)
+    private void ChangeDayStateClientRPC(float targetIntensity, DayState targetDayState)
     {
-        globalLight.intensity = targetIntencity;
+        globalLight.intensity = targetIntensity;
         _globalLightIntensityOnPosition = true;
-        dayState = tragetDayState;
+        dayState = targetDayState;
 
-        if (tragetDayState == DayState.Day)
+        if (targetDayState == DayState.Day)
         {
             _currentTime = dayTime;
             _currentDay++;

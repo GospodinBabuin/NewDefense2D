@@ -1,4 +1,5 @@
 using Environment;
+using GoldSystem;
 using Unity.Mathematics;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -20,7 +21,7 @@ public class Enemy : Entity
         {
             if (!Locomotion.CloseEnough(nearestFoe.transform.position))
             {
-                Locomotion.RotateAndMove(nearestFoe.transform.position);
+                Locomotion.RotateAndMoveWithVelocity(nearestFoe.transform.position);
                 return;
             }
             else

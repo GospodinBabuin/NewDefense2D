@@ -55,7 +55,7 @@ public class AlliedSoldier : Entity, IBind<UnitDataStruct>
         {
             if (!Locomotion.CloseEnough(nearestFoe.transform.position))
             {
-                Locomotion.RotateAndMove(nearestFoe.transform.position);
+                Locomotion.RotateAndMoveWithVelocity(nearestFoe.transform.position);
                 return;
             }
             else
@@ -68,7 +68,7 @@ public class AlliedSoldier : Entity, IBind<UnitDataStruct>
 
         if (!IsOnBorder(_selectedBorderPosition))
         {
-            Locomotion.RotateAndMove(_selectedBorderPosition);
+            Locomotion.RotateAndMoveWithVelocity(_selectedBorderPosition);
             return;
         }
         

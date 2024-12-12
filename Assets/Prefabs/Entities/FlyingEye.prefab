@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 5192773856601922718}
   - component: {fileID: 3995534755770141957}
   - component: {fileID: 663766701772709125}
+  - component: {fileID: -7650500928925839918}
   m_Layer: 10
   m_Name: FlyingEye
   m_TagString: Untagged
@@ -57,8 +58,8 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 0
-  m_GravityScale: 1
+  m_AngularDrag: 0.05
+  m_GravityScale: 3
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -66,10 +67,10 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 6
+  m_Constraints: 4
 --- !u!61 &2595809904510457289
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -225,7 +226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2ed448ad534b2a4184efeb52a628ac4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
+  speed: 100
   stopDistance: 0.85
   minStopDistance: -0.2
   maxStopDistance: 0
@@ -237,6 +238,7 @@ MonoBehaviour:
     Loop: 0
     PlayOnAwake: 0
     FrequentSound: 0
+  movementSmoothing: 0
 --- !u!114 &5192773856601922718
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -263,6 +265,12 @@ MonoBehaviour:
   soundDataDeath:
     AudioClips:
     - {fileID: 8300000, guid: 673190b62a5c31b43a04555048492d5f, type: 3}
+    AudioMixerGroup: {fileID: 0}
+    Loop: 0
+    PlayOnAwake: 0
+    FrequentSound: 0
+  soundDataHealing:
+    AudioClips: []
     AudioMixerGroup: {fileID: 0}
     Loop: 0
     PlayOnAwake: 0
@@ -312,6 +320,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TransitionStateInfoList: []
   m_Animator: {fileID: 9168353170450932758}
+--- !u!114 &-7650500928925839918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5502228041930633767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d7c879794dfda4687da0e400131852, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8851036976566908524
 GameObject:
   m_ObjectHideFlags: 0

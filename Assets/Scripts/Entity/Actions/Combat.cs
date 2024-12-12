@@ -75,6 +75,7 @@ public class Combat : NetworkBehaviour
             Health health = collider2D.GetComponent<Health>();
 
             if (health == null) continue;
+            if (health.IsDead()) continue;
 
             health.DamageServerRPC(damage);
 

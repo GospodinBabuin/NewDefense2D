@@ -1,6 +1,8 @@
 using System;
 using Buildings;
+using Cinemachine;
 using Environment;
+using GoldSystem;
 using Interfaces;
 using SaveLoadSystem;
 using UI;
@@ -82,16 +84,13 @@ public class PlayerController : Entity, IBind<PlayerController.PlayerDataStruct>
             return;
         }
         _input.Enable();
-        ParalaxManager.Instance.Initialize(GetComponentInChildren<Camera>());
-        //ObjectsInWorld.Instance?.AddPlayerToDictionaryClientRpc(Id);
-        //ObjectsInWorld.Instance?.AddPlayerToDictionary(this, SteamId);
+        ParalaxManager.Instance?.Initialize(GetComponentInChildren<Camera>());
+        WaterController.Instance?.Initialize(transform);
         NetworkTransmission.Instance.PlayerLoadedInGameServerRPC(true, NetworkManager.Singleton.LocalClientId);
     }
 
     private void Update()
     {
-        Locomotion.Rotate(_input.Move);
-        Locomotion.Move(_input.Move);
         Attack();
         Interact();
         UpgradeObject();
@@ -102,6 +101,8 @@ public class PlayerController : Entity, IBind<PlayerController.PlayerDataStruct>
 
     private void FixedUpdate()
     {
+        Locomotion.RotateAndMoveWithVelocity(_input.Move);
+        
         CheckInteractionObjects();
         CheckUpgradeableObjects();
         CheckBuildingsToRepair();
@@ -277,5 +278,5 @@ public class PlayerData : ISaveable
     public ulong id;
     public int maxHealth = 10;
     public int currentHealth = 10;
-    public int goldCount = 100;
+    public int goldCount = 200;
 }

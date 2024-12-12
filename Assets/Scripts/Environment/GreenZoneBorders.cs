@@ -57,6 +57,8 @@ public class GreenZoneBorders : MonoBehaviour
 
         foreach (Building building in buildings)
         {
+            if (building.CompareTag("RoadLamp")) continue;
+            
             if (building.transform.position.x < LeftBorder.transform.position.x)
             {
                 LeftBorder.transform.position = building.transform.position + new Vector3(1, -3);

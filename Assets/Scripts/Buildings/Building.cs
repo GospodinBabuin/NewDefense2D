@@ -1,6 +1,7 @@
 using System;
 using AudioSystem;
 using Environment;
+using GoldSystem;
 using HealthSystem;
 using SaveLoadSystem;
 using UI;
@@ -158,6 +159,8 @@ namespace Buildings
         {
             if (ObjectsInWorld.Instance.Buildings.Contains(this))
                 ObjectsInWorld.Instance.RemoveBuildingFromList(this, true);
+            
+            Debug.Log($"{gameObject.name} is destroyed");
         }
         
         private void SetAnimIDs()

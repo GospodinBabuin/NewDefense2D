@@ -1,9 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
+using Steamworks;
+using UI;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class LobbyManager : MonoBehaviour
 {
@@ -12,11 +11,15 @@ public class LobbyManager : MonoBehaviour
     public bool InGame;
     public bool IsHost;
     
-
+    [SerializeField] private GameObject lobbyPanel;
     [SerializeField] private GameObject startButton;
+    [SerializeField] private GameObject readyButton;
+    [SerializeField] private GameObject notReadyButton;
     [SerializeField] private GameObject multiMenuButtons;
-    [SerializeField] private GameObject multiLobbyButtons;
-    
+    [SerializeField] private GameObject lobbyMenuButtons;
+
+    private Notifications _notifications;
+
     private void Awake()
     {
         if (Instance != null)
@@ -27,12 +30,12 @@ public class LobbyManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        _notifications = GetComponentInChildren<Notifications>();
     }
 
     public void HostCreated()
     {
-        multiMenuButtons.SetActive(false);
-        multiLobbyButtons.SetActive(true);
         IsHost = true;
         Connected = true;
     }
@@ -40,7 +43,8 @@ public class LobbyManager : MonoBehaviour
     public void ConnectedAsClient()
     {
         multiMenuButtons.SetActive(false);
-        multiLobbyButtons.SetActive(true);
+        lobbyMenuButtons.SetActive(true);
+        readyButton.SetActive(true);
         IsHost = false;
         Connected = true;
     }
@@ -54,14 +58,12 @@ public class LobbyManager : MonoBehaviour
         }
         
         multiMenuButtons.SetActive(true);
-        multiLobbyButtons.SetActive(false);
+        startButton.SetActive(false);
+        readyButton.SetActive(false);
+        notReadyButton.SetActive(false);
+        lobbyMenuButtons.SetActive(false);
         IsHost = false;
         Connected = false;
-    }
-
-    public void OnReadyOrNotButtonClicked(bool ready)
-    {
-        NetworkTransmission.Instance.ClientReadyStateServerRpc(ready, NetworkManager.Singleton.LocalClientId);
     }
 
     public bool CheckIfPlayersAreReady()
@@ -85,9 +87,41 @@ public class LobbyManager : MonoBehaviour
         return ready;
     }
 
-    public void OnHostButtonClicked()
+    public async void OnStartSingleplayer()
     {
-        GameNetworkManager.Instance.StartHost(2);
+        lobbyPanel.SetActive(false);
+
+        await GameNetworkManager.Instance.StartHost(false);
+        NetworkTransmission.Instance.AddMeToDictionaryServerRpc(SteamClient.SteamId, SteamClient.Name, NetworkManager.Singleton.LocalClientId);
+
+        SceneTransitionHandler.Instance.SwitchScene("Game");
+    }
+    
+    public async void OnHostButtonClicked()
+    {
+        lobbyPanel.SetActive(false);
+        
+        _notifications.ShowCreatingLobbyNotification();
+
+        if (await GameNetworkManager.Instance.StartHost(true))
+        {
+            _notifications.ShowLobbyCreatedNotification();
+            
+            multiMenuButtons.SetActive(false);
+            lobbyMenuButtons.SetActive(true);
+            readyButton.SetActive(true);
+        }
+        else
+        {
+            _notifications.ShowLobbyWasNotCreatedNotification();
+        }
+        
+        lobbyPanel.SetActive(true);
+    }
+    
+    public void OnReadyOrNotButtonClicked(bool ready)
+    {
+        NetworkTransmission.Instance.ClientReadyStateServerRpc(ready, NetworkManager.Singleton.LocalClientId);
     }
 
     public void OnExitToMenuButtonClicked()
@@ -102,6 +136,9 @@ public class LobbyManager : MonoBehaviour
 
     public void OnStartButtonClicked()
     {
+        lobbyPanel.SetActive(false);
+
+        NetworkTransmission.Instance.SetLobbyJoinable(false);
         SceneTransitionHandler.Instance.SwitchScene("Game");
     }
 }

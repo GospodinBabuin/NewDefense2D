@@ -137,6 +137,7 @@ GameObject:
   - component: {fileID: 1206918109856183990}
   - component: {fileID: -966418311896871115}
   - component: {fileID: 1974322861861434354}
+  - component: {fileID: -7322737958555410373}
   m_Layer: 8
   m_Name: SoldierLvl3
   m_TagString: Untagged
@@ -174,8 +175,8 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 0
-  m_GravityScale: 1
+  m_AngularDrag: 0.05
+  m_GravityScale: 3
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -183,10 +184,10 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 6
+  m_Constraints: 4
 --- !u!61 &2709053989709039443
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -244,7 +245,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2762188399
+  GlobalObjectIdHash: 894092356
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -342,7 +343,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2ed448ad534b2a4184efeb52a628ac4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2.6
+  speed: 130
   stopDistance: 1
   minStopDistance: -0.1
   maxStopDistance: 0.35
@@ -354,6 +355,7 @@ MonoBehaviour:
     Loop: 0
     PlayOnAwake: 0
     FrequentSound: 0
+  movementSmoothing: 0
 --- !u!114 &1206918109856183990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -380,6 +382,12 @@ MonoBehaviour:
   soundDataDeath:
     AudioClips:
     - {fileID: 8300000, guid: c1c9dd1b3d73c8b46a98682ac8b65f16, type: 3}
+    AudioMixerGroup: {fileID: 0}
+    Loop: 0
+    PlayOnAwake: 0
+    FrequentSound: 0
+  soundDataHealing:
+    AudioClips: []
     AudioMixerGroup: {fileID: 0}
     Loop: 0
     PlayOnAwake: 0
@@ -429,6 +437,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TransitionStateInfoList: []
   m_Animator: {fileID: 8338167757517660656}
+--- !u!114 &-7322737958555410373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2227431682754589603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d7c879794dfda4687da0e400131852, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6792137595694930221
 GameObject:
   m_ObjectHideFlags: 0

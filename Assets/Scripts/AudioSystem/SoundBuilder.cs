@@ -2,9 +2,9 @@ using UnityEngine;
 
 namespace AudioSystem
 {
-    public class SoundBuilder : MonoBehaviour
+    public class SoundBuilder
     {
-        readonly private SoundManager _soundManager;
+        private readonly SoundManager _soundManager;
         private SoundData _soundData;
         private Vector3 _position = Vector3.zero;
         private bool _randomPitch;

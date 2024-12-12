@@ -1,3 +1,4 @@
+using GoldSystem;
 using UI;
 using UnityEngine;
 using UnityEngine.UI;

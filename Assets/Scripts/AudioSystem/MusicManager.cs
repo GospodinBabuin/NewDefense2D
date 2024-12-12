@@ -1,8 +1,6 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Random = System.Random;
 
 namespace AudioSystem
 {
@@ -14,7 +12,7 @@ namespace AudioSystem
         private int _nightMusicIndex = 0;
         private int _mainMenuMusicIndex = 0;
         private int _lobbyMusicIndex = 0;
-
+        
         [SerializeField] private List<AudioClip> daytimeMusic;
         [SerializeField] private List<AudioClip> nighttimeMusic;
 

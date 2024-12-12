@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.SceneManagement;
 
 namespace AudioSystem
 {
@@ -99,6 +100,7 @@ namespace AudioSystem
             soundEmitter.gameObject.SetActive(false);
             _activeSoundEmitters.Remove(soundEmitter);
         }
+
 
         private SoundEmitter CreateSoundEmitter()
         {

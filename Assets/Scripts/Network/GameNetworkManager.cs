@@ -3,6 +3,7 @@ using Steamworks;
 using Steamworks.Data;
 using System;
 using System.Threading.Tasks;
+using UI;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -10,7 +11,6 @@ public class GameNetworkManager : MonoBehaviour
 {
     public static GameNetworkManager Instance { get; private set; } = null;
     public Lobby? CurrentLobby { get; private set; } = null;
-    public ulong HostId;
 
     private FacepunchTransport _transport = null;
 
@@ -39,12 +39,19 @@ public class GameNetworkManager : MonoBehaviour
         SteamFriends.OnGameLobbyJoinRequested += SteamFriends_OnGameLobbyJoinRequested;
     }
 
-    public async void StartHost(int maxMembers)
+    public async Task<bool> StartHost(bool createLobby)
     {
         NetworkManager.Singleton.OnServerStarted += Singleton_OnServerStarted;
         NetworkManager.Singleton.StartHost();
-        PlayerSpawnManager.Instance.SpawnPlayerServerRPC(NetworkManager.Singleton.LocalClientId, true);
-        CurrentLobby = await SteamMatchmaking.CreateLobbyAsync(maxMembers);
+
+        if (createLobby)
+        {
+            PlayerSpawnManager.Instance.SpawnPlayerServerRPC(NetworkManager.Singleton.LocalClientId, true);
+            CurrentLobby = await SteamMatchmaking.CreateLobbyAsync(2);
+            Debug.Log(CurrentLobby);
+        }
+        
+        return CurrentLobby != null;
     }
 
     private void StartClient(SteamId steamId)
@@ -70,20 +77,20 @@ public class GameNetworkManager : MonoBehaviour
     public void Disconnected()
     {
         CurrentLobby?.Leave();
-        if (NetworkManager.Singleton == null)
+        if (NetworkManager.Singleton != null)
         {
-            return;
+            if (NetworkManager.Singleton.IsHost)
+            {
+                NetworkManager.Singleton.OnServerStarted -= Singleton_OnServerStarted;
+            }
+            else
+            {
+                NetworkManager.Singleton.OnClientConnectedCallback -= Singleton_OnClientConnectedCallback;
+            }
+
+            NetworkManager.Singleton.Shutdown(true);
         }
-        if (NetworkManager.Singleton.IsHost)
-        {
-            NetworkManager.Singleton.OnServerStarted -= Singleton_OnServerStarted;
-        }
-        else
-        {
-            NetworkManager.Singleton.OnClientConnectedCallback -= Singleton_OnClientConnectedCallback;
-        }
-        NetworkManager.Singleton.Shutdown(true);
-        
+
         Chat.Instance?.ClearChat();
         PlayerInfoHandler.Instance.ClearPlayerInfos();
 
@@ -93,6 +100,7 @@ public class GameNetworkManager : MonoBehaviour
         {
             LobbyManager.Instance.Disconnected();
         }
+        
         Debug.Log("Disconnected");
     }
 
@@ -141,7 +149,7 @@ public class GameNetworkManager : MonoBehaviour
         RoomEnter joinedLobby = await lobby.Join();
         if (joinedLobby != RoomEnter.Success)
         {
-            Debug.Log("Failed to create a lobby");
+            Debug.Log("Failed to join a lobby");
         }
         else
         {
@@ -192,13 +200,15 @@ public class GameNetworkManager : MonoBehaviour
         if (result != Result.OK)
         {
             Debug.Log("Lobby was not created");
-            return;
         }
-
-        lobby.SetPublic();
-        lobby.SetJoinable(true);
-        lobby.SetGameServer(lobby.Owner.Id);
-        Debug.Log($"Lobby created {lobby.Owner.Name}");
+        else
+        {
+            lobby.SetPublic();
+            lobby.SetJoinable(true);
+            lobby.SetGameServer(lobby.Owner.Id);
+            Debug.Log($"Lobby created {lobby.Owner.Name}");
+        }
+        
         NetworkTransmission.Instance.AddMeToDictionaryServerRpc(SteamClient.SteamId, SteamClient.Name, NetworkManager.Singleton.LocalClientId);
     }
 }

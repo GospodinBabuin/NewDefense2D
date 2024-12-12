@@ -55,7 +55,8 @@ namespace HealthSystem
                     break;
             }
         
-            Destroy(_building);
+            _building.enabled = false;
+            Destroy(gameObject, animator.GetCurrentAnimatorStateInfo(0).length + 5f);
         }
 
         protected override void SetAnimIDs()

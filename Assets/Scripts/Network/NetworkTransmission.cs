@@ -1,6 +1,7 @@
 using Environment;
 using SaveLoadSystem;
 using System.Collections.Generic;
+using Steamworks;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -37,7 +38,9 @@ public class NetworkTransmission : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void AddMeToDictionaryServerRpc(ulong steamId, string steamName, ulong clientId)
     {
-        Chat.Instance.SendMessageToChat($"{steamName} has joined", clientId, true);
+        if (SteamClient.SteamId != steamId)
+            Chat.Instance.SendMessageToChat($"{steamName} has joined", clientId, true);
+        
         PlayerInfoHandler.Instance.AddPlayerToDictionary(clientId, steamName, steamId);
         PlayerInfoHandler.Instance.UpdateClients();
     }
@@ -148,5 +151,11 @@ public class NetworkTransmission : NetworkBehaviour
                 }
             }
         }
+    }
+
+    public void SetLobbyJoinable(bool lobbyJoinable)
+    {
+        if (GameNetworkManager.Instance.CurrentLobby != null)
+            GameNetworkManager.Instance.CurrentLobby.Value.SetJoinable(lobbyJoinable);
     }
 }

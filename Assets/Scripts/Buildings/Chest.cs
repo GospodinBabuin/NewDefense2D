@@ -1,4 +1,5 @@
 using System.Collections;
+using GoldSystem;
 using Unity.Mathematics;
 using UnityEngine;
 using Random = UnityEngine.Random;
