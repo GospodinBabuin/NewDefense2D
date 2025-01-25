@@ -8,8 +8,9 @@ namespace HealthSystem
     {
         public delegate void HealthHandler(int currentHealth, int maxHealth);
         public event HealthHandler OnHealthValueChangedEvent;
-
         private HealParticles _healParticles;
+        
+        public bool IsDead { get; private set; }
 
         private void Start()
         {
@@ -28,7 +29,7 @@ namespace HealthSystem
             OnHealthValueChangedEvent?.Invoke(GetCurrentHealth(), GetMaxHealth());
         }
 
-        public override void Heal(int healAmount)
+        protected override void Heal(int healAmount)
         {
             base.Heal(healAmount);
         
@@ -37,32 +38,39 @@ namespace HealthSystem
             OnHealthValueChangedEvent?.Invoke(GetCurrentHealth(), GetMaxHealth());
         }
 
-        public override void IncreaseMaxHealth(int increaseAmount)
+        protected override void IncreaseMaxHealth(int increaseAmount)
         {
             base.IncreaseMaxHealth(increaseAmount);
         
             OnHealthValueChangedEvent?.Invoke(GetCurrentHealth(), GetMaxHealth());
         }
 
-        public override void ReduceMaxHealth(int reduceAmount)
+        protected override void ReduceMaxHealth(int reduceAmount)
         {
             base.ReduceMaxHealth(reduceAmount);
         
             OnHealthValueChangedEvent?.Invoke(GetCurrentHealth(), GetMaxHealth());
         }
 
-        public override void SetMaxHealth(int newMaxHealth)
+        protected override void SetMaxHealth(int newMaxHealth)
         {
             base.SetMaxHealth(newMaxHealth);
             
             OnHealthValueChangedEvent?.Invoke(GetCurrentHealth(), GetMaxHealth());
         }
 
-        public override void SetCurrentHealth(int newCurrentHealth)
+        protected override void SetCurrentHealth(int newCurrentHealth)
         {
             base.SetCurrentHealth(newCurrentHealth);
             
             OnHealthValueChangedEvent?.Invoke(GetCurrentHealth(), GetMaxHealth());
+        }
+
+        protected override void Die()
+        {
+            base.Die();
+
+            GetComponent<PlayerController>().Die();
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using SaveLoadSystem;
+using Steamworks;
 using UI;
 using Unity.Netcode;
 using UnityEngine;
@@ -54,13 +55,24 @@ public class DayManager : NetworkBehaviour
 
     private void Start()
     {
+        SetRichPresence();
+        
         GameUI.Instance.Notifications.ShowNewDayNotification(_currentDay);
+        GameManager.Instance.OnDefeatEvent += () => { enabled = false; };
     }
 
     private void FixedUpdate()
     {
         if (IsHost) 
             ChangeDayTime();
+    }
+
+    private void SetRichPresence()
+    {
+        string richPresenceMassage = $"Trying to get through the day {CurrentDay}";
+        SteamFriends.SetRichPresence( "steam_player_group", richPresenceMassage );
+        
+        Debug.Log(richPresenceMassage);
     }
 
     [ClientRpc]
@@ -103,6 +115,7 @@ public class DayManager : NetworkBehaviour
         {
             _currentTime = dayTime;
             _currentDay++;
+            SetRichPresence();
             GameUI.Instance.Notifications.ShowNewDayNotification(_currentDay);
         }
         
@@ -138,5 +151,17 @@ public class DayManager : NetworkBehaviour
     public void Add30SecToCurrentTime()
     {
         _currentTime += 30f;
+    }
+    
+    [ContextMenu("Add120SecToCurrentTime")]
+    public void Add120SecToCurrentTime()
+    {
+        _currentTime += 120f;
+    }
+
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        GameManager.Instance.OnDefeatEvent -= () => { enabled = false; };
     }
 }

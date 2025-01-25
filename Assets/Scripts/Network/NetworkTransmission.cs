@@ -14,12 +14,30 @@ public class NetworkTransmission : NetworkBehaviour
     {
         if (Instance != null)
         {
-            Destroy(this);
+            Destroy(gameObject);
         }
         else
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+        }
+    }
+
+    [ClientRpc(RequireOwnership = false)]
+    public void ClientDisconnectedClientRPC(ulong clientId)
+    {
+        Debug.Log(clientId);
+        
+        if (NetworkManager.Singleton.LocalClient.ClientId == clientId)
+            return;
+        
+        if (clientId == NetworkManager.ServerClientId)
+        {
+            GameNetworkManager.Instance.Disconnected();
+            if (SceneManager.GetActiveScene().name == "Game")
+            {
+                SceneTransitionHandler.Instance.SwitchScene("MainMenu");
+            }
         }
     }
 
@@ -95,7 +113,7 @@ public class NetworkTransmission : NetworkBehaviour
         }
     }
 
-    public bool IsAllPlayersLoadedInGame()
+    private bool IsAllPlayersLoadedInGame()
     {
         foreach (KeyValuePair<ulong, GameObject> player in PlayerInfoHandler.Instance.PlayerInfos)
         {

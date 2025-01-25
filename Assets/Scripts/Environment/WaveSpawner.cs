@@ -45,6 +45,8 @@ public class WaveSpawner : NetworkBehaviour
         DayManager.Instance.OnDayStateChangedEvent += CheckDay;
 
         CheckDayWithNewWave(DayManager.Instance.CurrentDay);
+        
+        GameManager.Instance.OnDefeatEvent += () => { enabled = false; };
     }
 
     private void CheckDay(DayManager.DayState dayState, int day)
@@ -103,5 +105,11 @@ public class WaveSpawner : NetworkBehaviour
     public bool IsMonstersDead()
     {
         return (_isMonstersAppeared && ObjectsInWorld.Instance.Enemies.Count == 0);
+    }
+
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        GameManager.Instance.OnDefeatEvent -= () => { enabled = false; };
     }
 }

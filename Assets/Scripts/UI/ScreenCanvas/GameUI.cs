@@ -1,5 +1,7 @@
+using System;
 using Buildings;
 using BuildingSystem;
+using UI.Menus;
 using UnityEngine;
 
 namespace UI
@@ -13,21 +15,29 @@ namespace UI
         [SerializeField] private GameObject pauseMenu;
         [SerializeField] private AltarMenu altarMenu;
         [SerializeField] private Notifications notifications;
+        [SerializeField] private SettingsMenu settingsMenu;
     
         public UnitMenu UnitMenu => unitMenu;
         public Notifications Notifications => notifications;
+        public SettingsMenu SettingsMenu => settingsMenu;
 
         private void Awake()
         {
             if (Instance == null)
             {
                 Instance = this;
-                return;
             }
-        
-            Destroy(gameObject);
+            else
+            {
+                Destroy(gameObject);
+            }
         }
-    
+
+        private void Start()
+        {
+            settingsMenu.Initialize();
+        }
+
         public bool IsMenuOpen()
         {
             return buildingMenu.activeInHierarchy || unitMenu.gameObject.activeInHierarchy || pauseMenu.activeInHierarchy;

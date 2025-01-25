@@ -67,7 +67,7 @@ TextureImporter:
   swizzle: 50462976
   cookieLightType: 0
   platformSettings:
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -80,7 +80,7 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -100,13 +100,14 @@ TextureImporter:
       name: crow_death2_0
       rect:
         serializedVersion: 2
-        x: 22
-        y: 16
-        width: 20
-        height: 29
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -121,13 +122,14 @@ TextureImporter:
       name: crow_death2_1
       rect:
         serializedVersion: 2
-        x: 82
-        y: 15
-        width: 22
-        height: 31
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -142,13 +144,14 @@ TextureImporter:
       name: crow_death2_2
       rect:
         serializedVersion: 2
-        x: 143
-        y: 15
-        width: 20
-        height: 31
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -163,13 +166,14 @@ TextureImporter:
       name: crow_death2_3
       rect:
         serializedVersion: 2
-        x: 203
-        y: 15
-        width: 21
-        height: 31
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -184,13 +188,14 @@ TextureImporter:
       name: crow_death2_4
       rect:
         serializedVersion: 2
-        x: 263
-        y: 15
-        width: 21
-        height: 31
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -202,6 +207,7 @@ TextureImporter:
       edges: []
       weights: []
     outline: []
+    customData: 
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
@@ -211,15 +217,14 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
     nameFileIdTable:
       crow_death2_0: 805090600
       crow_death2_1: -45236186
       crow_death2_2: 624725116
       crow_death2_3: -914744609
       crow_death2_4: -137876652
-      crow_death2_5: 619405533
-      crow_death2_6: -295877686
-      crow_death2_7: 994265720
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

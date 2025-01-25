@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: IncreaseSpeedPotionLvl1
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 3a481bc5b3972b54ab4918d5226622af, type: 3}
+  prefab: {fileID: 132578183749040199, guid: fb727dd7d3d87794bab9ba48401519cc, type: 3}
   description: A potion that increases speed and reflexes. Severe tremors are possible.
     The effect is irreversible.
   cost: 40
-  prefab: {fileID: 0}
-  needToInvoke: 0
   healCount: 0
   increaseHealthCount: 0
   increaseDamageCount: 0
-  increaseSpeedCount: 0.5
+  increaseSpeedCount: 15
+  potionType: 7

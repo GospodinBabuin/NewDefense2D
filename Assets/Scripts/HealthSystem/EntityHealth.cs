@@ -1,3 +1,4 @@
+using System;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -7,8 +8,7 @@ namespace HealthSystem
     {
         private Combat _combat;
         private int _animIDTakeDamage;
-
-    
+        
         protected override void Awake()
         {
             base.Awake();
@@ -30,9 +30,11 @@ namespace HealthSystem
         {
             base.Die();
         
+            if (gameObject.CompareTag("Player")) return;
+            
             Destroy(GetComponent<Entity>());
         }
-
+        
         protected override void SetAnimIDs()
         {
             base.SetAnimIDs();

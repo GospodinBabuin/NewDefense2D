@@ -3,11 +3,12 @@ using Environment;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Steamworks;
 using Unity.Netcode;
 using UnityEngine;
 using static AlliedSoldier;
 using static Buildings.Building;
-using static GameProgress;
+using static GameManager;
 
 namespace SaveLoadSystem
 {
@@ -90,26 +91,103 @@ namespace SaveLoadSystem
                 id = playerData.id,
                 maxHealth = playerData.maxHealth,
                 currentHealth = playerData.currentHealth,
-                goldCount = playerData.goldCount
+                goldCount = playerData.goldCount,
+                speed = playerData.speed,
+                speedAnimationMultiplier = playerData.speedAnimationMultiplier,
+                damage = playerData.damage
             };
         }
 
         [ServerRpc(RequireOwnership = false)]
-        public void SavePlayerServerRpc(ulong id, int maxHealth, int currentHealth, int gold)
+        public void SavePlayerServerRpc(ulong id, int maxHealth, int currentHealth, int gold, int damage, float speed, float speedAnimationMultiplier)
         {
             PlayerData data = GameData.playerData.FirstOrDefault(d => d.id == id);
             data.maxHealth = maxHealth;
             data.currentHealth = currentHealth;
             data.goldCount = gold;
+            data.speed = speed;
+            data.speedAnimationMultiplier = speedAnimationMultiplier;
+            data.damage = damage;
             Debug.Log($"Players data saved, ID: {id}");
         }
 
-        private void SaveGameProgressData()
+        [ClientRpc]
+        private void SaveGameProgressDataClientRpc()
         {
-            GameProgress.Instance.SaveData();
-            GameData.gameProgressData = GameProgress.Instance.GetGameProgressData();
+            GameManager.Instance.SaveData();
+            GameManagerData gameManagerData = GameManager.Instance.GetGameProgressData();
+            SaveGameProgressDataServerRpc(ConvertGameProgressData(gameManagerData));
+        }
+        
+        [ServerRpc(RequireOwnership = false)]
+        private void SaveGameProgressDataServerRpc(GameProgressDataStruct data)
+        {
+            GameManagerData gameManagerData = GameData.gameProgressData.FirstOrDefault(d => d.id == data.id);
+            
+            if (gameManagerData != null)
+            {
+                SetGameProgressDataValues();
+            }
+            else
+            {
+                gameManagerData = new GameManagerData();
+                SetGameProgressDataValues();
+                GameData.gameProgressData.Add(gameManagerData);
+            }
+
+            return;
+
+            void SetGameProgressDataValues()
+            {
+                gameManagerData.id = data.id;
+                gameManagerData.firstStart = data.firstStart;
+                gameManagerData.healPotionLvl1HasBeenUsed = data.healPotionLvl1HasBeenUsed;
+                gameManagerData.healPotionLvl2HasBeenUsed = data.healPotionLvl2HasBeenUsed;
+                gameManagerData.increaseDamagePotionLvl1HasBeenUsed = data.increaseDamagePotionLvl1HasBeenUsed;
+                gameManagerData.increaseDamagePotionLvl2HasBeenUsed = data.increaseDamagePotionLvl2HasBeenUsed;
+                gameManagerData.increaseHealthPotionLvl1HasBeenUsed = data.increaseHealthPotionLvl1HasBeenUsed;
+                gameManagerData.increaseHealthPotionLvl2HasBeenUsed = data.increaseHealthPotionLvl2HasBeenUsed;
+                gameManagerData.increaseHealthPotionLvl3HasBeenUsed = data.increaseHealthPotionLvl3HasBeenUsed;
+                gameManagerData.increaseSpeedPotionLvl1HasBeenUsed = data.increaseSpeedPotionLvl1HasBeenUsed;
+                gameManagerData.increaseSpeedPotionLvl2HasBeenUsed = data.increaseSpeedPotionLvl2HasBeenUsed;
+            }
+        }
+        
+        private void LoadGameProgressData(List<GameManagerData> progressData)
+        {
+            foreach (GameManagerData data in progressData)
+            {
+                GameProgressDataStruct convertedGameProgressData = ConvertGameProgressData(data);
+                LoadGameProgressDataClientRPC(convertedGameProgressData);
+            }
         }
 
+        [ClientRpc]
+        private void LoadGameProgressDataClientRPC(GameProgressDataStruct progressData)
+        {
+            if (SteamClient.SteamId != progressData.id) return;
+            
+            GameManager.Instance.Bind(progressData);
+        }
+        
+        private GameProgressDataStruct ConvertGameProgressData(GameManagerData gameManagerData)
+        {
+            return new GameProgressDataStruct
+            {
+                id = gameManagerData.id,
+                firstStart = gameManagerData.firstStart,
+                healPotionLvl1HasBeenUsed = gameManagerData.healPotionLvl1HasBeenUsed,
+                healPotionLvl2HasBeenUsed = gameManagerData.healPotionLvl2HasBeenUsed,
+                increaseHealthPotionLvl1HasBeenUsed = gameManagerData.increaseHealthPotionLvl1HasBeenUsed,
+                increaseHealthPotionLvl2HasBeenUsed = gameManagerData.increaseHealthPotionLvl2HasBeenUsed,
+                increaseHealthPotionLvl3HasBeenUsed = gameManagerData.increaseHealthPotionLvl3HasBeenUsed,
+                increaseDamagePotionLvl1HasBeenUsed = gameManagerData.increaseDamagePotionLvl1HasBeenUsed,
+                increaseDamagePotionLvl2HasBeenUsed = gameManagerData.increaseDamagePotionLvl2HasBeenUsed,
+                increaseSpeedPotionLvl1HasBeenUsed = gameManagerData.increaseSpeedPotionLvl1HasBeenUsed,
+                increaseSpeedPotionLvl2HasBeenUsed = gameManagerData.increaseSpeedPotionLvl2HasBeenUsed
+            };
+        }
+        
         private void LoadBuildings(List<BuildingData> buildingDatas)
         {
             foreach (BuildingData buildingData in buildingDatas)
@@ -143,15 +221,6 @@ namespace SaveLoadSystem
             }
         }
 
-        private void LoadGameProgressData(GameProgressData progressData)
-        {
-            GameProgressDataStruct ConvertedGameProgressData = ConvertGameProgressData(progressData);
-
-            //GameProgressManager newProgressManager = Instantiate(new GameProgressManager(), new Vector2(), Quaternion.identity);
-            GameProgress newProgressManager = FindFirstObjectByType<GameProgress>();
-            newProgressManager.Bind(ConvertedGameProgressData);
-        }
-
         private BuildingDataStruct ConvertBuildingData(BuildingData buildingData)
         {
             return new BuildingDataStruct
@@ -169,14 +238,6 @@ namespace SaveLoadSystem
             {
                 id = unitData.id,
                 currentHealth = unitData.currentHealth,
-            };
-        }
-
-        private GameProgressDataStruct ConvertGameProgressData(GameProgressData gameProgressData)
-        {
-            return new GameProgressDataStruct
-            {
-                firstStart = gameProgressData.firstStart,
             };
         }
 
@@ -216,7 +277,7 @@ namespace SaveLoadSystem
 
             SaveBuildingData();
             SaveUnitData();
-            SaveGameProgressData();
+            SaveGameProgressDataClientRpc();
 
             _dataService.Save(GameData);
         }
@@ -240,7 +301,7 @@ namespace SaveLoadSystem
 
     public interface IBind<TData> where TData : ISaveable
     {
-        void Bind(TData data);
+        void Bind(TData gameManagerData);
         void SaveData();
     }
 
@@ -250,6 +311,6 @@ namespace SaveLoadSystem
         public List<PlayerData> playerData = new List<PlayerData>();
         public List<BuildingData> buildingData = new List<BuildingData>();
         public List<UnitData> unitData = new List<UnitData>();
-        public GameProgressData gameProgressData = new GameProgressData();
+        public List<GameManagerData> gameProgressData = new List<GameManagerData>();
     }
 }

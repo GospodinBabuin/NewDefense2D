@@ -9,9 +9,9 @@ public class Combat : NetworkBehaviour
 {
     private Animator _animator;
 
+    [SerializeField] private NetworkVariable<int> damage = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] private float attackDelay = 1.5f;
     [SerializeField] private int attackAnimationCount;
-    [SerializeField] private int damage = 1;
     [SerializeField] private Transform attackPoint;
     [SerializeField] private float attackRadius = 1f;
     [SerializeField] private LayerMask attackLayers;
@@ -20,6 +20,8 @@ public class Combat : NetworkBehaviour
     [SerializeField] private bool IsSoldierLvl1 = false;
 
     [SerializeField] private SoundData soundData;
+    
+    public int Damage { get => damage.Value; private set => damage.Value = value; }
     public float AttackDelay => attackDelay;
 
     private bool _canAttack = true;
@@ -77,7 +79,7 @@ public class Combat : NetworkBehaviour
             if (health == null) continue;
             if (health.IsDead()) continue;
 
-            health.DamageServerRPC(damage);
+            health.DamageServerRPC(damage.Value);
 
             if (!canDamageMultipleTargets) return;
         }
@@ -102,9 +104,24 @@ public class Combat : NetworkBehaviour
         DealDamage();
     }
 
-    public void IncreaseDamage(int increaseDamage)
+    [ServerRpc(RequireOwnership = false)]
+    public void IncreaseDamageServerRPC(int increaseDamage)
     {
-        damage += increaseDamage;
+        IncreaseDamage(increaseDamage);
+    }
+    private void IncreaseDamage(int increaseDamage)
+    {
+        damage.Value += increaseDamage;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SetDamageServerRPC(int newDamage)
+    {
+        SetDamage(newDamage);
+    }
+    private void SetDamage(int newDamage)
+    {
+        damage.Value = newDamage;
     }
 
     private void SetAnimIDs()

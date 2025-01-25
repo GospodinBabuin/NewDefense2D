@@ -15,6 +15,7 @@ public class LobbyManager : MonoBehaviour
     [SerializeField] private GameObject startButton;
     [SerializeField] private GameObject readyButton;
     [SerializeField] private GameObject notReadyButton;
+    [SerializeField] private GameObject inviteButton;
     [SerializeField] private GameObject multiMenuButtons;
     [SerializeField] private GameObject lobbyMenuButtons;
 
@@ -34,6 +35,29 @@ public class LobbyManager : MonoBehaviour
         _notifications = GetComponentInChildren<Notifications>();
     }
 
+    private void Start()
+    {
+        SteamFriends.ClearRichPresence();
+        SteamFriends.SetRichPresence( "steam_player_group", "Resting at the camp" );
+
+        if (GameNetworkManager.Instance.CurrentLobby != null && GameNetworkManager.Instance.CurrentLobby.Value.Id.IsValid)
+        {
+            PlayerSpawnManager.Instance.SpawnPlayerServerRPC(NetworkManager.Singleton.LocalClientId, true);
+            
+            multiMenuButtons.SetActive(false);
+            lobbyMenuButtons.SetActive(true);
+            readyButton.SetActive(true);
+            CheckMembersCount();
+        }
+        else
+        {
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsHost)
+            {
+                GameNetworkManager.Instance.Disconnected();
+            }
+        }
+    }
+
     public void HostCreated()
     {
         IsHost = true;
@@ -49,6 +73,34 @@ public class LobbyManager : MonoBehaviour
         Connected = true;
     }
 
+    public void CheckMembersCount()
+    {
+        Debug.Log("Checking members count");
+
+        if (GameNetworkManager.Instance.CurrentLobby == null)
+        {
+            Debug.Log("lobby not found");
+            return;
+        }
+        
+        if (GameNetworkManager.Instance.CurrentLobby.Value.MaxMembers ==
+            GameNetworkManager.Instance.CurrentLobby.Value.MemberCount)
+        {
+            inviteButton.SetActive(false);
+        }
+
+        Debug.Log($"{GameNetworkManager.Instance.CurrentLobby.Value.MemberCount} members");
+        
+        if (GameNetworkManager.Instance.CurrentLobby.Value.MemberCount > 1)
+        {
+            SteamFriends.SetRichPresence("steam_player_group_size", GameNetworkManager.Instance.CurrentLobby.Value.MemberCount.ToString());
+        }
+        else
+        {
+            SteamFriends.SetRichPresence("steam_player_group_size", null);
+        }
+    }
+
     public void Disconnected()
     {
         GameObject[] playersCards = GameObject.FindGameObjectsWithTag("PlayerCard");
@@ -60,10 +112,13 @@ public class LobbyManager : MonoBehaviour
         multiMenuButtons.SetActive(true);
         startButton.SetActive(false);
         readyButton.SetActive(false);
+        inviteButton.SetActive(false);
         notReadyButton.SetActive(false);
         lobbyMenuButtons.SetActive(false);
         IsHost = false;
         Connected = false;
+        
+        Debug.Log("Disconnected from lobby");
     }
 
     public bool CheckIfPlayersAreReady()
@@ -110,6 +165,7 @@ public class LobbyManager : MonoBehaviour
             multiMenuButtons.SetActive(false);
             lobbyMenuButtons.SetActive(true);
             readyButton.SetActive(true);
+            inviteButton.SetActive(true);
         }
         else
         {
@@ -117,6 +173,16 @@ public class LobbyManager : MonoBehaviour
         }
         
         lobbyPanel.SetActive(true);
+    }
+
+    public void OnJoinButtonClicked()
+    {
+        SteamFriends.OpenOverlay("friends");
+    }
+
+    public void OnInviteButtonClicked()
+    {
+        SteamFriends.OpenGameInviteOverlay(SteamClient.SteamId);
     }
     
     public void OnReadyOrNotButtonClicked(bool ready)
@@ -126,6 +192,11 @@ public class LobbyManager : MonoBehaviour
 
     public void OnExitToMenuButtonClicked()
     {
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsHost)
+        {
+            GameNetworkManager.Instance.Disconnected();
+        }
+        
         SceneTransitionHandler.Instance.SwitchScene("MainMenu");
     }
 

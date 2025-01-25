@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -23,7 +24,7 @@ namespace GoldSystem
             }
         
             _goldPool = new ObjectPool<Gold>(CreatePooledObject, OnTakeFromPool, 
-                OnReturnToPool, OnDestroyObject, false, 10, 60);
+                OnReturnToPool, OnDestroyObject, false, 10, 100);
         }
 
         private void ReturnObjectToPool(Gold instance)

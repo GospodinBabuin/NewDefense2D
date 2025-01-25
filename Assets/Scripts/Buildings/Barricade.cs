@@ -6,7 +6,7 @@ namespace Buildings
     {
         public void Upgrade()
         {
-            UpgradeBuilding();
+            UpgradeBuildingServerRPC();
         }
         
         public bool CanUpgrade()

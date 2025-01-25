@@ -43,6 +43,17 @@ namespace Buildings
             CheckEnemyPresence();
         }
 
+        public override void Bind(BuildingDataStruct gameManagerData)
+        {
+            base.Bind(gameManagerData);
+            
+            for (int i = 1; i < BuildingLvl.Value; i++)
+            {
+                _currentMaxAllyCountFromBuilding += magnificationSize;
+                AllyCountController.Instance.IncreaseMaxAllyCount(magnificationSize);
+            }
+        }
+
         public void Interact(GameObject interactingObject)
         {
             Collider2D[] colliders2d = Physics2D.OverlapCircleAll(transform.position, _circleCollider.radius, enemyLayerMask);
@@ -81,9 +92,15 @@ namespace Buildings
         }
         
         [ContextMenu("UpgradeBarracks")]
-        public override void UpgradeBuilding()
+        protected override void UpgradeBuilding()
         {
             base.UpgradeBuilding();
+            UpgradeBarracksClientRPC();
+        }
+
+        [ClientRpc]
+        private void UpgradeBarracksClientRPC()
+        {
             _currentMaxAllyCountFromBuilding += magnificationSize;
             AllyCountController.Instance.IncreaseMaxAllyCount(magnificationSize);
         }
@@ -124,7 +141,7 @@ namespace Buildings
 
         public void Upgrade()
         {
-            UpgradeBuilding();
+            UpgradeBuildingServerRPC();
         }
         
         public bool CanUpgrade()

@@ -1,9 +1,10 @@
 using System;
+using System.Linq;
 using Buildings;
-using Cinemachine;
 using Environment;
 using GoldSystem;
 using Interfaces;
+using MenuSlots;
 using SaveLoadSystem;
 using UI;
 using Unity.Netcode;
@@ -34,20 +35,30 @@ public class PlayerController : Entity, IBind<PlayerController.PlayerDataStruct>
         public int maxHealth;
         public int currentHealth;
         public int goldCount;
+        public float speed;
+        public float speedAnimationMultiplier;
+        public int damage;
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
             serializer.SerializeValue(ref id);
             serializer.SerializeValue(ref maxHealth);
             serializer.SerializeValue(ref currentHealth);
             serializer.SerializeValue(ref goldCount);
+            serializer.SerializeValue(ref speed);
+            serializer.SerializeValue(ref speedAnimationMultiplier);
+            serializer.SerializeValue(ref damage);
         }
     }
     
-    public void Bind(PlayerDataStruct playerData)
+    public void Bind(PlayerDataStruct gameManagerData)
     {
-        Health.SetMaxHealth(playerData.maxHealth);
-        Health.SetCurrentHealth(playerData.currentHealth);
-        GoldBank.Instance.SetGoldCount(this, playerData.goldCount);
+        Health.SetMaxHealthServerRPC(gameManagerData.maxHealth);
+        Health.SetCurrentHealthServerRPC(gameManagerData.currentHealth);
+        Debug.Log(GoldBank.Instance);
+        GoldBank.Instance.SetGoldCount(this, gameManagerData.goldCount);
+        Locomotion.SetSpeedServerRPC(gameManagerData.speed);
+        Locomotion.SetSpeedAnimationMultiplierServerRPC(gameManagerData.speedAnimationMultiplier);
+        Combat.SetDamageServerRPC(gameManagerData.damage);
         
         Debug.Log($"SaveLoadSystem bind {this.gameObject}, ID: {this.SteamId}");
     }
@@ -55,17 +66,8 @@ public class PlayerController : Entity, IBind<PlayerController.PlayerDataStruct>
     [ContextMenu("SavePlayerData")]
     public void SaveData()
     {
-        SaveLoad.Instance.SavePlayerServerRpc(SteamId, Health.GetMaxHealth(), Health.GetCurrentHealth(), GoldBank.Instance.Gold);
-    }
-
-    public ulong GetSteamId()
-    {
-        return PlayerInfoHandler.Instance.ReturnSteamIdByLocalId(NetworkManager.Singleton.LocalClientId);
-    }
-
-    public ulong GetLocalId()
-    {
-        return NetworkManager.Singleton.LocalClientId;
+        SaveLoad.Instance.SavePlayerServerRpc(SteamId, Health.GetMaxHealth(), Health.GetCurrentHealth(), 
+            GoldBank.Instance.Gold, Combat.Damage, Locomotion.Speed, Locomotion.SpeedAnimationMultiplier );
     }
 
     protected override void Awake()
@@ -83,10 +85,12 @@ public class PlayerController : Entity, IBind<PlayerController.PlayerDataStruct>
             enabled = false;
             return;
         }
+        
         _input.Enable();
         ParalaxManager.Instance?.Initialize(GetComponentInChildren<Camera>());
-        WaterController.Instance?.Initialize(transform);
         NetworkTransmission.Instance.PlayerLoadedInGameServerRPC(true, NetworkManager.Singleton.LocalClientId);
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnDefeatEvent += () => { enabled = false; };
     }
 
     private void Update()
@@ -261,14 +265,116 @@ public class PlayerController : Entity, IBind<PlayerController.PlayerDataStruct>
     public override void OnDestroy()
     {
         base.OnDestroy();
-        //ObjectsInWorld.Instance?.RemovePlayerFromListClientRpc(Id);
         ObjectsInWorld.Instance?.RemovePlayerFromList(this, SteamId);
-        this.enabled = false;
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnDefeatEvent -= () => { enabled = false; };
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(transform.position, interactionRadius);
+    }
+
+    public void Die()
+    {
+        if (NetworkManager.Singleton != null)
+        {
+            DieClientRPC(NetworkManager.Singleton.LocalClientId);
+
+            if (DeadPlayersHandler.Instance.AreThereAnyDeadPlayers())
+            {
+                GameManager.Instance.Defeat();
+            }
+        }
+        else
+        {
+            GetComponent<Collider2D>().enabled = false;
+            Health.enabled = false;
+            Combat.enabled = false;
+            Locomotion.enabled = false;
+        
+            Rigidbody2D rigidbody2D = GetComponent<Rigidbody2D>();
+            rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
+            
+            GameManager.Instance.Defeat();
+        }
+    }
+
+    [ClientRpc(RequireOwnership = false)]
+    public void ReviveClientRPC(ulong clientId)
+    {
+        if (NetworkManager.Singleton.LocalClientId != clientId) return;
+        
+        GetComponent<Collider2D>().enabled = true;
+        Health.enabled = true;
+        Combat.enabled = true;
+        Locomotion.enabled = true;
+        
+        Rigidbody2D rigidbody2D = GetComponent<Rigidbody2D>();
+        rigidbody2D.constraints = RigidbodyConstraints2D.FreezeRotation;
+    }
+
+    [ClientRpc(RequireOwnership = false)]
+    private void DieClientRPC(ulong clientId)
+    {
+        GetComponent<Collider2D>().enabled = false;
+        Health.enabled = false;
+        Combat.enabled = false;
+        Locomotion.enabled = false;
+        
+        Rigidbody2D rigidbody2D = GetComponent<Rigidbody2D>();
+        rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
+        
+        DeadPlayersHandler.Instance.PlayerDead(clientId);
+    }
+    
+    private void LoadPotionsEffects()
+    {
+        PotionDatabaseSO potionDatabase = Resources.Load<PotionDatabaseSO>("Databases/PotionDatabase");
+        if (GameManager.Instance.IncreaseHealthPotionLvl1HasBeenUsed)
+        {
+            PotionScriptableObject potion = potionDatabase.potionSO.FirstOrDefault(potion => potion.Type == PotionScriptableObject.PotionType.IncreaseHealthLvl1);
+            Health.IncreaseMaxHealthServerRPC(potion.IncreaseHealthCount);
+            Debug.Log($"{potion} has been used");
+        }
+        if (GameManager.Instance.IncreaseHealthPotionLvl2HasBeenUsed)
+        {
+            PotionScriptableObject potion = potionDatabase.potionSO.FirstOrDefault(potion => potion.Type == PotionScriptableObject.PotionType.IncreaseHealthLvl2);
+            Health.IncreaseMaxHealthServerRPC(potion.IncreaseHealthCount);
+            Debug.Log($"{potion} has been used");
+        }
+        if (GameManager.Instance.IncreaseHealthPotionLvl3HasBeenUsed)
+        {
+            PotionScriptableObject potion = potionDatabase.potionSO.FirstOrDefault(potion => potion.Type == PotionScriptableObject.PotionType.IncreaseHealthLvl3);
+            Health.IncreaseMaxHealthServerRPC(potion.IncreaseHealthCount);
+            Debug.Log($"{potion} has been used");
+        }
+        if (GameManager.Instance.IncreaseDamagePotionLvl1HasBeenUsed)
+        {
+            PotionScriptableObject potion = potionDatabase.potionSO.FirstOrDefault(potion => potion.Type == PotionScriptableObject.PotionType.IncreaseDamageLvl1);
+            Combat.IncreaseDamageServerRPC(potion.IncreaseDamageCount);
+            Debug.Log($"{potion} has been used");
+        }
+        if (GameManager.Instance.IncreaseDamagePotionLvl2HasBeenUsed)
+        {
+            PotionScriptableObject potion = potionDatabase.potionSO.FirstOrDefault(potion => potion.Type == PotionScriptableObject.PotionType.IncreaseDamageLvl2);
+            Combat.IncreaseDamageServerRPC(potion.IncreaseDamageCount);
+            Debug.Log($"{potion} has been used");
+        }
+
+        if (GameManager.Instance.IncreaseSpeedPotionLvl1HasBeenUsed)
+        {
+            PotionScriptableObject potion = potionDatabase.potionSO.FirstOrDefault(potion => potion.Type == PotionScriptableObject.PotionType.IncreaseSpeedLvl1);
+            Locomotion.IncreaseSpeedServerRPC(potion.IncreaseSpeedCount);
+            Debug.Log($"{potion} has been used");
+        }
+
+        if (GameManager.Instance.IncreaseSpeedPotionLvl2HasBeenUsed)
+        {
+            PotionScriptableObject potion = potionDatabase.potionSO.FirstOrDefault(potion => potion.Type == PotionScriptableObject.PotionType.IncreaseSpeedLvl2);
+            Locomotion.IncreaseSpeedServerRPC(potion.IncreaseSpeedCount);
+            Debug.Log($"{potion} has been used");
+        }
     }
 }
 
@@ -279,4 +385,7 @@ public class PlayerData : ISaveable
     public int maxHealth = 10;
     public int currentHealth = 10;
     public int goldCount = 200;
+    public float speed = 180f;
+    public float speedAnimationMultiplier = 1f;
+    public int damage = 1;
 }

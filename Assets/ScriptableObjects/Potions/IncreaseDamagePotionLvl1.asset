@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: IncreaseDamagePotionLvl1
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 805736230f06ac449a72b0ecb951e522, type: 3}
+  prefab: {fileID: 8823760693434499220, guid: 1b8372408593cd34cb19018e906adf37, type: 3}
   description: The potion increases the physical strength of the drinker. Insomnia
     is guaranteed.
   cost: 50
-  prefab: {fileID: 0}
-  needToInvoke: 0
   healCount: 0
   increaseHealthCount: 0
   increaseDamageCount: 1
   increaseSpeedCount: 0
+  potionType: 5

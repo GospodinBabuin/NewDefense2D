@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: IncreaseHealthPotionlvl3
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: ace8a02646afeda4880fc3cb14cad705, type: 3}
+  prefab: {fileID: 2648871290850130954, guid: 06dbf4bbc78f3524c984e821ce47068a, type: 3}
   description: A potion that burns the nerve endings of the drinker. Pay with terrible
     pain once and for all
   cost: 60
-  prefab: {fileID: 0}
-  needToInvoke: 0
   healCount: 0
   increaseHealthCount: 5
   increaseDamageCount: 0
   increaseSpeedCount: 0
+  potionType: 4

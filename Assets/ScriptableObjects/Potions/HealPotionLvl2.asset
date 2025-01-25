@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: HealPotionLvl2
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 44dc65116207f4b46aa85443dae5ad96, type: 3}
+  prefab: {fileID: 7912765673014295381, guid: d58297117f486ed49848c1c33a772c70, type: 3}
   description: A potion that increases overall survival and health.
   cost: 50
-  prefab: {fileID: 0}
-  needToInvoke: 0
   healCount: 15
   increaseHealthCount: 0
   increaseDamageCount: 0
   increaseSpeedCount: 0
+  potionType: 1

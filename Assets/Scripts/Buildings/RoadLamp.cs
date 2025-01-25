@@ -1,5 +1,6 @@
 using Environment;
 using HealthSystem;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Buildings
@@ -28,6 +29,8 @@ namespace Buildings
 
         private void FadeLights(DayManager.DayState dayState, int currentDay)
         {
+            if (Animator.isActiveAndEnabled) return;
+            
             switch (dayState)
             {
                 case DayManager.DayState.Day when _lightsOn:
@@ -44,8 +47,8 @@ namespace Buildings
                     break;
             }
         }
-
-        public override void UpgradeBuilding()
+        
+        protected override void UpgradeBuilding()
         {
             Debug.Log("cant upgrade this building");
         }
@@ -55,6 +58,7 @@ namespace Buildings
             if (ObjectsInWorld.Instance.Buildings.Contains(this))
                 ObjectsInWorld.Instance.RemoveBuildingFromList(this, false);
             
+            DayManager.Instance.OnDayStateChangedEvent -= FadeLights;
             GetComponent<Collider2D>().enabled = false;
             GetComponent<Health>().enabled = false;
         }

@@ -1,20 +1,25 @@
 using AudioSystem;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Locomotion : MonoBehaviour
+public class Locomotion : NetworkBehaviour
 {
-    [SerializeField] private float speed = 1f;
     [SerializeField] private float stopDistance = 1f;
-
+    
+    [SerializeField] private NetworkVariable<float> speed = new NetworkVariable<float>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<float> speedAnimationMultiplier = new NetworkVariable<float>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    
     [SerializeField] private float minStopDistance = -0.1f;
     [SerializeField] private float maxStopDistance = 0.35f;
 
     [SerializeField] private SoundData soundData;
     
-    public float Speed { get => speed; private set => speed = value; }
+    public float Speed { get => speed.Value; private set => speed.Value = value; }
     public float StopDistance { get => stopDistance; private set => stopDistance = value; }
+    public float SpeedAnimationMultiplier { get => speedAnimationMultiplier.Value; private set => speedAnimationMultiplier.Value = value; }
     
     private int _animIDMove;
+    private int _animIDMultiplier;
     private Animator _animator;
     private Transform _spriteTransform;
     
@@ -29,6 +34,7 @@ public class Locomotion : MonoBehaviour
         _animator = GetComponent<Animator>();
         
         _animIDMove = Animator.StringToHash("IsMoving");
+        _animIDMultiplier = Animator.StringToHash("Multiplier");
         
         _rigidbody2D = GetComponent<Rigidbody2D>();
 
@@ -37,11 +43,11 @@ public class Locomotion : MonoBehaviour
 
     private void MoveWithTransform(Vector2 direction)
     {
-        transform.Translate(speed * Time.deltaTime * direction);
+        transform.Translate(speed.Value * Time.deltaTime * direction);
         SetMoveAnimation(true);
     }
     
-    private void MoveWithTransform(float direction)
+    public void MoveWithTransform(float direction)
     {
         if (direction == 0f)
         {
@@ -49,17 +55,16 @@ public class Locomotion : MonoBehaviour
             return;
         }
         
-        //Vector2 directionVector = new Vector2(direction, 0);
-        //transform.Translate(speed * Time.deltaTime * directionVector);
-        
-        transform.position += new Vector3(direction, 0, 0) * (speed * Time.deltaTime);
+        transform.position += new Vector3(direction, 0, 0) * (speed.Value * Time.deltaTime);
         SetMoveAnimation(true);
     }
 
-    private void MoveWithVelocity(Vector2 direction)
+    public void MoveWithVelocity(Vector2 targetPosition)
     {
-        Vector2 targetVelocity = new Vector2(direction.x * (speed * Time.fixedDeltaTime), _rigidbody2D.velocity.y);
-        _rigidbody2D.velocity = Vector2.SmoothDamp(_rigidbody2D.velocity, targetVelocity, ref _velocity, movementSmoothing);
+        Vector2 direction = targetPosition.x < transform.position.x ? -transform.right : transform.right;
+        
+        Vector2 targetVelocity = new Vector2(direction.x * (speed.Value * Time.fixedDeltaTime), _rigidbody2D.linearVelocity.y);
+        _rigidbody2D.linearVelocity = Vector2.SmoothDamp(_rigidbody2D.linearVelocity, targetVelocity, ref _velocity, movementSmoothing);
         SetMoveAnimation(true);
     }
 
@@ -71,19 +76,19 @@ public class Locomotion : MonoBehaviour
             return;
         }
         
-        Vector2 targetVelocity = new Vector2(direction * speed * Time.fixedDeltaTime, _rigidbody2D.velocity.y);
-        _rigidbody2D.velocity = Vector2.SmoothDamp(_rigidbody2D.velocity, targetVelocity, ref _velocity, movementSmoothing);
+        Vector2 targetVelocity = new Vector2(direction * speed.Value * Time.fixedDeltaTime, _rigidbody2D.linearVelocity.y);
+        _rigidbody2D.linearVelocity = Vector2.SmoothDamp(_rigidbody2D.linearVelocity, targetVelocity, ref _velocity, movementSmoothing);
         
         SetMoveAnimation(true);
     }
     
-    private void Rotate(Vector2 direction)
+    public void Rotate(Vector2 direction)
     {
         _spriteTransform.rotation = direction.x > transform.position.x ?
             Quaternion.identity : Quaternion.Euler(0, 180, 0);
     }
     
-    private void Rotate(float direction)
+    public void Rotate(float direction)
     {
         if (direction == 0) return;
         
@@ -103,10 +108,10 @@ public class Locomotion : MonoBehaviour
         MoveWithTransform(direction);
     }
 
-    public void RotateAndMoveWithVelocity(Vector2 direction)
+    public void RotateAndMoveWithVelocity(Vector2 targetPosition)
     {
-        Rotate(direction);
-        MoveWithVelocity(direction.x < transform.position.x ? -transform.right : transform.right);
+        Rotate(targetPosition);
+        MoveWithVelocity(targetPosition);
     }
     
     public void RotateAndMoveWithVelocity(float direction)
@@ -115,9 +120,9 @@ public class Locomotion : MonoBehaviour
         MoveWithVelocity(direction);
     }
     
-    public bool CloseEnough(Vector2 target)
+    public bool CloseEnough(Vector2 targetPosition, float targetHalfSize)
     {
-        return Vector2.Distance(transform.position, target) <= stopDistance;
+        return Vector2.Distance(transform.position, targetPosition) <= stopDistance + targetHalfSize;
     }
 
     public void SetMoveAnimation(bool moveState)
@@ -125,9 +130,37 @@ public class Locomotion : MonoBehaviour
         _animator.SetBool(_animIDMove, moveState);
     }
 
-    public void IncreaseSpeed(float increaseSpeed)
+    [ServerRpc(RequireOwnership = false)]
+    public void IncreaseSpeedServerRPC(float increaseSpeed)
     {
-        speed += increaseSpeed;
+        IncreaseSpeed(increaseSpeed);
+    }
+    private void IncreaseSpeed(float increaseSpeed)
+    {
+        speed.Value += increaseSpeed;
+        speedAnimationMultiplier.Value += 0.083f;
+        _animator.SetFloat(_animIDMultiplier, speedAnimationMultiplier.Value);
+    }
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void SetSpeedServerRPC(float newSpeed)
+    {
+        SetSpeed(newSpeed);
+    }
+    private void SetSpeed(float newSpeed)
+    {
+        speed.Value = newSpeed;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SetSpeedAnimationMultiplierServerRPC(float newSpeedAnimMultiplier)
+    {
+        SetSpeedAnimationMultiplier(newSpeedAnimMultiplier);
+    }
+    private void SetSpeedAnimationMultiplier(float newSpeedAnimMultiplier)
+    {
+        speedAnimationMultiplier.Value = newSpeedAnimMultiplier;
+        _animator.SetFloat(_animIDMultiplier, speedAnimationMultiplier.Value);
     }
     
     private void AddRandomToStopDistance()

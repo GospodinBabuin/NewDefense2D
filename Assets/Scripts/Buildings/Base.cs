@@ -7,12 +7,12 @@ namespace Buildings
     {
         public void Interact(GameObject interactingObject)
         {
-            throw new System.NotImplementedException();
+            Health.TestDestroy();
         }
 
         public void Upgrade()
         {
-            UpgradeBuilding();
+            UpgradeBuildingServerRPC();
         }
 
         public bool CanUpgrade()

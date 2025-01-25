@@ -34,7 +34,6 @@ namespace HealthSystem
         {
             Damage(damageAmount);
         }
-
         protected virtual void Damage(int damageAmount)
         {
             currentHealth.Value -= damageAmount;
@@ -43,6 +42,8 @@ namespace HealthSystem
 
             if (currentHealth.Value > 0)
             {
+                Debug.Log(transform.position);
+                
                 SoundManager.Instance.CreateSound()
                 .WithSoundData(soundDataHit)
                 .WithRandomPitch()
@@ -53,7 +54,12 @@ namespace HealthSystem
             CheckHealth();
         }
 
-        public virtual void Heal(int healAmount)
+        [ServerRpc(RequireOwnership = false)]
+        public void HealServerRPC(int healAmount)
+        {
+            Heal(healAmount);
+        }
+        protected virtual void Heal(int healAmount)
         {
             currentHealth.Value += healAmount;
             PlayHealSound();
@@ -61,7 +67,13 @@ namespace HealthSystem
             CheckHealth();
         }
 
-        public void HealToMaxHealth()
+        
+        [ServerRpc(RequireOwnership = false)]
+        public void HealToMaxHealthServerRPC()
+        {
+            HealToMaxHealth();
+        }
+        protected void HealToMaxHealth()
         {
             currentHealth.Value = maxHealth.Value;
             PlayHealSound();
@@ -71,13 +83,23 @@ namespace HealthSystem
         {
             return maxHealth.Value - currentHealth.Value;
         }
-
-        public virtual void IncreaseMaxHealth(int increaseAmount)
+        
+        [ServerRpc(RequireOwnership = false)]
+        public void IncreaseMaxHealthServerRPC(int increaseAmount)
+        {
+            IncreaseMaxHealth(increaseAmount);
+        }
+        protected virtual void IncreaseMaxHealth(int increaseAmount)
         {
             maxHealth.Value += increaseAmount;
         }
 
-        public virtual void ReduceMaxHealth(int reduceAmount)
+        [ServerRpc(RequireOwnership = false)]
+        public void ReduceMaxHealthServerRPC(int reduceAmount)
+        {
+            ReduceMaxHealth(reduceAmount);
+        }
+        protected virtual void ReduceMaxHealth(int reduceAmount)
         {
             maxHealth.Value -= reduceAmount;
         
@@ -88,14 +110,24 @@ namespace HealthSystem
         {
             return currentHealth.Value == maxHealth.Value;
         }
-
-        public virtual void SetMaxHealth(int newMaxHealth)
+        
+        [ServerRpc(RequireOwnership = false)]
+        public void SetMaxHealthServerRPC(int newMaxHealth)
+        {
+            SetMaxHealth(newMaxHealth);
+        }
+        protected virtual void SetMaxHealth(int newMaxHealth)
         {
             maxHealth.Value = newMaxHealth;
             CheckHealth();
         }
 
-        public virtual void SetCurrentHealth(int newCurrentHealth)
+        [ServerRpc(RequireOwnership = false)]
+        public void SetCurrentHealthServerRPC(int newCurrentHealth)
+        {
+            SetCurrentHealth(newCurrentHealth);
+        }
+        protected virtual void SetCurrentHealth(int newCurrentHealth)
         {
             currentHealth.Value = newCurrentHealth;
             CheckHealth();

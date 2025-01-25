@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: IncreaseHealthPotionlvl1
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: b7f77607c82ea4142a2070c0e37e1756, type: 3}
+  prefab: {fileID: 4689193006677301210, guid: 73302e57953ead0489ec568c769e9757, type: 3}
   description: A potion that lowers the pain threshold. surprisingly quite tasty
   cost: 20
-  prefab: {fileID: 0}
-  needToInvoke: 0
   healCount: 0
   increaseHealthCount: 5
   increaseDamageCount: 0
   increaseSpeedCount: 0
+  potionType: 2

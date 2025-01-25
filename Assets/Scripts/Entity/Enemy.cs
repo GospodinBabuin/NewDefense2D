@@ -19,7 +19,7 @@ public class Enemy : Entity
 
         if (nearestFoe != null)
         {
-            if (!Locomotion.CloseEnough(nearestFoe.transform.position))
+            if (!Locomotion.CloseEnough(nearestFoe.transform.position, nearestFoe.GetComponent<BoxCollider2D>().size.x/2))
             {
                 Locomotion.RotateAndMoveWithVelocity(nearestFoe.transform.position);
                 return;
@@ -56,7 +56,7 @@ public class Enemy : Entity
     {
         for (int i = 0; i < goldAfterDeath; i++)
         {
-            GoldSpawner.Instance.SpawnGold(GetRandomPoint(transform.position, 0.3f), quaternion.identity);
+            NetworkGoldSpawner.Instance.SpawnGold(GetRandomPoint(transform.position, 0.3f), quaternion.identity);
         }
 
         base.OnDestroy();

@@ -73,14 +73,12 @@ public class Entity : NetworkBehaviour
 
     public override void OnDestroy()
     {
-        ObjectsInWorld.Instance?.AddDeadBodiesToList(gameObject);
+        DeadBody deadBody = gameObject.AddComponent<DeadBody>();
+        ObjectsInWorld.Instance?.AddDeadBodiesToList(deadBody);
         GetComponent<Collider2D>().enabled = false;
         _health.enabled = false;
         _combat.enabled = false;
         _locomotion.enabled = false;
-
-        Collider2D collider2D = GetComponent<Collider2D>();
-        collider2D.enabled = false;
         
         Rigidbody2D rigidbody2D = GetComponent<Rigidbody2D>();
         rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;

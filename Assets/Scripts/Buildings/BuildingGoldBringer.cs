@@ -1,4 +1,5 @@
 using Interfaces;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Buildings
@@ -24,7 +25,20 @@ namespace Buildings
 
         private void FixedUpdate()
         {
+            if (!IsHost) return;
+            
             FarmGold();
+        }
+
+        public override void Bind(BuildingDataStruct gameManagerData)
+        {
+            base.Bind(gameManagerData);
+            
+            for (int i = 1; i < BuildingLvl.Value; i++)
+            {
+                goldPerIteration++;
+                maxGold *= 2;
+            }
         }
 
         private void FarmGold()
@@ -49,14 +63,21 @@ namespace Buildings
 
         public void Interact(GameObject interactingObject)
         {
+            InteractClientRPC();
+        }
+
+        [ClientRpc]
+        private void InteractClientRPC()
+        {
             _chest.CollectGold(_collectedGold);
             _collectedGold = 0;
         }
         
         [ContextMenu("UpgradeBuildingGoldBringer")]
-        public override void UpgradeBuilding()
+        protected override void UpgradeBuilding()
         {
             base.UpgradeBuilding();
+            
             goldPerIteration++;
             maxGold *= 2;
         }

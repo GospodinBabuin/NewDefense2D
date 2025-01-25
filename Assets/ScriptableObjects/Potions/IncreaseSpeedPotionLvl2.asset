@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: IncreaseSpeedPotionLvl2
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 3a481bc5b3972b54ab4918d5226622af, type: 3}
+  prefab: {fileID: 6978509646226194662, guid: e4b3f87d7765e9948bd713072387d470, type: 3}
   description: A powerful potion that greatly increases the speed of whoever drinks
     it. It will become more difficult for you to concentrate and speak.
   cost: 100
-  prefab: {fileID: 0}
-  needToInvoke: 0
   healCount: 0
   increaseHealthCount: 0
   increaseDamageCount: 0
-  increaseSpeedCount: 0.5
+  increaseSpeedCount: 15
+  potionType: 8

@@ -1,3 +1,4 @@
+using Network;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,7 +8,7 @@ namespace Environment
     {
         public static WaterController Instance;
 
-        private Transform _playerTransform;
+        private Camera _camera;
         
         private void Awake()
         {
@@ -21,18 +22,18 @@ namespace Environment
             }
         }
         
-        public void Initialize(Transform playerTransform)
+        public void Initialize(Camera playerCamera)
         {
             if (SceneManager.GetActiveScene().name == "Lobby") return;
 
-            _playerTransform = playerTransform;
+            _camera = playerCamera;
         }
 
         private void Update()
         {
-            if (!_playerTransform) return;
+            if (!_camera) return;
             
-            transform.position = new Vector2(_playerTransform.position.x, transform.position.y);
+            transform.position = new Vector2(_camera.transform.position.x, transform.position.y);
         }
     }
 }

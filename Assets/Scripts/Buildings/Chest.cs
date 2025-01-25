@@ -1,59 +1,62 @@
 using System.Collections;
 using GoldSystem;
 using Unity.Mathematics;
+using Unity.Netcode;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Buildings
 {
-    public class Chest : MonoBehaviour
+    public class Chest : NetworkBehaviour
     {
         [SerializeField] private Transform goldSpawner;
         [SerializeField] private float radius = 0.5f;
         [SerializeField] private float goldSpawnDelay = 0.05f;
     
-        private Animator _animator;
+        protected Animator animator;
 
-        private int _animIDOpen;
-        private int _animIDClose;
-        private int _animIDDestroy;
+        protected int animIDOpen;
+        protected int animIDClose;
+        protected int animIDDestroy;
 
-        private void Awake()
+        protected virtual void Awake()
         {
-            _animator = GetComponent<Animator>();
+            animator = GetComponent<Animator>();
             SetAnimIDs();
         }
 
         private void SetAnimIDs()
         {
-            _animIDOpen = Animator.StringToHash("Open");
-            _animIDClose = Animator.StringToHash("Close");
-            _animIDDestroy = Animator.StringToHash("Destroy");
+            animIDOpen = Animator.StringToHash("Open");
+            animIDClose = Animator.StringToHash("Close");
+            animIDDestroy = Animator.StringToHash("Destroy");
         }
     
         public void CollectGold(int goldCount)
         {
-            _animator.SetTrigger(_animIDOpen);
-
+            animator.SetTrigger(animIDOpen);
+            
+            if (!IsHost) return;
+            
             StartCoroutine(SpawnGold(goldCount));
         }
 
         public void DestroyChest()
         {
-            _animator.SetTrigger(_animIDDestroy);
+            animator.SetTrigger(animIDDestroy);
             
-            Destroy(gameObject, _animator.GetCurrentAnimatorStateInfo(0).length);
+            Destroy(gameObject, animator.GetCurrentAnimatorStateInfo(0).length);
         }
 
         private IEnumerator SpawnGold(int goldCount)
         {
             for (int i = 0; i < goldCount; i++)
             {
-                GoldSpawner.Instance.SpawnGold(GetRandomPoint(goldSpawner.position), quaternion.identity);
+                NetworkGoldSpawner.Instance.SpawnGold(GetRandomPoint(goldSpawner.position), quaternion.identity);
                 yield return new WaitForSeconds(goldSpawnDelay);
             }
         
-            _animator.SetTrigger(_animIDClose);
+            animator.SetTrigger(animIDClose);
         }
 
         private Vector2 GetRandomPoint(Vector2 oldPos)

@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: HealPotionLvl1
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 117b17facff65dc42b1b57deb7c21551, type: 3}
+  prefab: {fileID: 1377324228043018344, guid: 5e63904177d3b8644a6660ed0b7e8546, type: 3}
   description: A healing potion that will help to cope with pain and wounds.
   cost: 20
-  prefab: {fileID: 0}
-  needToInvoke: 0
   healCount: 5
   increaseHealthCount: 0
   increaseDamageCount: 0
   increaseSpeedCount: 0
+  potionType: 0

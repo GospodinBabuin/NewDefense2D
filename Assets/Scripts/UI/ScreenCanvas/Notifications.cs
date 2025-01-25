@@ -18,6 +18,7 @@ namespace UI
         private int _animIDShowCreatingLobbyNotification;
         private int _animIDShowLobbyCreatedNotification;
         private int _animIDShowOfflineModeNotification;
+        private int _animIDShowDefeatNotification;
     
         private void Start()
         {
@@ -31,6 +32,7 @@ namespace UI
             _animIDShowCreatingLobbyNotification = Animator.StringToHash("ShowCreatingLobbyNotification");
             _animIDShowLobbyCreatedNotification = Animator.StringToHash("ShowLobbyCreatedNotification");
             _animIDShowOfflineModeNotification = Animator.StringToHash("ShowOfflineModeNotification");
+            _animIDShowDefeatNotification = Animator.StringToHash("ShowDefeatNotification");
         }
 
         public void ShowNewDayNotification(int currentDay)
@@ -72,6 +74,11 @@ namespace UI
         public void ShowLobbyWasNotCreatedNotification()
         {
             _animator.SetTrigger(_animIDShowOfflineModeNotification);
+        }
+
+        public void ShowDefeatNotification()
+        {
+            _animator.SetTrigger(_animIDShowDefeatNotification);
         }
     }
 }

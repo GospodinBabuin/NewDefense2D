@@ -13,7 +13,7 @@ namespace Environment
         [SerializeField] private List<AlliedSoldier> _alliedSoldiers = new List<AlliedSoldier>();
         [SerializeField] private List<Enemy> _enemies = new List<Enemy>();
         [SerializeField] private List<MonoBehaviour> _alliedObjects = new List<MonoBehaviour>();
-        [SerializeField] private List<GameObject> _deadBodies = new List<GameObject>();
+        [SerializeField] private List<DeadBody> _deadBodies = new List<DeadBody>();
         [SerializeField] private Dictionary<ulong, PlayerController> _players = new Dictionary<ulong, PlayerController>();
 
         public Dictionary<ulong, PlayerController> Players => _players;
@@ -21,7 +21,7 @@ namespace Environment
         public List<AlliedSoldier> AlliedSoldiers => _alliedSoldiers;
         public List<Enemy> Enemies => _enemies;
         public List<MonoBehaviour> AlliedObjects => _alliedObjects;
-        public List<GameObject> DeadBodies => _deadBodies;
+        public List<DeadBody> DeadBodies => _deadBodies;
 
 
         public delegate void BuildingsHandler(List<Building> buildings);
@@ -36,7 +36,7 @@ namespace Environment
         public delegate void PlayersHandler(Dictionary<ulong, PlayerController> players);
         public event PlayersHandler OnPlayersDictionaryChangedEvent;
 
-        public delegate void DeadBodiesHandler(List<GameObject> deadBodies);
+        public delegate void DeadBodiesHandler(List<DeadBody> deadBodies);
         public event DeadBodiesHandler OnDeadBodiesListChangedEvent;
 
         private void Awake()
@@ -51,8 +51,20 @@ namespace Environment
 
         private void Start()
         {
-            if (IsServer) return;
-            enabled = false;
+            if (!IsServer)
+                enabled = false;
+            
+            GameManager.Instance.OnDefeatEvent += ClearAll;
+        }
+
+        private void ClearAll()
+        {
+            _buildings.Clear();
+            _alliedSoldiers.Clear();
+            _enemies.Clear();
+            _alliedObjects.Clear();
+            _deadBodies.Clear();
+            _players.Clear();
         }
 
         public void AddBuildingToList(Building newBuilding, bool needToInvoke)
@@ -103,37 +115,12 @@ namespace Environment
             OnEnemiesListChangedEvent?.Invoke(_enemies);
         }
 
-        public void AddPlayerToDictionary(PlayerController player, ulong id)
-        {
-            _players.Add(id, player);
-            _alliedObjects.Add(player.GetComponent<MonoBehaviour>());
-
-            OnPlayersDictionaryChangedEvent?.Invoke(_players);
-        }
-
         public void RemovePlayerFromList(PlayerController player, ulong id)
         {
             _players.Remove(id);
             _alliedObjects.Remove(player.GetComponent<MonoBehaviour>());
 
             OnPlayersDictionaryChangedEvent?.Invoke(_players);
-        }
-
-        [ClientRpc(RequireOwnership = false)]
-        public void AddPlayerToDictionaryClientRpc(ulong id)
-        {
-            PlayerController[] players = FindObjectsByType<PlayerController>(FindObjectsSortMode.None);
-            foreach (PlayerController player in players)
-            {
-                if (player.SteamId == id)
-                {
-                    _players.Add(id, player);
-                    _alliedObjects.Add(player.GetComponent<MonoBehaviour>());
-
-                    OnPlayersDictionaryChangedEvent?.Invoke(_players);
-                    return;
-                }
-            }
         }
 
         public void AddAllPlayersInGameToDictionary()
@@ -157,18 +144,24 @@ namespace Environment
             OnPlayersDictionaryChangedEvent?.Invoke(_players);
         }
 
-        public void AddDeadBodiesToList(GameObject deadBodies)
+        public void AddDeadBodiesToList(DeadBody deadBodies)
         {
             _deadBodies.Add(deadBodies);
 
             OnDeadBodiesListChangedEvent?.Invoke(_deadBodies);
         }
 
-        public void RemoveDeadBodiesFromList(GameObject deadBodies)
+        public void RemoveDeadBodiesFromList(DeadBody deadBodies)
         {
             _deadBodies.Remove(deadBodies);
 
             OnDeadBodiesListChangedEvent?.Invoke(_deadBodies);
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            GameManager.Instance.OnDefeatEvent -= ClearAll;
         }
     }
 }

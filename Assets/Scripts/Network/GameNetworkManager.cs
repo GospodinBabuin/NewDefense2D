@@ -1,9 +1,7 @@
 using Netcode.Transports.Facepunch;
 using Steamworks;
 using Steamworks.Data;
-using System;
 using System.Threading.Tasks;
-using UI;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -57,7 +55,8 @@ public class GameNetworkManager : MonoBehaviour
     private void StartClient(SteamId steamId)
     {
         NetworkManager.Singleton.OnClientConnectedCallback += Singleton_OnClientConnectedCallback;
-        NetworkManager.Singleton.OnClientDisconnectCallback += Singleton_OnClientDisconnectCallback;
+        //NetworkManager.Singleton.OnClientDisconnectCallback += Singleton_OnClientDisconnectCallback;
+        NetworkManager.Singleton.Shutdown();
         _transport.targetSteamId = steamId;
         if (NetworkManager.Singleton.StartClient())
         {
@@ -65,17 +64,10 @@ public class GameNetworkManager : MonoBehaviour
         }
     }
 
-    private void Singleton_OnClientDisconnectCallback(ulong clientId)
-    {
-        NetworkManager.Singleton.OnClientDisconnectCallback -= Singleton_OnClientDisconnectCallback;
-        if (clientId == 0)
-        {
-            Disconnected();
-        }
-    }
-
     public void Disconnected()
     {
+        NetworkTransmission.Instance.ClientDisconnectedClientRPC(NetworkManager.Singleton.LocalClientId);
+        
         CurrentLobby?.Leave();
         if (NetworkManager.Singleton != null)
         {
@@ -88,18 +80,18 @@ public class GameNetworkManager : MonoBehaviour
                 NetworkManager.Singleton.OnClientConnectedCallback -= Singleton_OnClientConnectedCallback;
             }
 
-            NetworkManager.Singleton.Shutdown(true);
+            NetworkManager.Singleton.Shutdown();
         }
 
         Chat.Instance?.ClearChat();
-        PlayerInfoHandler.Instance.ClearPlayerInfos();
-
-        Debug.Log(LobbyManager.Instance);
-
+        PlayerInfoHandler.Instance?.ClearPlayerInfos();
+        
         if (LobbyManager.Instance != null)
         {
             LobbyManager.Instance.Disconnected();
         }
+        
+        CurrentLobby = null;
         
         Debug.Log("Disconnected");
     }
@@ -135,7 +127,6 @@ public class GameNetworkManager : MonoBehaviour
         }
         NetworkManager.Singleton.OnServerStarted -= Singleton_OnServerStarted;
         NetworkManager.Singleton.OnClientConnectedCallback -= Singleton_OnClientConnectedCallback;
-        NetworkManager.Singleton.OnClientDisconnectCallback -= Singleton_OnClientDisconnectCallback;
     }
 
     private void OnApplicationQuit()
@@ -154,7 +145,7 @@ public class GameNetworkManager : MonoBehaviour
         else
         {
             CurrentLobby = lobby;
-            LobbyManager.Instance.ConnectedAsClient();
+            LobbyManager.Instance?.ConnectedAsClient();
             Debug.Log("Joined lobby");
         }
     }
@@ -177,15 +168,19 @@ public class GameNetworkManager : MonoBehaviour
         Debug.Log($"Member {friend.Name} leave");
         Chat.Instance.SendMessageToChat($"{friend.Name} has left", friend.Id, true);
         NetworkTransmission.Instance.RemoveMeFromDictionaryServerRpc(friend.Id);
+        LobbyManager.Instance?.CheckMembersCount();
     }
 
     private void SteamMatchmaking_OnLobbyMemberJoined(Lobby lobby, Friend friend)
     {
         Debug.Log($"Member {friend.Name} join");
+        LobbyManager.Instance?.CheckMembersCount();
     }
 
     private void SteamMatchmaking_OnLobbyEntered(Lobby lobby)
     {
+        LobbyManager.Instance?.CheckMembersCount();
+
         if (NetworkManager.Singleton.IsHost)
         {
             return;
@@ -199,6 +194,7 @@ public class GameNetworkManager : MonoBehaviour
     {
         if (result != Result.OK)
         {
+            NetworkManager.Singleton.Shutdown();
             Debug.Log("Lobby was not created");
         }
         else

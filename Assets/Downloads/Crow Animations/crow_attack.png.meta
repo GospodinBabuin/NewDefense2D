@@ -67,7 +67,7 @@ TextureImporter:
   swizzle: 50462976
   cookieLightType: 0
   platformSettings:
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -80,7 +80,7 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -100,19 +100,20 @@ TextureImporter:
       name: crow_attack_0
       rect:
         serializedVersion: 2
-        x: 19
-        y: 16
-        width: 23
-        height: 29
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c995f9782f59d5c4796c10dbc648b47d
-      internalID: 1155659057
+      spriteID: 161fa4b4ce7846a47becd837b866accd
+      internalID: -1716183815
       vertices: []
       indices: 
       edges: []
@@ -121,19 +122,20 @@ TextureImporter:
       name: crow_attack_1
       rect:
         serializedVersion: 2
-        x: 84
-        y: 16
-        width: 35
-        height: 27
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0ca95e6cbdc06dc49b8e527dab431c92
-      internalID: -2028142956
+      spriteID: 5b762e3ae063b74438b2b4e426bfdeed
+      internalID: 478605714
       vertices: []
       indices: 
       edges: []
@@ -142,19 +144,20 @@ TextureImporter:
       name: crow_attack_2
       rect:
         serializedVersion: 2
-        x: 149
-        y: 16
-        width: 33
-        height: 26
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 87bc8d2b103240d4684822e0051889ee
-      internalID: 532595383
+      spriteID: b73b2035676213549a952b945afda786
+      internalID: 1307396553
       vertices: []
       indices: 
       edges: []
@@ -163,19 +166,20 @@ TextureImporter:
       name: crow_attack_3
       rect:
         serializedVersion: 2
-        x: 211
-        y: 16
-        width: 23
-        height: 29
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1c9ba88ddba4aef43887fd57d14f3b74
-      internalID: 1268092810
+      spriteID: 733571d2776773f4abb92027c75aab95
+      internalID: 1251785538
       vertices: []
       indices: 
       edges: []
@@ -184,24 +188,26 @@ TextureImporter:
       name: crow_attack_4
       rect:
         serializedVersion: 2
-        x: 277
-        y: 16
-        width: 21
-        height: 28
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 25e7a3cbc9ea3ca40a0163a4f0d62d38
-      internalID: 1399846665
+      spriteID: c617e12402bc4f447921a9e8fb9a3eee
+      internalID: 198593472
       vertices: []
       indices: 
       edges: []
       weights: []
     outline: []
+    customData: 
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
@@ -211,12 +217,14 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
     nameFileIdTable:
-      crow_attack_0: 1155659057
-      crow_attack_1: -2028142956
-      crow_attack_2: 532595383
-      crow_attack_3: 1268092810
-      crow_attack_4: 1399846665
+      crow_attack_0: -1716183815
+      crow_attack_1: 478605714
+      crow_attack_2: 1307396553
+      crow_attack_3: 1251785538
+      crow_attack_4: 198593472
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

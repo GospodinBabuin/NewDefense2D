@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: IncreaseDamagePotionLvl2
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 1f97848f18817cc43ba66da5a2d0ccfa, type: 3}
+  prefab: {fileID: 2971133422828238300, guid: d8fb54eec68b9dd42be93ee90359a291, type: 3}
   description: A powerful potion to increase physical strength. Over time, the person
     who drinks it will no longer look like a human.
   cost: 100
-  prefab: {fileID: 0}
-  needToInvoke: 0
   healCount: 0
   increaseHealthCount: 0
   increaseDamageCount: 1
   increaseSpeedCount: 0
+  potionType: 6

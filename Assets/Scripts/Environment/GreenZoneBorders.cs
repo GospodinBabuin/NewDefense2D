@@ -30,6 +30,9 @@ public class GreenZoneBorders : MonoBehaviour
 
     private int _soldiersOnLeftBorder = 0;
     private int _soldiersOnRightBorder = 0;
+    
+    private Vector2 leftBorderPositionOffset = new Vector2(1, -3);
+    private Vector2 rightBorderPositionOffset = new Vector2(-1, -3);
 
     private void Awake()
     {
@@ -61,14 +64,14 @@ public class GreenZoneBorders : MonoBehaviour
             
             if (building.transform.position.x < LeftBorder.transform.position.x)
             {
-                LeftBorder.transform.position = building.transform.position + new Vector3(1, -3);
+                LeftBorder.transform.position = building.transform.position;
                 Debug.Log($"New left border position: {LeftBorder.transform.position.x}");
                 continue;
             }
 
             if (building.transform.position.x > RightBorder.transform.position.x)
             {
-                RightBorder.transform.position = building.transform.position + new Vector3(-1, -3);
+                RightBorder.transform.position = building.transform.position;
                 Debug.Log($"New Right border position: {RightBorder.transform.position.x}");
                 continue;
             }
@@ -81,12 +84,12 @@ public class GreenZoneBorders : MonoBehaviour
     {
         if (_soldiersOnLeftBorder <= _soldiersOnRightBorder)
         {
-            soldier.SelectBorder(LeftBorder);
+            soldier.SelectBorder(LeftBorder, leftBorderPositionOffset);
             _soldiersOnLeftBorder++;
         }
         else
         {
-            soldier.SelectBorder(RightBorder);
+            soldier.SelectBorder(RightBorder, rightBorderPositionOffset);
             _soldiersOnRightBorder++;
         }
     }

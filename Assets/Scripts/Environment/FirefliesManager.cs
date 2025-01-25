@@ -9,7 +9,7 @@ namespace Environment
     {
         public static FirefliesManager Instance;
         
-        [SerializeField] private GameObject fireflyPrefab;
+        [SerializeField] private GameObject fireflyHomePrefab;
         [SerializeField] private int firefliesAmount = 100;
         
         [SerializeField] private float minY = -5f;
@@ -45,28 +45,27 @@ namespace Environment
         {
             Vector3 spawnPosition = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), 0);
             
-            GameObject firefly = Instantiate(fireflyPrefab, spawnPosition, Quaternion.identity, transform);
-            fireflies.Add(firefly.GetComponent<Firefly>());
-            firefly.SetActive(false);
+            GameObject fireflyHome = Instantiate(fireflyHomePrefab, spawnPosition, Quaternion.identity, transform);
+            fireflies.Add(fireflyHome.GetComponentInChildren<Firefly>());
+            fireflyHome.SetActive(false);
         }
 
-        private void EnableFireflies(bool enable)
+        [ContextMenu("Enable Fireflies")]
+        private void EnableFireflies()
         {
-            if (enable)
-            {
-                foreach (Firefly firefly in fireflies)
-                { 
-                    firefly.gameObject.SetActive(true);
-                }
+            foreach (Firefly firefly in fireflies)
+            { 
+                firefly.transform.parent.gameObject.SetActive(true);
             }
-            else
-            {
-                foreach (Firefly firefly in fireflies)
-                { 
-                    firefly.TurnInactive();
-                }
+        }
+        
+        [ContextMenu("Disable Fireflies")]
+        private void DisableFireflies()
+        {
+            foreach (Firefly firefly in fireflies)
+            { 
+                firefly.TurnInactive();
             }
-            
         }
         
         private void FirefliesStateChange(DayManager.DayState dayState, int currentDay)
@@ -74,10 +73,10 @@ namespace Environment
             switch (dayState)
             {
                 case DayManager.DayState.Day:
-                    EnableFireflies(false);
+                    DisableFireflies();
                     return;
                 case DayManager.DayState.Night:
-                    EnableFireflies(true);
+                    EnableFireflies();
                     return;
             }
         }

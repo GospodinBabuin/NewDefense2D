@@ -52,6 +52,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -99,6 +102,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be486740ce7d0104897d07baaba11016, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AuthorityMode: 0
+  TickSyncChildren: 0
   UseUnreliableDeltas: 0
   SyncPositionX: 0
   SyncPositionY: 0
@@ -116,6 +123,7 @@ MonoBehaviour:
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
   InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
   Interpolate: 0
   SlerpPosition: 0
 --- !u!1 &471704933917338972
@@ -398,6 +406,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 583d2461bd551ce4b81f5140606e6d0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -652,12 +661,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RenderShadows: 1
+  m_RenderShadows: 0
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: 0
+  m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1
@@ -696,10 +705,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85956cfdbe35bd041b96347903999fc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   player: {fileID: 0}
   offset: {x: 0, y: 2.1, z: -50}
   clampOffset: {x: 0, y: 3.15, z: 0}
-  smoothSpeed: 0.005
+  smoothSpeed: 3
   cameraDirectionXMultiplier: 5
   cameraDirectionYMultiplier: 2
   cameraOffset: 2.5
@@ -912,7 +922,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &6101675632985080830
 Rigidbody2D:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -923,9 +933,9 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 3
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 10
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -945,6 +955,7 @@ BoxCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8297914983458527218}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -968,7 +979,8 @@ BoxCollider2D:
     m_Bits: 4294967295
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: 0.1, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
@@ -979,7 +991,6 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  serializedVersion: 2
   m_Size: {x: 0.4, y: 1.3}
   m_EdgeRadius: 0
 --- !u!114 &1854753631027047459
@@ -994,8 +1005,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3827875408
+  GlobalObjectIdHash: 2942564477
   InScenePlacedSourceGlobalObjectIdHash: 2942564477
+  DeferredDespawnTick: 0
+  Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -1003,6 +1016,8 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!210 &8401309515687629435
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -1017,7 +1032,7 @@ SortingGroup:
   m_SortAtRoot: 0
 --- !u!95 &8063926393312875558
 Animator:
-  serializedVersion: 5
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1031,6 +1046,7 @@ Animator:
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
@@ -1048,9 +1064,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89e2c7fb3722cb8409c067595ce64344, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  damage:
+    m_InternalValue: 1
   attackDelay: 1.5
   attackAnimationCount: 3
-  damage: 1
   attackPoint: {fileID: 1970942410205286428}
   attackRadius: 0.8
   attackLayers:
@@ -1077,8 +1095,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2ed448ad534b2a4184efeb52a628ac4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 125
+  ShowTopMostFoldoutHeaderGroup: 1
   stopDistance: 0
+  speed:
+    m_InternalValue: 180
+  speedAnimationMultiplier:
+    m_InternalValue: 1
   minStopDistance: -0.1
   maxStopDistance: 0.35
   soundData:
@@ -1089,7 +1111,7 @@ MonoBehaviour:
     Loop: 0
     PlayOnAwake: 0
     FrequentSound: 0
-  movementSmoothing: 0
+  movementSmoothing: 0.01
 --- !u!114 &8802729131745676027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1102,6 +1124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a5da84bdc4041740b93c650968b3cb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   visionRange: 15
   nearestFoe: {fileID: 0}
   interactionRadius: 1.3
@@ -1122,6 +1145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a496daac252bd1d4bbf9f3083b902ec9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   maxHealth:
     m_InternalValue: 10
   currentHealth:
@@ -1170,6 +1194,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be486740ce7d0104897d07baaba11016, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 1
+  AuthorityMode: 0
+  TickSyncChildren: 0
   UseUnreliableDeltas: 0
   SyncPositionX: 1
   SyncPositionY: 1
@@ -1187,7 +1215,8 @@ MonoBehaviour:
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
   InLocalSpace: 0
-  Interpolate: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
   SlerpPosition: 0
 --- !u!114 &7816325877418744298
 MonoBehaviour:
@@ -1201,6 +1230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b335f71141e59d3448ecb890bf2e0656, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   TransitionStateInfoList: []
   m_Animator: {fileID: 8063926393312875558}
 --- !u!81 &4194770226794281971
@@ -1223,6 +1253,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80d7c879794dfda4687da0e400131852, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkRigidbodyBaseExpanded: 0
+  UseRigidBodyForMotion: 0
+  AutoUpdateKinematicState: 1
+  AutoSetKinematicOnDespawn: 1
 --- !u!1001 &8936795785239276022
 PrefabInstance:
   m_ObjectHideFlags: 0

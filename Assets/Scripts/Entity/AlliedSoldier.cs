@@ -14,6 +14,8 @@ public class AlliedSoldier : Entity, IBind<UnitDataStruct>
     [SerializeField] private int id = -1;
 
     private UnitData _unitData = new UnitData();
+    
+    private Vector2 _borderOffset;
 
     public struct UnitDataStruct : INetworkSerializable, ISaveable
     {
@@ -26,9 +28,9 @@ public class AlliedSoldier : Entity, IBind<UnitDataStruct>
         }
     }
 
-    public void Bind(UnitDataStruct unitData)
+    public void Bind(UnitDataStruct gameManagerData)
     {
-        Health.SetCurrentHealth(unitData.currentHealth);
+        Health.SetCurrentHealthServerRPC(gameManagerData.currentHealth);
     }
 
     public void SaveData()
@@ -53,7 +55,7 @@ public class AlliedSoldier : Entity, IBind<UnitDataStruct>
 
         if (nearestFoe != null)
         {
-            if (!Locomotion.CloseEnough(nearestFoe.transform.position))
+            if (!Locomotion.CloseEnough(nearestFoe.transform.position, nearestFoe.GetComponent<BoxCollider2D>().size.x/2))
             {
                 Locomotion.RotateAndMoveWithVelocity(nearestFoe.transform.position);
                 return;
@@ -82,19 +84,23 @@ public class AlliedSoldier : Entity, IBind<UnitDataStruct>
         if (!GreenZoneBorders.Instance.IsBeyondGreenZoneBorders(transform.position) || GreenZoneBorders.Instance.IsBeyondDefaultGreenZoneBorders(transform.position))
         {
             nearestFoe = FindNearestFoe(ObjectsInWorld.Instance.Enemies, true);
+            
+            if (nearestFoe != null)
+                Locomotion.Rotate(nearestFoe.transform.position);
         }
     }
 
-    public void SelectBorder(Transform newBorder)
+    public void SelectBorder(Transform newBorder, Vector2 borderOffset)
     {
         SelectedBorder = newBorder;
-
+        _borderOffset = borderOffset;
         SelectBordersPosition();
     }
 
     private void SelectBordersPosition()
     {
         _selectedBorderPosition = AddRandomToTargetPosition(SelectedBorder.position, 0f, 1.5f);
+        _selectedBorderPosition.x += _borderOffset.x;
     }
 
     private bool IsOnBorder(Vector2 targetPosition)

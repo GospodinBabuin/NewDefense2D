@@ -48,6 +48,7 @@ namespace GoldSystem
         {
             int oldGoldValue = Gold;
             Gold = newGoldCount;
+            
             OnGoldValueChangedEvent?.Invoke(sender, oldGoldValue, Gold);
         }
 

@@ -44,9 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03a9a4a881d785a42af9cf9dd43ec3ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireflyPrefab: {fileID: 3084174343697114980, guid: 41ba973e1cd5b2749b462206d7c15df7, type: 3}
+  fireflyHomePrefab: {fileID: 0}
   firefliesAmount: 100
   minY: -5
   maxY: 0
   minX: -100
   maxX: 100
+  fireflies: []

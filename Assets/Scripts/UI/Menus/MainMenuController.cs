@@ -1,4 +1,5 @@
 using SaveLoadSystem;
+using Steamworks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,6 +12,9 @@ namespace UI.Menus
 
         private void Start()
         {
+            SteamFriends.ClearRichPresence();
+            SteamFriends.SetRichPresence( "steam_player_group", "In the main menu" );
+            
             if (!SaveLoad.Instance.IsSaveFileExists())
             {
                 continueGame.SetActive(false);
@@ -21,7 +25,7 @@ namespace UI.Menus
         {
             SaveLoad.Instance.LoadGame();
             
-            SceneManager.LoadSceneAsync("Lobby");
+            SceneTransitionHandler.Instance.SwitchScene("Lobby");
         }
         
         public void OnStartNewGameButtonClicked()

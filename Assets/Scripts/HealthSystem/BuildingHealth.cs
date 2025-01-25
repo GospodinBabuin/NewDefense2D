@@ -39,6 +39,11 @@ namespace HealthSystem
             base.Damage(damageAmount);
         }
 
+        public void TestDestroy()
+        {
+            Die();
+        }
+
         [ContextMenu("Destroy")]
         protected override void Die()
         {
@@ -54,8 +59,22 @@ namespace HealthSystem
                     animator.SetTrigger(_animIDDestroyLvl3); 
                     break;
             }
+
+            if (gameObject.CompareTag("Base"))
+            {
+                GameManager.Instance.Defeat();
+                
+                return;
+            }
+            
+            Destroy(_building);
+            
+            Collider2D collider2D = GetComponent<Collider2D>();
+            collider2D.enabled = false;
         
-            _building.enabled = false;
+            Rigidbody2D rigidbody2D = GetComponent<Rigidbody2D>();
+            rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;            
+            
             Destroy(gameObject, animator.GetCurrentAnimatorStateInfo(0).length + 5f);
         }
 

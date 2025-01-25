@@ -1,3 +1,7 @@
+using System;
+using Environment;
+using UI;
+using UI.Menus;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -14,7 +18,7 @@ namespace Network
         
         [SerializeField] private Vector3 offset;
         [SerializeField] private Vector3 clampOffset;
-        [Range(0, 0.5f)] [SerializeField] private float smoothSpeed = 0.005f;
+        [Range(1, 5f)] [SerializeField] private float smoothSpeed = 4f;
         [Range(1, 10)] [SerializeField] private float cameraDirectionXMultiplier = 5;
         [Range(1, 10)] [SerializeField] private float cameraDirectionYMultiplier = 2;
 
@@ -25,7 +29,7 @@ namespace Network
         
         private Vector3 _targetPosition;
         private float _targetCameraSize;
-
+        
         private void Awake()
         {
             _audioListener = GetComponentInParent<AudioListener>();
@@ -46,6 +50,8 @@ namespace Network
 
             _audioListener.enabled = true;
             
+            smoothSpeed = PlayerPrefs.GetFloat("CameraSensitivity");
+            
             if (offset == Vector3.zero)
                 offset = new Vector3(0, 2.1f, -50);
             
@@ -55,49 +61,52 @@ namespace Network
             transform.position = offset;
 
             Cursor.lockState = CursorLockMode.Confined;
+            
+            WaterController.Instance?.Initialize(_camera);
+            
+            GameUI.Instance.SettingsMenu.MainSettings.OnCameraSensitivityChangedEvent += SetSmoothSpeed;
         }
 
         private void LateUpdate()
         {
-            MoveCameraToCursor();
+            FindCameraTargetPosition();
         }
 
-        private void MoveCameraToCursor()
+        private void FindCameraTargetPosition()
         {
-            //Camera Transform
             if (Cursor.lockState != CursorLockMode.Confined) return;
-            
+
             Vector3 cursorViewportPosition = _camera.ScreenToViewportPoint(Mouse.current.position.ReadValue());
             cursorViewportPosition.z = 0;
             
             float normalizedX = cursorViewportPosition.x * 2 - 1;
             float normalizedY = cursorViewportPosition.y * 2 - 1;
             
-            Vector3 desiredPosition = new Vector3(normalizedX / 2 * cameraDirectionXMultiplier + offset.x, 
+            _targetPosition = new Vector3(normalizedX / 2 * cameraDirectionXMultiplier + offset.x, 
                 normalizedY / 2 * cameraDirectionYMultiplier + offset.y, offset.z);
-           
-            _targetPosition = Vector3.Lerp(transform.localPosition, desiredPosition, smoothSpeed);
-
-            float cameraHalfWidth = _camera.orthographicSize * _camera.aspect;
-
-            float clampedX = Mathf.Clamp(_targetPosition.x, -clampOffset.x - cameraHalfWidth,
-                clampOffset.x + cameraHalfWidth);
-            float clampedY = Mathf.Clamp(_targetPosition.y, -clampOffset.y,
-                clampOffset.y);
             
-            transform.localPosition = new Vector3(_targetPosition.x, clampedY, transform.localPosition.z);
-            
-            //Camera Size
             float normalizedCameraSize = (Mathf.Abs(normalizedX) + Mathf.Abs(normalizedY)) / 2;
             
             float desiredCameraSize = normalizedCameraSize * cameraSizeMultiplier + cameraOffset;
             
-            _targetCameraSize = Mathf.Lerp(_camera.orthographicSize, desiredCameraSize, smoothSpeed);
-            
-            float clampedCameraSize = Mathf.Clamp(_targetCameraSize, cameraMinSize,
+            _targetCameraSize = Mathf.Clamp(desiredCameraSize, cameraMinSize,
                 cameraMaxSize);
             
-            _camera.orthographicSize = clampedCameraSize;
+            transform.localPosition = Vector3.Lerp(transform.localPosition, _targetPosition, smoothSpeed * Time.fixedDeltaTime);
+            _camera.orthographicSize = Mathf.Lerp(_camera.orthographicSize, _targetCameraSize, smoothSpeed * Time.fixedDeltaTime);
+        }
+
+        private void SetSmoothSpeed(float newSmoothSpeed)
+        {
+            smoothSpeed = newSmoothSpeed;
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            
+            if (GameUI.Instance != null)
+                GameUI.Instance.SettingsMenu.MainSettings.OnCameraSensitivityChangedEvent -= SetSmoothSpeed;
         }
     }
 }

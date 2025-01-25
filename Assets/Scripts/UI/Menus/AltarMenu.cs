@@ -9,6 +9,8 @@ namespace UI
         [SerializeField] private GameObject[] potionsLvl2;
         [SerializeField] private GameObject[] potionsLvl3;
 
+        [SerializeField] private GameObject revivePlayerButton;
+
         public Altar CurrentAltar { get; private set; }
         
         public void ShowMenu(int buildingLvl, Altar currentAltar)
@@ -35,6 +37,8 @@ namespace UI
                     ActivateSlots(potionsLvl3);
                     break;
             }
+
+            RevivePlayerButtonState(revivePlayerButton);
         }
 
         private static void ActivateSlots(GameObject[] slots)
@@ -47,6 +51,11 @@ namespace UI
         {
             foreach (GameObject slot in slots)
                 slot.SetActive(false);
+        }
+
+        private static void RevivePlayerButtonState(GameObject revivePlayerButton)
+        {
+            revivePlayerButton.SetActive(DeadPlayersHandler.Instance.AreThereAnyDeadPlayers());
         }
     }
 }

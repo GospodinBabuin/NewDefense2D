@@ -100,7 +100,7 @@ public class Chat : MonoBehaviour
             _chatInputField.DeactivateInputField();
             _isChatOpened = false;
             inputActions.Player.Enable();
-            Cursor.lockState = CursorLockMode.None;
+            Cursor.lockState = CursorLockMode.Confined;
             _animator.SetTrigger(_animIDHideChat);
         }
         else

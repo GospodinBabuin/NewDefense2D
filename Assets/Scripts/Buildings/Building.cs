@@ -48,9 +48,9 @@ namespace Buildings
             }
         }
 
-        public void Bind(BuildingDataStruct buildingData)
+        public virtual void Bind(BuildingDataStruct gameManagerData)
         {
-            BuildingLvl.Value = buildingData.level;
+            BuildingLvl.Value = gameManagerData.level;
             switch (BuildingLvl.Value)
             {
                 case 2:
@@ -63,10 +63,9 @@ namespace Buildings
 
             for (int i = 1; i < BuildingLvl.Value; i++)
             {
-                Health.IncreaseMaxHealth(Health.GetMaxHealth() / 2);
+                Health.IncreaseMaxHealthServerRPC(Health.GetMaxHealth() / 2);
             }
-
-            Health.SetCurrentHealth(buildingData.currentHealth);
+            Health.SetCurrentHealthServerRPC(gameManagerData.currentHealth);
         }
 
         public void SaveData()
@@ -93,7 +92,13 @@ namespace Buildings
         }
 
         [ContextMenu("Upgrade")]
-        public virtual void UpgradeBuilding()
+        [ServerRpc(RequireOwnership = false)]
+        public void UpgradeBuildingServerRPC()
+        {
+            UpgradeBuilding();
+        }
+        
+        protected virtual void UpgradeBuilding()
         {
             switch (BuildingLvl.Value)
             {
@@ -118,8 +123,8 @@ namespace Buildings
             }
             
             BuildingLvl.Value++;
-            Health.IncreaseMaxHealth(Health.GetMaxHealth() /2);
-            Health.Heal(Health.GetMaxHealth() /2);
+            Health.IncreaseMaxHealthServerRPC(Health.GetMaxHealth() /2);
+            Health.HealServerRPC(Health.GetMaxHealth() /2);
         }
 
         protected int GetUpgradeToNextLvlCost()
@@ -144,7 +149,7 @@ namespace Buildings
             }
 
             GoldBank.Instance.SpendGold(this, CostToRepairBuilding());
-            Health.HealToMaxHealth();
+            Health.HealToMaxHealthServerRPC();
         }
 
         public int CostToRepairBuilding()

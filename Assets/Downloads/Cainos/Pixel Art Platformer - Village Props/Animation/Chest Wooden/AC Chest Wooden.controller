@@ -142,19 +142,19 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: Close
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: Destroy
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -264,7 +264,7 @@ AnimatorStateMachine:
     m_Position: {x: 120, y: 370, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -3043695872307486049}
-    m_Position: {x: 155, y: 435, z: 0}
+    m_Position: {x: 120, y: 440, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -9218170563927479205}
     m_Position: {x: 120, y: 150, z: 0}

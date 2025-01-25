@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Environment
@@ -21,35 +22,45 @@ namespace Environment
         private Animator _animator;
         private int _animIDLightOn;
         private int _animIDLightOff;
+        private int _animIDIdle;
+        private int _animIDMultiplier;
+        [SerializeField] [Range(0.01f, 0.5f)] private float _animMultiplier;
+
+        [SerializeField] private bool _isVisible = false;
 
         private void Awake()
         {
             _animator = GetComponent<Animator>();
             _animIDLightOn = Animator.StringToHash("LightOn");
             _animIDLightOff = Animator.StringToHash("LightOff");
+            _animIDIdle = Animator.StringToHash("Idle");
+            _animIDMultiplier = Animator.StringToHash("Multiplier");
         }
 
         private void FixedUpdate()
         {
-            MoveAlongCurve();
+            //MoveAlongCurve();
         }
 
         private void Initialize()
         {
-            _center = transform.position;
-            AddRandomToRadius();
-            AddRandomToSpeed();
-            SetRandomTargetPosition();
-            Debug.Log($"{gameObject.name} initialized");
+            // _center = transform.position;
+            // AddRandomToRadius();
+            // AddRandomToSpeed();
+            AddRandomToAnimMultiplier();
+            // SetRandomTargetPosition();
         }
         
         private void MoveAlongCurve()
         {
+            if (!_isVisible) return;
+            
             Vector2 direction = _targetPosition - (Vector2)transform.position;
         
             if (direction.magnitude < 0.1f)  
             {
                 SetRandomTargetPosition();  
+                return;
             }
         
             _timeElapsed += Time.fixedDeltaTime;
@@ -79,6 +90,12 @@ namespace Environment
         {
             speed += Random.Range(-randomSpeed, randomSpeed);
         }
+        
+        private void AddRandomToAnimMultiplier()
+        {
+            _animMultiplier += Random.Range(0.05f, 0.1f);
+            _animator.SetFloat(_animIDMultiplier, _animMultiplier);
+        }
 
         private void OnEnable()
         {
@@ -93,8 +110,18 @@ namespace Environment
 
         public void OnLightOffAnimEventEnded()
         {
-            gameObject.SetActive(false);
+            transform.parent.gameObject.SetActive(false);
         }
+
+        //private void OnBecameVisible()
+        //{
+        //    _isVisible = true;
+        //}
+        //
+        //private void OnBecameInvisible()
+        //{
+        //    _isVisible = false;
+        //}
 
         private void OnDrawGizmos()
         {
