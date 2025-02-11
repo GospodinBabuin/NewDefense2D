@@ -142,8 +142,8 @@ namespace MenuSlots
                 GameUI.Instance.Notifications.ShowNotEnoughMoneyNotification();
                 return;
             }
-            NetworkManager.Singleton.id
-            NetworkManager.Singleton.ConnectedClientsList[]
+            //NetworkManager.Singleton.id
+            //NetworkManager.Singleton.ConnectedClientsList[]
                 
             
             ManageMenuSlots();
